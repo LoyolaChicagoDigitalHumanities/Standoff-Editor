@@ -1,0 +1,328 @@
+body 
+{
+	margin:0;
+	padding:10px;
+	font:13px/16px "Lucida Grande", Tahoma, Arial, Sans-serif;
+	color:#ffffff;
+	background-color:#043e54;
+	background-image:url('../images/background2.png');
+	background-repeat: repeat-x;
+	background-position: top;
+}
+a:link 
+{	
+	text-decoration: none; 
+	color: #65cee7;
+}
+
+a:visited 
+{
+	text-decoration: none; 
+	color: #65cee7;
+}
+
+a:active 
+{
+	text-decoration: none; 
+	color: #65cee7;
+}
+
+a:hover 
+{
+	text-decoration: underline; 
+	color: #65cee7;
+}
+
+:link img
+{
+  border: none;
+}
+
+img
+{
+  border: none;
+}
+#container
+{
+	width: 900px;
+	margin: 0 auto;
+	padding: 0px;
+}
+#header
+{
+	height: 60px;	
+	padding: 0px;
+	margin: 0px;
+}
+#logo
+{
+	float: left;
+	padding-top: 10px;
+}
+#userinfo
+{
+	float: right;
+	padding: 25px 30px 0px 0px;
+}
+#content
+{
+	height: 477px;
+	margin: 11px 0px 20px 0px;
+	overflow: auto;
+	padding: 5px;
+}
+#footer
+{
+	padding: 0px;
+	margin: 0px;
+	margin: 30px 30px 0px 0px;
+	text-align: right;
+	font-size: 11px;
+}
+#marks
+{
+	float:right;
+	width:200px;
+	height: 290px;
+	margin-left: 10px;
+	border: 1px dashed #dadada;
+	background-color: #f8f8f8;
+	padding: 10px;
+	overflow: auto;	
+}
+span
+{
+	color: #ff0000;
+	border: 1px solid #ff0000;
+	background-color: #ffe5e5;
+	padding: 2px;
+	margin: 4px;
+	display:inline-block;
+}
+
+
+#title
+{
+	font-size: 18px;
+}
+#menu
+{
+	border: 1px solid #79c4e3;
+	background-color: #e2e8ee;
+	padding: 5px;
+	margin:0px 0px 0px 130px;
+	width:300px;
+	display:none;
+	position:absolute; 
+	-moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+    box-shadow: 5px 5px 5px #ccc;  
+}
+
+#menuHolder
+{
+	height:55px;
+}
+
+
+#buttons
+{
+  margin:0px;
+  padding: 0px;
+}
+
+.classicField
+{
+	width: 100%;
+	border: 1px solid #e0ddd4;
+	height: 20px; 
+}
+.classicTextarea
+{
+	width: 99.8%;
+	border: 1px solid #cdcdcd;
+	background-color: #f2f2f2;
+	color: #000;
+	font-size: 16px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;	
+	outline: none;
+	resize: none;	
+	height: 99%;
+	line-height: 200%;
+}
+.classicLegend
+{
+	white-space: nowrap;
+	color: #918d81;
+}
+.menuLegend
+{
+	white-space: nowrap;
+	color: #0e96cf;
+	font-size: 12px;
+}
+.loading
+{
+	width:240px;
+	margin-top: 150px;
+	text-align: center;
+}
+
+.classicTable
+{
+	margin:0px;
+	padding:0px;
+	border-collapse:collapse;
+	border-spacing: 0px;
+}
+
+table.classicTable
+{ 
+	border-collapse: collapse; 
+	border-spacing: 0px;
+	padding: 0px;
+	margin:0px;
+}
+table.classicTable tr td, table.classicTable tr th
+{ 
+	border-collapse: collapse;
+	border-spacing: 0px; 
+	padding: 0px;
+	margin:0px;	
+}
+
+table.paddedTable
+{ 
+	border-collapse: collapse; 
+	border-spacing: 0px;
+	padding: 0px;
+	margin:0px;
+}
+table.paddedTable tr td, table.classicTable tr th
+{ 
+	border-collapse: collapse;
+	border-spacing: 0px; 
+	padding: 5px;
+	margin:0px; 	
+}
+#saving
+{
+	border: 1px solid #a1a1a1;
+	width:150px;
+	background-color: #f2f2f2;
+	color: #a1a1a1;
+	padding: 5px;
+	margin: 5px auto;
+	position: absolute;
+	text-align: center;
+	float: right;
+	display: none;
+}
+#listOfDocumentsHolder
+{
+	width: 580px;
+	min-height: 98%;
+	float: right;
+	font-size: 20px;
+	padding: 5px;
+	vertical-align:middle;
+}
+#folderIcon
+{
+	background-image:url('../images/icon_folder.png');
+	background-repeat: no-repeat;
+	background-position-y: center;
+	float: left;
+	width: 256px;
+	height: 100%;	 
+}
+#newDocumentButtonHolder
+{
+	margin-top: 370px;
+}
+.documentsElement
+{
+  color: #000; 
+  background-color: #b1e2f3;
+  border: 1px solid #000;
+  padding: 10px;
+  margin: 6px;
+  -moz-border-radius: 5px; 
+  border-radius: 5px;
+  cursor: pointer;
+  background-image:url('../images/li_background.png');
+  background-repeat: repeat-x;  
+}
+.stepActive
+{
+	border: 1px solid #fff;
+	padding: 4px;
+	background-color: #84d2ed;
+	margin: 2px;
+	color: #000;
+  	-moz-border-radius: 5px; 
+ 	border-radius: 5px;		
+}
+.stepInactive
+{
+	border: 1px solid #64aec8;
+	padding: 4px;
+	background-color: #b7e7f8;
+	margin: 2px;
+	color: #64aec8;
+  	-moz-border-radius: 5px; 
+ 	border-radius: 5px;		
+}
+#stepHolder
+{
+	font-size: 18px;
+	margin: 10px 2px 10px 2px;
+	border: 1px solid #fff;
+	background-color: #043e54;
+	padding: 5px;
+	color: #65cee7;
+  	-moz-border-radius: 5px; 
+ 	border-radius: 5px;	
+ 	height: 300px;
+}
+#documentNameHolder
+{
+	font-size: 18px;
+	margin: 0px 2px 10px 2px;
+	border: 1px solid #fff;
+	background-color: #043e54;
+	padding: 15px;
+	color: #65cee7;
+  	-moz-border-radius: 5px; 
+ 	border-radius: 5px;	
+ 	height: 27px;
+}
+#documentName
+{
+	float:left;
+	padding-top: 5px;
+	
+}
+#documentDelete
+{
+	float:right;
+}
+.markupHolder
+{
+	width: 83.8%;
+	border: 1px solid #cdcdcd;
+	background-color: #f2f2f2;
+	color: #000;
+	-moz-border-radius: 5px;
+	border-radius: 5px;	
+	height: 99%;
+	line-height:200%;
+	font:16px/18px "Lucida Grande", Tahoma, Arial, Sans-serif;
+	float: right;
+}
+.markupToolsHolder
+{
+	float: left;
+	padding-left: 6px;
+}

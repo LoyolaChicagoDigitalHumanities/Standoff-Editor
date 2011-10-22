@@ -1,0 +1,12 @@
+<form enctype="multipart/form-data" method="post" action="do.php?action=processStep{STEP}&id={ID}">
+	<div id="stepHolder">
+	{FORM}
+	</div>
+	<div style="float:left">
+		<a href="index.php"><img src="images/button_folder.png"></a>
+	</div>
+	<div style="float:right">
+		<a href="javascript:void(0)" onclick="loadStep('edit.php?id={ID}&step={PREV}', '{PREV}');"><img src="images/button_prev.png"></a>
+		<input type="image" src="images/button_next.png">
+	</div>
+</form>

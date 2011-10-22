@@ -1,0 +1,112 @@
+body 
+{
+	margin:0;
+	padding: 0;
+	font:13px/16px "Lucida Grande", Tahoma, Arial, Sans-serif;
+	color:#ffffff;
+	background-color:#043e54;
+	background-image:url('../images/background.png');
+	background-repeat: repeat-x;
+	background-position: top;
+}
+a:link 
+{	
+	text-decoration: none; 
+	color: #65cee7;
+}
+
+a:visited 
+{
+	text-decoration: none; 
+	color: #65cee7;
+}
+
+a:active 
+{
+	text-decoration: none; 
+	color: #65cee7;
+}
+
+a:hover 
+{
+	text-decoration: underline; 
+	color: #65cee7;
+}
+
+:link img
+{
+  border: none;
+}
+
+img
+{
+  border: none;
+}
+
+#container
+{
+	width: 900px;
+	margin: 0 auto;
+	padding: 0px;
+}
+#header
+{
+	height: 60px;	
+	padding: 0px;
+	margin: 0px;
+}
+#logo
+{
+	float: left;
+	padding-top: 10px;
+}
+#menu
+{
+	float: right;
+	padding: 15px 30px 0px 0px;
+}
+#holders
+{
+	height: 285px;	
+	padding: 0px;
+	margin-top: 15px;
+}
+#markupIconHolder
+{
+	float: right;
+	background-image: url('../images/markupIcon.png');
+	background-repeat: no-repeat;
+	width: 400px;
+	height: 300px;
+}
+#optionsHolder
+{
+	float: left;
+	background-image: url('../images/explanations.png');
+	width: 400px;
+	height: 250px;
+}
+#info
+{
+	height: 95px;	
+	padding: 0px;
+	margin: 0px;
+	margin-top: 15px;
+}
+#footer
+{
+	height: 50px;
+	padding: 0px;
+	margin: 0px;
+	margin: 30px 30px 0px 0px;
+	text-align: right;
+	font-size: 11px;
+}
+.infoElement
+{
+	float: left;
+}
+.explanation
+{
+	padding-right: 60px;
+}

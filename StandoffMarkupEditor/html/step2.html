@@ -1,0 +1,41 @@
+<div class="markupToolsHolder">
+	<a href="javascript:void(0);" id="addMarkButton" onclick="addMark();"><img alt="Add Mark" id="theButton1" src="images/button_addmark.png" onmouseover="updateButton('1', 'theButton1');" onmouseout="updateButton('0', 'theButton1');"></a>
+	<br><br>
+<a href="javascript:void(0);" id="clearMarksButton"><img alt="Clear Marks" id="theButton2" src="images/button_clearmarks.png" onmouseover="updateButton('1', 'theButton2');" onmouseout="updateButton('0', 'theButton2');"></a>		
+</div>
+<div id="userInput" class="markupHolder">{CONTENT}</div>
+	<div id="menu">
+		<table class="paddedTable">
+			<tr>
+				<td class="menuLegend">
+					Name Space:
+				</td>
+				<td style="width:100%">
+					<input name="ns" id="ns" class="classicField">
+				</td>
+			</tr>
+			<tr>
+				<td class="menuLegend">
+					Tag:
+				</td>
+				<td style="width:100%">
+					<input name="tag" id="tag" class="classicField">
+				</td>
+			</tr>
+			<tr>
+				<td class="menuLegend">
+					Attribute:
+				</td>
+				<td style="width:100%">
+					<input name="attr" id="attr" class="classicField">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="text-align:right">
+					<a id="markButton" href="javascript:void(0);">
+						<img alt="Add" id="plusButton" src="images/button_add.png">
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
