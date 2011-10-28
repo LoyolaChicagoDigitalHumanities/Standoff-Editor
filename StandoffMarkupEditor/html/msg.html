@@ -20,7 +20,8 @@
 			{MESSAGE}
 		</div>
 		<div id="button">
-			<input type="button" value="{BUTTON}" onclick="window.location ='{URL}';">
+			<script><input type="button" value="{BUTTON}" onclick="window.location ='{URL}';"></script>
+			<noscript><a href="{URL}">{BUTTON}</a></noscript>
 		</div>
 	</div>
 </body>

@@ -1,82 +1,3202 @@
-window.rangy=function(){function k(o,u){var x=typeof o[u];return x=="function"||!!(x=="object"&&o[u])||x=="unknown"}function L(o,u){return!!(typeof o[u]=="object"&&o[u])}function J(o,u){return typeof o[u]!="undefined"}function K(o){return function(u,x){for(var B=x.length;B--;)if(!o(u,x[B]))return false;return true}}function z(o){return o&&A(o,y)&&v(o,s)}function C(o){window.alert("Rangy not supported in your browser. Reason: "+o);c.initialized=true;c.supported=false}function N(){if(!c.initialized){var o,
-u=false,x=false;if(k(document,"createRange")){o=document.createRange();if(A(o,n)&&v(o,h))u=true;o.detach()}if((o=L(document,"body")?document.body:document.getElementsByTagName("body")[0])&&k(o,"createTextRange")){o=o.createTextRange();if(z(o))x=true}!u&&!x&&C("Neither Range nor TextRange are implemented");c.initialized=true;c.features={implementsDomRange:u,implementsTextRange:x};u=j.concat(f);x=0;for(o=u.length;x<o;++x)try{u[x](c)}catch(B){L(window,"console")&&k(window.console,"log")&&window.console.log("Init listener threw an exception. Continuing.",
-B)}}}function P(o){this.name=o;this.supported=this.initialized=false}var h=["startContainer","startOffset","endContainer","endOffset","collapsed","commonAncestorContainer","START_TO_START","START_TO_END","END_TO_START","END_TO_END"],n=["setStart","setStartBefore","setStartAfter","setEnd","setEndBefore","setEndAfter","collapse","selectNode","selectNodeContents","compareBoundaryPoints","deleteContents","extractContents","cloneContents","insertNode","surroundContents","cloneRange","toString","detach"],
-s=["boundingHeight","boundingLeft","boundingTop","boundingWidth","htmlText","text"],y=["collapse","compareEndPoints","duplicate","getBookmark","moveToBookmark","moveToElementText","parentElement","pasteHTML","select","setEndPoint","getBoundingClientRect"],A=K(k),p=K(L),v=K(J),c={version:"1.2",initialized:false,supported:true,util:{isHostMethod:k,isHostObject:L,isHostProperty:J,areHostMethods:A,areHostObjects:p,areHostProperties:v,isTextRange:z},features:{},modules:{},config:{alertOnWarn:false,preferTextRange:false}};
-c.fail=C;c.warn=function(o){o="Rangy warning: "+o;if(c.config.alertOnWarn)window.alert(o);else typeof window.console!="undefined"&&typeof window.console.log!="undefined"&&window.console.log(o)};if({}.hasOwnProperty)c.util.extend=function(o,u){for(var x in u)if(u.hasOwnProperty(x))o[x]=u[x]};else C("hasOwnProperty not supported");var f=[],j=[];c.init=N;c.addInitListener=function(o){c.initialized?o(c):f.push(o)};var r=[];c.addCreateMissingNativeApiListener=function(o){r.push(o)};c.createMissingNativeApi=
-function(o){o=o||window;N();for(var u=0,x=r.length;u<x;++u)r[u](o)};P.prototype.fail=function(o){this.initialized=true;this.supported=false;throw Error("Module '"+this.name+"' failed to load: "+o);};P.prototype.warn=function(o){c.warn("Module "+this.name+": "+o)};P.prototype.createError=function(o){return Error("Error in Rangy "+this.name+" module: "+o)};c.createModule=function(o,u){var x=new P(o);c.modules[o]=x;j.push(function(B){u(B,x);x.initialized=true;x.supported=true})};c.requireModules=function(o){for(var u=
-0,x=o.length,B,F;u<x;++u){F=o[u];B=c.modules[F];if(!B||!(B instanceof P))throw Error("Module '"+F+"' not found");if(!B.supported)throw Error("Module '"+F+"' not supported");}};var M=false;p=function(){if(!M){M=true;c.initialized||N()}};if(typeof window=="undefined")C("No window found");else if(typeof document=="undefined")C("No document found");else{k(document,"addEventListener")&&document.addEventListener("DOMContentLoaded",p,false);if(k(window,"addEventListener"))window.addEventListener("load",
-p,false);else k(window,"attachEvent")?window.attachEvent("onload",p):C("Window does not have required addEventListener or attachEvent method");return c}}();
-rangy.createModule("DomUtil",function(k,L){function J(c){for(var f=0;c=c.previousSibling;)f++;return f}function K(c,f){var j=[],r;for(r=c;r;r=r.parentNode)j.push(r);for(r=f;r;r=r.parentNode)if(v(j,r))return r;return null}function z(c,f,j){for(j=j?c:c.parentNode;j;){c=j.parentNode;if(c===f)return j;j=c}return null}function C(c){c=c.nodeType;return c==3||c==4||c==8}function N(c,f){var j=f.nextSibling,r=f.parentNode;j?r.insertBefore(c,j):r.appendChild(c);return c}function P(c){if(c.nodeType==9)return c;
-else if(typeof c.ownerDocument!="undefined")return c.ownerDocument;else if(typeof c.document!="undefined")return c.document;else if(c.parentNode)return P(c.parentNode);else throw Error("getDocument: no document found for node");}function h(c){if(!c)return"[No node]";return C(c)?'"'+c.data+'"':c.nodeType==1?"<"+c.nodeName+(c.id?' id="'+c.id+'"':"")+">["+c.childNodes.length+"]":c.nodeName}function n(c){this._next=this.root=c}function s(c,f){this.node=c;this.offset=f}function y(c){this.code=this[c];
-this.codeName=c;this.message="DOMException: "+this.codeName}var A=k.util;A.areHostMethods(document,["createDocumentFragment","createElement","createTextNode"])||L.fail("document missing a Node creation method");A.isHostMethod(document,"getElementsByTagName")||L.fail("document missing getElementsByTagName method");var p=document.createElement("div");A.areHostMethods(p,["insertBefore","appendChild","cloneNode"])||L.fail("Incomplete Element implementation");p=document.createTextNode("test");A.areHostMethods(p,
-["splitText","deleteData","insertData","appendData","cloneNode"])||L.fail("Incomplete Text Node implementation");var v=function(c,f){for(var j=c.length;j--;)if(c[j]===f)return true;return false};n.prototype={_current:null,hasNext:function(){return!!this._next},next:function(){var c=this._current=this._next,f;if(this._current)if(f=c.firstChild)this._next=f;else{for(f=null;c!==this.root&&!(f=c.nextSibling);)c=c.parentNode;this._next=f}return this._current},detach:function(){this._current=this._next=
-this.root=null}};s.prototype={equals:function(c){return this.node===c.node&this.offset==c.offset},inspect:function(){return"[DomPosition("+h(this.node)+":"+this.offset+")]"}};y.prototype={INDEX_SIZE_ERR:1,HIERARCHY_REQUEST_ERR:3,WRONG_DOCUMENT_ERR:4,NO_MODIFICATION_ALLOWED_ERR:7,NOT_FOUND_ERR:8,NOT_SUPPORTED_ERR:9,INVALID_STATE_ERR:11};y.prototype.toString=function(){return this.message};k.dom={arrayContains:v,getNodeIndex:J,getNodeLength:function(c){var f;return C(c)?c.length:(f=c.childNodes)?f.length:
-0},getCommonAncestor:K,isAncestorOf:function(c,f,j){for(f=j?f:f.parentNode;f;)if(f===c)return true;else f=f.parentNode;return false},getClosestAncestorIn:z,isCharacterDataNode:C,insertAfter:N,splitDataNode:function(c,f){var j=c.cloneNode(false);j.deleteData(0,f);c.deleteData(f,c.length-f);N(j,c);return j},getDocument:P,getWindow:function(c){c=P(c);if(typeof c.defaultView!="undefined")return c.defaultView;else if(typeof c.parentWindow!="undefined")return c.parentWindow;else throw Error("Cannot get a window object for node");
-},getIframeWindow:function(c){if(typeof c.contentWindow!="undefined")return c.contentWindow;else if(typeof c.contentDocument!="undefined")return c.contentDocument.defaultView;else throw Error("getIframeWindow: No Window object found for iframe element");},getIframeDocument:function(c){if(typeof c.contentDocument!="undefined")return c.contentDocument;else if(typeof c.contentWindow!="undefined")return c.contentWindow.document;else throw Error("getIframeWindow: No Document object found for iframe element");
-},getBody:function(c){return A.isHostObject(c,"body")?c.body:c.getElementsByTagName("body")[0]},getRootContainer:function(c){for(var f;f=c.parentNode;)c=f;return c},comparePoints:function(c,f,j,r){var M;if(c==j)return f===r?0:f<r?-1:1;else if(M=z(j,c,true))return f<=J(M)?-1:1;else if(M=z(c,j,true))return J(M)<r?-1:1;else{f=K(c,j);c=c===f?f:z(c,f,true);j=j===f?f:z(j,f,true);if(c===j)throw Error("comparePoints got to case 4 and childA and childB are the same!");else{for(f=f.firstChild;f;){if(f===c)return-1;
-else if(f===j)return 1;f=f.nextSibling}throw Error("Should not be here!");}}},inspectNode:h,createIterator:function(c){return new n(c)},DomPosition:s};k.DOMException=y});
-rangy.createModule("DomRange",function(k){function L(a,e){return a.nodeType!=3&&(l.isAncestorOf(a,e.startContainer,true)||l.isAncestorOf(a,e.endContainer,true))}function J(a){return l.getDocument(a.startContainer)}function K(a,e,g){if(e=a._listeners[e])for(var q=0,G=e.length;q<G;++q)e[q].call(a,{target:a,args:g})}function z(a){return new D(a.parentNode,l.getNodeIndex(a))}function C(a){return new D(a.parentNode,l.getNodeIndex(a)+1)}function N(a,e,g){var q=a.nodeType==11?a.firstChild:a;if(l.isCharacterDataNode(e))g==
-e.length?l.insertAfter(a,e):e.parentNode.insertBefore(a,g==0?e:l.splitDataNode(e,g));else g>=e.childNodes.length?e.appendChild(a):e.insertBefore(a,e.childNodes[g]);return q}function P(a){for(var e,g,q=J(a.range).createDocumentFragment();g=a.next();){e=a.isPartiallySelectedSubtree();g=g.cloneNode(!e);if(e){e=a.getSubtreeIterator();g.appendChild(P(e));e.detach(true)}if(g.nodeType==10)throw new Q("HIERARCHY_REQUEST_ERR");q.appendChild(g)}return q}function h(a,e,g){var q,G;for(g=g||{stop:false};q=a.next();)if(a.isPartiallySelectedSubtree())if(e(q)===
-false){g.stop=true;return}else{q=a.getSubtreeIterator();h(q,e,g);q.detach(true);if(g.stop)return}else for(q=l.createIterator(q);G=q.next();)if(e(G)===false){g.stop=true;return}}function n(a){for(var e;a.next();)if(a.isPartiallySelectedSubtree()){e=a.getSubtreeIterator();n(e);e.detach(true)}else a.remove()}function s(a){for(var e,g=J(a.range).createDocumentFragment(),q;e=a.next();){if(a.isPartiallySelectedSubtree()){e=e.cloneNode(false);q=a.getSubtreeIterator();e.appendChild(s(q));q.detach(true)}else a.remove();
-if(e.nodeType==10)throw new Q("HIERARCHY_REQUEST_ERR");g.appendChild(e)}return g}function y(a,e,g){var q=!!(e&&e.length),G,U=!!g;if(q)G=RegExp("^("+e.join("|")+")$");var ba=[];h(new p(a,false),function(m){if((!q||G.test(m.nodeType))&&(!U||g(m)))ba.push(m)});return ba}function A(a){return"["+(typeof a.getName=="undefined"?"Range":a.getName())+"("+l.inspectNode(a.startContainer)+":"+a.startOffset+", "+l.inspectNode(a.endContainer)+":"+a.endOffset+")]"}function p(a,e){this.range=a;this.clonePartiallySelectedTextNodes=
-e;if(!a.collapsed){this.sc=a.startContainer;this.so=a.startOffset;this.ec=a.endContainer;this.eo=a.endOffset;var g=a.commonAncestorContainer;if(this.sc===this.ec&&l.isCharacterDataNode(this.sc)){this.isSingleCharacterDataNode=true;this._first=this._last=this._next=this.sc}else{this._first=this._next=this.sc===g&&!l.isCharacterDataNode(this.sc)?this.sc.childNodes[this.so]:l.getClosestAncestorIn(this.sc,g,true);this._last=this.ec===g&&!l.isCharacterDataNode(this.ec)?this.ec.childNodes[this.eo-1]:l.getClosestAncestorIn(this.ec,
-g,true)}}}function v(a){this.code=this[a];this.codeName=a;this.message="RangeException: "+this.codeName}function c(a,e,g){this.nodes=y(a,e,g);this._next=this.nodes[0];this._position=0}function f(a){return function(e,g){for(var q,G=g?e:e.parentNode;G;){q=G.nodeType;if(l.arrayContains(a,q))return G;G=G.parentNode}return null}}function j(a,e){if(E(a,e))throw new v("INVALID_NODE_TYPE_ERR");}function r(a){if(!a.startContainer)throw new Q("INVALID_STATE_ERR");}function M(a,e){if(!l.arrayContains(e,a.nodeType))throw new v("INVALID_NODE_TYPE_ERR");
-}function o(a,e){if(e<0||e>(l.isCharacterDataNode(a)?a.length:a.childNodes.length))throw new Q("INDEX_SIZE_ERR");}function u(a,e){if(d(a,true)!==d(e,true))throw new Q("WRONG_DOCUMENT_ERR");}function x(a){if(i(a,true))throw new Q("NO_MODIFICATION_ALLOWED_ERR");}function B(a,e){if(!a)throw new Q(e);}function F(a){r(a);if(!l.arrayContains(Y,a.startContainer.nodeType)&&!d(a.startContainer,true)||!l.arrayContains(Y,a.endContainer.nodeType)&&!d(a.endContainer,true)||!(a.startOffset<=(l.isCharacterDataNode(a.startContainer)?
-a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))throw Error("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){F(this);
-var g=this.startContainer,q=this.startOffset,G=this.commonAncestorContainer,U=new p(this,true);if(g!==G){g=l.getClosestAncestorIn(g,G,true);q=C(g);g=q.node;q=q.offset}h(U,x);U.reset();G=a(U);U.detach();e(this,g,q,g,q);return G}}function ca(a,e,g){function q(m,t){return function(w){r(this);M(w,fa);M(b(w),Y);w=(m?z:C)(w);(t?G:U)(this,w.node,w.offset)}}function G(m,t,w){var I=m.endContainer,R=m.endOffset;if(t!==m.startContainer||w!==this.startOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==1){I=t;R=
-w}e(m,t,w,I,R)}}function U(m,t,w){var I=m.startContainer,R=m.startOffset;if(t!==m.endContainer||w!==this.endOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==-1){I=t;R=w}e(m,I,R,t,w)}}function ba(m,t,w){if(t!==m.startContainer||w!==this.startOffset||t!==m.endContainer||w!==this.endOffset)e(m,t,w,t,w)}a.prototype=new W;k.util.extend(a.prototype,{setStart:function(m,t){r(this);j(m,true);o(m,t);G(this,m,t)},setEnd:function(m,t){r(this);j(m,true);o(m,t);U(this,m,t)},setStartBefore:q(true,true),setStartAfter:q(false,
-true),setEndBefore:q(true,false),setEndAfter:q(false,false),collapse:function(m){F(this);m?e(this,this.startContainer,this.startOffset,this.startContainer,this.startOffset):e(this,this.endContainer,this.endOffset,this.endContainer,this.endOffset)},selectNodeContents:function(m){r(this);j(m,true);e(this,m,0,m,l.getNodeLength(m))},selectNode:function(m){r(this);j(m,false);M(m,fa);var t=z(m);m=C(m);e(this,t.node,t.offset,m.node,m.offset)},extractContents:X(s,e),deleteContents:X(n,e),canSurroundContents:function(){F(this);
-x(this.startContainer);x(this.endContainer);var m=new p(this,true),t=m._first&&L(m._first,this)||m._last&&L(m._last,this);m.detach();return!t},detach:function(){g(this)},splitBoundaries:function(){F(this);var m=this.startContainer,t=this.startOffset,w=this.endContainer,I=this.endOffset,R=m===w;l.isCharacterDataNode(w)&&I>0&&I<w.length&&l.splitDataNode(w,I);if(l.isCharacterDataNode(m)&&t>0&&t<m.length){m=l.splitDataNode(m,t);if(R){I-=t;w=m}else w==m.parentNode&&I>=l.getNodeIndex(m)&&I++;t=0}e(this,
-m,t,w,I)},normalizeBoundaries:function(){F(this);var m=this.startContainer,t=this.startOffset,w=this.endContainer,I=this.endOffset,R=function(V){var S=V.nextSibling;if(S&&S.nodeType==V.nodeType){w=V;I=V.length;V.appendData(S.data);S.parentNode.removeChild(S)}},pa=function(V){var S=V.previousSibling;if(S&&S.nodeType==V.nodeType){m=V;var qa=V.length;t=S.length;V.insertData(0,S.data);S.parentNode.removeChild(S);if(m==w){I+=t;w=m}else if(w==V.parentNode){S=l.getNodeIndex(V);if(I==S){w=V;I=qa}else I>S&&
-I--}}},ga=true;if(l.isCharacterDataNode(w))w.length==I&&R(w);else{if(I>0)(ga=w.childNodes[I-1])&&l.isCharacterDataNode(ga)&&R(ga);ga=!this.collapsed}if(ga)if(l.isCharacterDataNode(m))t==0&&pa(m);else{if(t<m.childNodes.length)(R=m.childNodes[t])&&l.isCharacterDataNode(R)&&pa(R)}else{m=w;t=I}e(this,m,t,w,I)},collapseToPoint:function(m,t){r(this);j(m,true);o(m,t);ba(this,m,t)}});$(a)}function ha(a){a.collapsed=a.startContainer===a.endContainer&&a.startOffset===a.endOffset;a.commonAncestorContainer=a.collapsed?
-a.startContainer:l.getCommonAncestor(a.startContainer,a.endContainer)}function da(a,e,g,q,G){var U=a.startContainer!==e||a.startOffset!==g,ba=a.endContainer!==q||a.endOffset!==G;a.startContainer=e;a.startOffset=g;a.endContainer=q;a.endOffset=G;ha(a);K(a,"boundarychange",{startMoved:U,endMoved:ba})}function T(a){this.startContainer=a;this.startOffset=0;this.endContainer=a;this.endOffset=0;this._listeners={boundarychange:[],detach:[]};ha(this)}k.requireModules(["DomUtil"]);var l=k.dom,D=l.DomPosition,
-Q=k.DOMException;p.prototype={_current:null,_next:null,_first:null,_last:null,isSingleCharacterDataNode:false,reset:function(){this._current=null;this._next=this._first},hasNext:function(){return!!this._next},next:function(){var a=this._current=this._next;if(a){this._next=a!==this._last?a.nextSibling:null;if(l.isCharacterDataNode(a)&&this.clonePartiallySelectedTextNodes){if(a===this.ec)(a=a.cloneNode(true)).deleteData(this.eo,a.length-this.eo);if(this._current===this.sc)(a=a.cloneNode(true)).deleteData(0,
-this.so)}}return a},remove:function(){var a=this._current,e,g;if(l.isCharacterDataNode(a)&&(a===this.sc||a===this.ec)){e=a===this.sc?this.so:0;g=a===this.ec?this.eo:a.length;e!=g&&a.deleteData(e,g-e)}else a.parentNode&&a.parentNode.removeChild(a)},isPartiallySelectedSubtree:function(){return L(this._current,this.range)},getSubtreeIterator:function(){var a;if(this.isSingleCharacterDataNode){a=this.range.cloneRange();a.collapse()}else{a=new T(J(this.range));var e=this._current,g=e,q=0,G=e,U=l.getNodeLength(e);
-if(l.isAncestorOf(e,this.sc,true)){g=this.sc;q=this.so}if(l.isAncestorOf(e,this.ec,true)){G=this.ec;U=this.eo}da(a,g,q,G,U)}return new p(a,this.clonePartiallySelectedTextNodes)},detach:function(a){a&&this.range.detach();this.range=this._current=this._next=this._first=this._last=this.sc=this.so=this.ec=this.eo=null}};v.prototype={BAD_BOUNDARYPOINTS_ERR:1,INVALID_NODE_TYPE_ERR:2};v.prototype.toString=function(){return this.message};c.prototype={_current:null,hasNext:function(){return!!this._next},next:function(){this._current=
-this._next;this._next=this.nodes[++this._position];return this._current},detach:function(){this._current=this._next=this.nodes=null}};var fa=[1,3,4,5,7,8,10],Y=[2,9,11],ia=[1,3,4,5,7,8,10,11],aa=[1,3,4,5,7,8],b=l.getRootContainer,d=f([9,11]),i=f([5,6,10,12]),E=f([6,10,12]),H=["startContainer","startOffset","endContainer","endOffset","collapsed","commonAncestorContainer"],O=0,Z=1,ka=2,la=3,ma=0,na=1,oa=2,ja=3;W.prototype={attachListener:function(a,e){this._listeners[a].push(e)},compareBoundaryPoints:function(a,
-e){F(this);u(this.startContainer,e.startContainer);var g=a==la||a==O?"start":"end",q=a==Z||a==O?"start":"end";return l.comparePoints(this[g+"Container"],this[g+"Offset"],e[q+"Container"],e[q+"Offset"])},insertNode:function(a){F(this);M(a,ia);x(this.startContainer);if(l.isAncestorOf(a,this.startContainer,true))throw new Q("HIERARCHY_REQUEST_ERR");this.setStartBefore(N(a,this.startContainer,this.startOffset))},cloneContents:function(){F(this);var a,e;if(this.collapsed)return J(this).createDocumentFragment();
-else{if(this.startContainer===this.endContainer&&l.isCharacterDataNode(this.startContainer)){a=this.startContainer.cloneNode(true);a.data=a.data.slice(this.startOffset,this.endOffset);e=J(this).createDocumentFragment();e.appendChild(a);return e}else{e=new p(this,true);a=P(e);e.detach()}return a}},canSurroundContents:function(){F(this);x(this.startContainer);x(this.endContainer);var a=new p(this,true),e=a._first&&L(a._first,this)||a._last&&L(a._last,this);a.detach();return!e},surroundContents:function(a){M(a,
-aa);if(!this.canSurroundContents())throw new v("BAD_BOUNDARYPOINTS_ERR");var e=this.extractContents();if(a.hasChildNodes())for(;a.lastChild;)a.removeChild(a.lastChild);N(a,this.startContainer,this.startOffset);a.appendChild(e);this.selectNode(a)},cloneRange:function(){F(this);for(var a=new T(J(this)),e=H.length,g;e--;){g=H[e];a[g]=this[g]}return a},toString:function(){F(this);var a=this.startContainer;if(a===this.endContainer&&l.isCharacterDataNode(a))return a.nodeType==3||a.nodeType==4?a.data.slice(this.startOffset,
-this.endOffset):"";else{var e=[];a=new p(this,true);h(a,function(g){if(g.nodeType==3||g.nodeType==4)e.push(g.data)});a.detach();return e.join("")}},compareNode:function(a){F(this);var e=a.parentNode,g=l.getNodeIndex(a);if(!e)throw new Q("NOT_FOUND_ERR");a=this.comparePoint(e,g);e=this.comparePoint(e,g+1);return a<0?e>0?oa:ma:e>0?na:ja},comparePoint:function(a,e){F(this);B(a,"HIERARCHY_REQUEST_ERR");u(a,this.startContainer);if(l.comparePoints(a,e,this.startContainer,this.startOffset)<0)return-1;else if(l.comparePoints(a,
-e,this.endContainer,this.endOffset)>0)return 1;return 0},createContextualFragment:function(a){r(this);var e=J(this),g=e.createElement("div");g.innerHTML=a;for(a=e.createDocumentFragment();e=g.firstChild;)a.appendChild(e);return a},toHtml:function(){F(this);var a=J(this).createElement("div");a.appendChild(this.cloneContents());return a.innerHTML},intersectsNode:function(a,e){F(this);B(a,"NOT_FOUND_ERR");if(l.getDocument(a)!==J(this))return false;var g=a.parentNode,q=l.getNodeIndex(a);B(g,"NOT_FOUND_ERR");
-var G=l.comparePoints(g,q,this.endContainer,this.endOffset);g=l.comparePoints(g,q+1,this.startContainer,this.startOffset);return e?G<=0&&g>=0:G<0&&g>0},isPointInRange:function(a,e){F(this);B(a,"HIERARCHY_REQUEST_ERR");u(a,this.startContainer);return l.comparePoints(a,e,this.startContainer,this.startOffset)>=0&&l.comparePoints(a,e,this.endContainer,this.endOffset)<=0},intersectsRange:function(a,e){F(this);if(J(a)!=J(this))throw new Q("WRONG_DOCUMENT_ERR");var g=l.comparePoints(this.startContainer,
-this.startOffset,a.endContainer,a.endOffset),q=l.comparePoints(this.endContainer,this.endOffset,a.startContainer,a.startOffset);return e?g<=0&&q>=0:g<0&&q>0},intersection:function(a){if(this.intersectsRange(a)){var e=l.comparePoints(this.startContainer,this.startOffset,a.startContainer,a.startOffset),g=l.comparePoints(this.endContainer,this.endOffset,a.endContainer,a.endOffset),q=this.cloneRange();e==-1&&q.setStart(a.startContainer,a.startOffset);g==1&&q.setEnd(a.endContainer,a.endOffset);return q}return null},
-union:function(a){if(this.intersectsRange(a,true)){var e=this.cloneRange();l.comparePoints(a.startContainer,a.startOffset,this.startContainer,this.startOffset)==-1&&e.setStart(a.startContainer,a.startOffset);l.comparePoints(a.endContainer,a.endOffset,this.endContainer,this.endOffset)==1&&e.setEnd(a.endContainer,a.endOffset);return e}else throw new v("Ranges do not intersect");},containsNode:function(a,e){return e?this.intersectsNode(a,false):this.compareNode(a)==ja},containsNodeContents:function(a){return this.comparePoint(a,
-0)>=0&&this.comparePoint(a,l.getNodeLength(a))<=0},containsRange:function(a){return this.intersection(a).equals(a)},containsNodeText:function(a){var e=this.cloneRange();e.selectNode(a);var g=e.getNodes([3]);if(g.length>0){e.setStart(g[0],0);a=g.pop();e.setEnd(a,a.length);a=this.containsRange(e);e.detach();return a}else return this.containsNodeContents(a)},createNodeIterator:function(a,e){F(this);return new c(this,a,e)},getNodes:function(a,e){F(this);return y(this,a,e)},getDocument:function(){return J(this)},
-collapseBefore:function(a){r(this);this.setEndBefore(a);this.collapse(false)},collapseAfter:function(a){r(this);this.setStartAfter(a);this.collapse(true)},getName:function(){return"DomRange"},equals:function(a){return T.rangesEqual(this,a)},inspect:function(){return A(this)}};ca(T,da,function(a){r(a);a.startContainer=a.startOffset=a.endContainer=a.endOffset=null;a.collapsed=a.commonAncestorContainer=null;K(a,"detach",null);a._listeners=null});k.rangePrototype=W.prototype;T.rangeProperties=H;T.RangeIterator=
-p;T.copyComparisonConstants=$;T.createPrototypeRange=ca;T.inspect=A;T.getRangeDocument=J;T.rangesEqual=function(a,e){return a.startContainer===e.startContainer&&a.startOffset===e.startOffset&&a.endContainer===e.endContainer&&a.endOffset===e.endOffset};k.DomRange=T;k.RangeException=v});
-rangy.createModule("WrappedRange",function(k){function L(h,n,s,y){var A=h.duplicate();A.collapse(s);var p=A.parentElement();z.isAncestorOf(n,p,true)||(p=n);if(!p.canHaveHTML)return new C(p.parentNode,z.getNodeIndex(p));n=z.getDocument(p).createElement("span");var v,c=s?"StartToStart":"StartToEnd";do{p.insertBefore(n,n.previousSibling);A.moveToElementText(n)}while((v=A.compareEndPoints(c,h))>0&&n.previousSibling);c=n.nextSibling;if(v==-1&&c&&z.isCharacterDataNode(c)){A.setEndPoint(s?"EndToStart":"EndToEnd",
-h);if(/[\r\n]/.test(c.data)){p=A.duplicate();s=p.text.replace(/\r\n/g,"\r").length;for(s=p.moveStart("character",s);p.compareEndPoints("StartToEnd",p)==-1;){s++;p.moveStart("character",1)}}else s=A.text.length;p=new C(c,s)}else{c=(y||!s)&&n.previousSibling;p=(s=(y||s)&&n.nextSibling)&&z.isCharacterDataNode(s)?new C(s,0):c&&z.isCharacterDataNode(c)?new C(c,c.length):new C(p,z.getNodeIndex(n))}n.parentNode.removeChild(n);return p}function J(h,n){var s,y,A=h.offset,p=z.getDocument(h.node),v=p.body.createTextRange(),
-c=z.isCharacterDataNode(h.node);if(c){s=h.node;y=s.parentNode}else{s=h.node.childNodes;s=A<s.length?s[A]:null;y=h.node}p=p.createElement("span");p.innerHTML="&#feff;";s?y.insertBefore(p,s):y.appendChild(p);v.moveToElementText(p);v.collapse(!n);y.removeChild(p);if(c)v[n?"moveStart":"moveEnd"]("character",A);return v}k.requireModules(["DomUtil","DomRange"]);var K,z=k.dom,C=z.DomPosition,N=k.DomRange;if(k.features.implementsDomRange&&(!k.features.implementsTextRange||!k.config.preferTextRange)){(function(){function h(f){for(var j=
-s.length,r;j--;){r=s[j];f[r]=f.nativeRange[r]}}var n,s=N.rangeProperties,y,A;K=function(f){if(!f)throw Error("Range must be specified");this.nativeRange=f;h(this)};N.createPrototypeRange(K,function(f,j,r,M,o){var u=f.endContainer!==M||f.endOffset!=o;if(f.startContainer!==j||f.startOffset!=r||u){f.setEnd(M,o);f.setStart(j,r)}},function(f){f.nativeRange.detach();f.detached=true;for(var j=s.length,r;j--;){r=s[j];f[r]=null}});n=K.prototype;n.selectNode=function(f){this.nativeRange.selectNode(f);h(this)};
-n.deleteContents=function(){this.nativeRange.deleteContents();h(this)};n.extractContents=function(){var f=this.nativeRange.extractContents();h(this);return f};n.cloneContents=function(){return this.nativeRange.cloneContents()};n.surroundContents=function(f){this.nativeRange.surroundContents(f);h(this)};n.collapse=function(f){this.nativeRange.collapse(f);h(this)};n.cloneRange=function(){return new K(this.nativeRange.cloneRange())};n.refresh=function(){h(this)};n.toString=function(){return this.nativeRange.toString()};
-var p=document.createTextNode("test");z.getBody(document).appendChild(p);var v=document.createRange();v.setStart(p,0);v.setEnd(p,0);try{v.setStart(p,1);y=true;n.setStart=function(f,j){this.nativeRange.setStart(f,j);h(this)};n.setEnd=function(f,j){this.nativeRange.setEnd(f,j);h(this)};A=function(f){return function(j){this.nativeRange[f](j);h(this)}}}catch(c){y=false;n.setStart=function(f,j){try{this.nativeRange.setStart(f,j)}catch(r){this.nativeRange.setEnd(f,j);this.nativeRange.setStart(f,j)}h(this)};
-n.setEnd=function(f,j){try{this.nativeRange.setEnd(f,j)}catch(r){this.nativeRange.setStart(f,j);this.nativeRange.setEnd(f,j)}h(this)};A=function(f,j){return function(r){try{this.nativeRange[f](r)}catch(M){this.nativeRange[j](r);this.nativeRange[f](r)}h(this)}}}n.setStartBefore=A("setStartBefore","setEndBefore");n.setStartAfter=A("setStartAfter","setEndAfter");n.setEndBefore=A("setEndBefore","setStartBefore");n.setEndAfter=A("setEndAfter","setStartAfter");v.selectNodeContents(p);n.selectNodeContents=
-v.startContainer==p&&v.endContainer==p&&v.startOffset==0&&v.endOffset==p.length?function(f){this.nativeRange.selectNodeContents(f);h(this)}:function(f){this.setStart(f,0);this.setEnd(f,N.getEndOffset(f))};v.selectNodeContents(p);v.setEnd(p,3);y=document.createRange();y.selectNodeContents(p);y.setEnd(p,4);y.setStart(p,2);n.compareBoundaryPoints=v.compareBoundaryPoints(v.START_TO_END,y)==-1&v.compareBoundaryPoints(v.END_TO_START,y)==1?function(f,j){j=j.nativeRange||j;if(f==j.START_TO_END)f=j.END_TO_START;
-else if(f==j.END_TO_START)f=j.START_TO_END;return this.nativeRange.compareBoundaryPoints(f,j)}:function(f,j){return this.nativeRange.compareBoundaryPoints(f,j.nativeRange||j)};z.getBody(document).removeChild(p);v.detach();y.detach()})();k.createNativeRange=function(h){h=h||document;return h.createRange()}}else if(k.features.implementsTextRange){K=function(h){this.textRange=h;this.refresh()};K.prototype=new N(document);K.prototype.refresh=function(){var h,n,s=this.textRange;h=s.parentElement();var y=
-s.duplicate();y.collapse(true);n=y.parentElement();y=s.duplicate();y.collapse(false);s=y.parentElement();n=n==s?n:z.getCommonAncestor(n,s);n=n==h?n:z.getCommonAncestor(h,n);if(this.textRange.compareEndPoints("StartToEnd",this.textRange)==0)n=h=L(this.textRange,n,true,true);else{h=L(this.textRange,n,true,false);n=L(this.textRange,n,false,false)}this.setStart(h.node,h.offset);this.setEnd(n.node,n.offset)};N.copyComparisonConstants(K);var P=function(){return this}();if(typeof P.Range=="undefined")P.Range=
-K;k.createNativeRange=function(h){h=h||document;return h.body.createTextRange()}}if(k.features.implementsTextRange)K.rangeToTextRange=function(h){if(h.collapsed)return J(new C(h.startContainer,h.startOffset),true);else{var n=J(new C(h.startContainer,h.startOffset),true),s=J(new C(h.endContainer,h.endOffset),false);h=z.getDocument(h.startContainer).body.createTextRange();h.setEndPoint("StartToStart",n);h.setEndPoint("EndToEnd",s);return h}};K.prototype.getName=function(){return"WrappedRange"};k.WrappedRange=
-K;k.createRange=function(h){h=h||document;return new K(k.createNativeRange(h))};k.createRangyRange=function(h){h=h||document;return new N(h)};k.createIframeRange=function(h){return k.createRange(z.getIframeDocument(h))};k.createIframeRangyRange=function(h){return k.createRangyRange(z.getIframeDocument(h))};k.addCreateMissingNativeApiListener(function(h){h=h.document;if(typeof h.createRange=="undefined")h.createRange=function(){return k.createRange(this)};h=h=null})});
-rangy.createModule("WrappedSelection",function(k,L){function J(b){return(b||window).getSelection()}function K(b){return(b||window).document.selection}function z(b,d,i){var E=i?"end":"start";i=i?"start":"end";b.anchorNode=d[E+"Container"];b.anchorOffset=d[E+"Offset"];b.focusNode=d[i+"Container"];b.focusOffset=d[i+"Offset"]}function C(b){b.anchorNode=b.focusNode=null;b.anchorOffset=b.focusOffset=0;b.rangeCount=0;b.isCollapsed=true;b._ranges.length=0}function N(b){var d;if(b instanceof j){d=b._selectionNativeRange;
-if(!d){d=k.createNativeRange(c.getDocument(b.startContainer));d.setEnd(b.endContainer,b.endOffset);d.setStart(b.startContainer,b.startOffset);b._selectionNativeRange=d;b.attachListener("detach",function(){this._selectionNativeRange=null})}}else if(b instanceof r)d=b.nativeRange;else if(k.features.implementsDomRange&&b instanceof c.getWindow(b.startContainer).Range)d=b;return d}function P(b){var d=b.getNodes(),i;a:if(!d.length||d[0].nodeType!=1)i=false;else{i=1;for(var E=d.length;i<E;++i)if(!c.isAncestorOf(d[0],
-d[i])){i=false;break a}i=true}if(!i)throw Error("getSingleElementFromRange: range "+b.inspect()+" did not consist of a single element");return d[0]}function h(b,d){var i=new r(d);b._ranges=[i];z(b,i,false);b.rangeCount=1;b.isCollapsed=i.collapsed}function n(b){b._ranges.length=0;if(b.docSelection.type=="None")C(b);else{var d=b.docSelection.createRange();if(d&&typeof d.text!="undefined")h(b,d);else{b.rangeCount=d.length;for(var i,E=c.getDocument(d.item(0)),H=0;H<b.rangeCount;++H){i=k.createRange(E);
-i.selectNode(d.item(H));b._ranges.push(i)}b.isCollapsed=b.rangeCount==1&&b._ranges[0].collapsed;z(b,b._ranges[b.rangeCount-1],false)}}}function s(b,d){var i=b.docSelection.createRange(),E=P(d),H=c.getDocument(i.item(0));H=c.getBody(H).createControlRange();for(var O=0,Z=i.length;O<Z;++O)H.add(i.item(O));try{H.add(E)}catch(ka){throw Error("addRange(): Element within the specified Range could not be added to control selection (does it have layout?)");}H.select();n(b)}function y(b,d,i){this.nativeSelection=
-b;this.docSelection=d;this._ranges=[];this.win=i;this.refresh()}function A(b,d){var i=c.getDocument(d[0].startContainer);i=c.getBody(i).createControlRange();for(var E=0,H;E<rangeCount;++E){H=P(d[E]);try{i.add(H)}catch(O){throw Error("setRanges(): Element within the one of the specified Ranges could not be added to control selection (does it have layout?)");}}i.select();n(b)}function p(b,d){if(b.anchorNode&&c.getDocument(b.anchorNode)!==c.getDocument(d))throw new M("WRONG_DOCUMENT_ERR");}function v(b){var d=
-[],i=new o(b.anchorNode,b.anchorOffset),E=new o(b.focusNode,b.focusOffset),H=typeof b.getName=="function"?b.getName():"Selection";if(typeof b.rangeCount!="undefined")for(var O=0,Z=b.rangeCount;O<Z;++O)d[O]=j.inspect(b.getRangeAt(O));return"["+H+"(Ranges: "+d.join(", ")+")(anchor: "+i.inspect()+", focus: "+E.inspect()+"]"}k.requireModules(["DomUtil","DomRange","WrappedRange"]);k.config.checkSelectionRanges=true;var c=k.dom,f=k.util,j=k.DomRange,r=k.WrappedRange,M=k.DOMException,o=c.DomPosition,u,x,
-B=k.util.isHostMethod(window,"getSelection"),F=k.util.isHostObject(document,"selection"),W=F&&(!B||k.config.preferTextRange);if(W){u=K;k.isSelectionValid=function(b){b=(b||window).document;var d=b.selection;return d.type!="None"||c.getDocument(d.createRange().parentElement())==b}}else if(B){u=J;k.isSelectionValid=function(){return true}}else L.fail("Neither document.selection or window.getSelection() detected.");k.getNativeSelection=u;B=u();var ea=k.createNativeRange(document),$=c.getBody(document),
-X=f.areHostObjects(B,f.areHostProperties(B,["anchorOffset","focusOffset"]));k.features.selectionHasAnchorAndFocus=X;var ca=f.isHostMethod(B,"extend");k.features.selectionHasExtend=ca;var ha=typeof B.rangeCount=="number";k.features.selectionHasRangeCount=ha;var da=false,T=true;f.areHostMethods(B,["addRange","getRangeAt","removeAllRanges"])&&typeof B.rangeCount=="number"&&k.features.implementsDomRange&&function(){var b=document.createElement("iframe");$.appendChild(b);var d=c.getIframeDocument(b);d.open();
-d.write("<html><head></head><body>12</body></html>");d.close();var i=c.getIframeWindow(b).getSelection(),E=d.documentElement.lastChild.firstChild;d=d.createRange();d.setStart(E,1);d.collapse(true);i.addRange(d);T=i.rangeCount==1;i.removeAllRanges();var H=d.cloneRange();d.setStart(E,0);H.setEnd(E,2);i.addRange(d);i.addRange(H);da=i.rangeCount==2;d.detach();H.detach();$.removeChild(b)}();k.features.selectionSupportsMultipleRanges=da;k.features.collapsedNonEditableSelectionsSupported=T;var l=false,D;
-if($&&f.isHostMethod($,"createControlRange")){D=$.createControlRange();if(f.areHostProperties(D,["item","add"]))l=true}k.features.implementsControlRange=l;x=X?function(b){return b.anchorNode===b.focusNode&&b.anchorOffset===b.focusOffset}:function(b){return b.rangeCount?b.getRangeAt(b.rangeCount-1).collapsed:false};var Q;if(f.isHostMethod(B,"getRangeAt"))Q=function(b,d){try{return b.getRangeAt(d)}catch(i){return null}};else if(X)Q=function(b){var d=c.getDocument(b.anchorNode);d=k.createRange(d);d.setStart(b.anchorNode,
-b.anchorOffset);d.setEnd(b.focusNode,b.focusOffset);if(d.collapsed!==this.isCollapsed){d.setStart(b.focusNode,b.focusOffset);d.setEnd(b.anchorNode,b.anchorOffset)}return d};k.getSelection=function(b){b=b||window;var d=b._rangySelection,i=u(b),E=F?K(b):null;if(d){d.nativeSelection=i;d.docSelection=E;d.refresh(b)}else{d=new y(i,E,b);b._rangySelection=d}return d};k.getIframeSelection=function(b){return k.getSelection(c.getIframeWindow(b))};D=y.prototype;if(!W&&X&&f.areHostMethods(B,["removeAllRanges",
-"addRange"])){D.removeAllRanges=function(){this.nativeSelection.removeAllRanges();C(this)};var fa=function(b,d){var i=j.getRangeDocument(d);i=k.createRange(i);i.collapseToPoint(d.endContainer,d.endOffset);b.nativeSelection.addRange(N(i));b.nativeSelection.extend(d.startContainer,d.startOffset);b.refresh()};D.addRange=ha?function(b,d){if(l&&F&&this.docSelection.type=="Control")s(this,b);else if(d&&ca)fa(this,b);else{var i;if(da)i=this.rangeCount;else{this.removeAllRanges();i=0}this.nativeSelection.addRange(N(b));
-this.rangeCount=this.nativeSelection.rangeCount;if(this.rangeCount==i+1){if(k.config.checkSelectionRanges)if((i=Q(this.nativeSelection,this.rangeCount-1))&&!j.rangesEqual(i,b))b=new r(i);this._ranges[this.rangeCount-1]=b;z(this,b,aa(this.nativeSelection));this.isCollapsed=x(this)}else this.refresh()}}:function(b,d){if(d&&ca)fa(this,b);else{this.nativeSelection.addRange(N(b));this.refresh()}};D.setRanges=function(b){if(l&&b.length>1)A(this,b);else{this.removeAllRanges();for(var d=0,i=b.length;d<i;++d)this.addRange(b[d])}}}else if(f.isHostMethod(B,
-"empty")&&f.isHostMethod(ea,"select")&&l&&W){D.removeAllRanges=function(){try{this.docSelection.empty();if(this.docSelection.type!="None"){var b;if(this.anchorNode)b=c.getDocument(this.anchorNode);else if(this.docSelection.type=="Control"){var d=this.docSelection.createRange();if(d.length)b=c.getDocument(d.item(0)).body.createTextRange()}if(b){b.body.createTextRange().select();this.docSelection.empty()}}}catch(i){}C(this)};D.addRange=function(b){if(this.docSelection.type=="Control")s(this,b);else{r.rangeToTextRange(b).select();
-this._ranges[0]=b;this.rangeCount=1;this.isCollapsed=this._ranges[0].collapsed;z(this,b,false)}};D.setRanges=function(b){this.removeAllRanges();var d=b.length;if(d>1)A(this,b);else d&&this.addRange(b[0])}}else{L.fail("No means of selecting a Range or TextRange was found");return false}D.getRangeAt=function(b){if(b<0||b>=this.rangeCount)throw new M("INDEX_SIZE_ERR");else return this._ranges[b]};var Y;if(W)Y=function(b){var d;if(k.isSelectionValid(b.win))d=b.docSelection.createRange();else{d=c.getBody(b.win.document).createTextRange();
-d.collapse(true)}if(b.docSelection.type=="Control")n(b);else d&&typeof d.text!="undefined"?h(b,d):C(b)};else if(f.isHostMethod(B,"getRangeAt")&&typeof B.rangeCount=="number")Y=function(b){if(l&&F&&b.docSelection.type=="Control")n(b);else{b._ranges.length=b.rangeCount=b.nativeSelection.rangeCount;if(b.rangeCount){for(var d=0,i=b.rangeCount;d<i;++d)b._ranges[d]=new k.WrappedRange(b.nativeSelection.getRangeAt(d));z(b,b._ranges[b.rangeCount-1],aa(b.nativeSelection));b.isCollapsed=x(b)}else C(b)}};else if(X&&
-typeof B.isCollapsed=="boolean"&&typeof ea.collapsed=="boolean"&&k.features.implementsDomRange)Y=function(b){var d;d=b.nativeSelection;if(d.anchorNode){d=Q(d,0);b._ranges=[d];b.rangeCount=1;d=b.nativeSelection;b.anchorNode=d.anchorNode;b.anchorOffset=d.anchorOffset;b.focusNode=d.focusNode;b.focusOffset=d.focusOffset;b.isCollapsed=x(b)}else C(b)};else{L.fail("No means of obtaining a Range or TextRange from the user's selection was found");return false}D.refresh=function(b){var d=b?this._ranges.slice(0):
-null;Y(this);if(b){b=d.length;if(b!=this._ranges.length)return false;for(;b--;)if(!j.rangesEqual(d[b],this._ranges[b]))return false;return true}};var ia=function(b,d){var i=b.getAllRanges(),E=false;b.removeAllRanges();for(var H=0,O=i.length;H<O;++H)if(E||d!==i[H])b.addRange(i[H]);else E=true;b.rangeCount||C(b)};D.removeRange=l?function(b){if(this.docSelection.type=="Control"){var d=this.docSelection.createRange();b=P(b);var i=c.getDocument(d.item(0));i=c.getBody(i).createControlRange();for(var E,
-H=false,O=0,Z=d.length;O<Z;++O){E=d.item(O);if(E!==b||H)i.add(d.item(O));else H=true}i.select();n(this)}else ia(this,b)}:function(b){ia(this,b)};var aa;if(!W&&X&&k.features.implementsDomRange){aa=function(b){var d=false;if(b.anchorNode)d=c.comparePoints(b.anchorNode,b.anchorOffset,b.focusNode,b.focusOffset)==1;return d};D.isBackwards=function(){return aa(this)}}else aa=D.isBackwards=function(){return false};D.toString=function(){for(var b=[],d=0,i=this.rangeCount;d<i;++d)b[d]=""+this._ranges[d];return b.join("")};
-D.collapse=function(b,d){p(this,b);var i=k.createRange(c.getDocument(b));i.collapseToPoint(b,d);this.removeAllRanges();this.addRange(i);this.isCollapsed=true};D.collapseToStart=function(){if(this.rangeCount){var b=this._ranges[0];this.collapse(b.startContainer,b.startOffset)}else throw new M("INVALID_STATE_ERR");};D.collapseToEnd=function(){if(this.rangeCount){var b=this._ranges[this.rangeCount-1];this.collapse(b.endContainer,b.endOffset)}else throw new M("INVALID_STATE_ERR");};D.selectAllChildren=
-function(b){p(this,b);var d=k.createRange(c.getDocument(b));d.selectNodeContents(b);this.removeAllRanges();this.addRange(d)};D.deleteFromDocument=function(){if(l&&F&&this.docSelection.type=="Control"){for(var b=this.docSelection.createRange(),d;b.length;){d=b.item(0);b.remove(d);d.parentNode.removeChild(d)}this.refresh()}else if(this.rangeCount){b=this.getAllRanges();this.removeAllRanges();d=0;for(var i=b.length;d<i;++d)b[d].deleteContents();this.addRange(b[i-1])}};D.getAllRanges=function(){return this._ranges.slice(0)};
-D.setSingleRange=function(b){this.setRanges([b])};D.containsNode=function(b,d){for(var i=0,E=this._ranges.length;i<E;++i)if(this._ranges[i].containsNode(b,d))return true;return false};D.toHtml=function(){var b="";if(this.rangeCount){b=j.getRangeDocument(this._ranges[0]).createElement("div");for(var d=0,i=this._ranges.length;d<i;++d)b.appendChild(this._ranges[d].cloneContents());b=b.innerHTML}return b};D.getName=function(){return"WrappedSelection"};D.inspect=function(){return v(this)};D.detach=function(){this.win=
-this.anchorNode=this.focusNode=this.win._rangySelection=null};y.inspect=v;k.Selection=y;k.selectionPrototype=D;k.addCreateMissingNativeApiListener(function(b){if(typeof b.getSelection=="undefined")b.getSelection=function(){return k.getSelection(this)};b=null})});
+window['rangy'] = (function() {
+
+
+    var OBJECT = "object", FUNCTION = "function", UNDEFINED = "undefined";
+
+    var domRangeProperties = ["startContainer", "startOffset", "endContainer", "endOffset", "collapsed",
+        "commonAncestorContainer", "START_TO_START", "START_TO_END", "END_TO_START", "END_TO_END"];
+
+    var domRangeMethods = ["setStart", "setStartBefore", "setStartAfter", "setEnd", "setEndBefore",
+        "setEndAfter", "collapse", "selectNode", "selectNodeContents", "compareBoundaryPoints", "deleteContents",
+        "extractContents", "cloneContents", "insertNode", "surroundContents", "cloneRange", "toString", "detach"];
+
+    var textRangeProperties = ["boundingHeight", "boundingLeft", "boundingTop", "boundingWidth", "htmlText", "text"];
+
+    // Subset of TextRange's full set of methods that we're interested in
+    var textRangeMethods = ["collapse", "compareEndPoints", "duplicate", "getBookmark", "moveToBookmark",
+        "moveToElementText", "parentElement", "pasteHTML", "select", "setEndPoint", "getBoundingClientRect"];
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Trio of functions taken from Peter Michaux's article:
+    // http://peter.michaux.ca/articles/feature-detection-state-of-the-art-browser-scripting
+    function isHostMethod(o, p) {
+        var t = typeof o[p];
+        return t == FUNCTION || (!!(t == OBJECT && o[p])) || t == "unknown";
+    }
+
+    function isHostObject(o, p) {
+        return !!(typeof o[p] == OBJECT && o[p]);
+    }
+
+    function isHostProperty(o, p) {
+        return typeof o[p] != UNDEFINED;
+    }
+
+    // Creates a convenience function to save verbose repeated calls to tests functions
+    function createMultiplePropertyTest(testFunc) {
+        return function(o, props) {
+            var i = props.length;
+            while (i--) {
+                if (!testFunc(o, props[i])) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    }
+
+    // Next trio of functions are a convenience to save verbose repeated calls to previous two functions
+    var areHostMethods = createMultiplePropertyTest(isHostMethod);
+    var areHostObjects = createMultiplePropertyTest(isHostObject);
+    var areHostProperties = createMultiplePropertyTest(isHostProperty);
+
+    function isTextRange(range) {
+        return range && areHostMethods(range, textRangeMethods) && areHostProperties(range, textRangeProperties);
+    }
+
+    var api = {
+        version: "1.2.1",
+        initialized: false,
+        supported: true,
+
+        util: {
+            isHostMethod: isHostMethod,
+            isHostObject: isHostObject,
+            isHostProperty: isHostProperty,
+            areHostMethods: areHostMethods,
+            areHostObjects: areHostObjects,
+            areHostProperties: areHostProperties,
+            isTextRange: isTextRange
+        },
+
+        features: {},
+
+        modules: {},
+        config: {
+            alertOnWarn: false,
+            preferTextRange: false
+        }
+    };
+
+    function fail(reason) {
+        window.alert("Rangy not supported in your browser. Reason: " + reason);
+        api.initialized = true;
+        api.supported = false;
+    }
+
+    api.fail = fail;
+
+    function warn(msg) {
+        var warningMessage = "Rangy warning: " + msg;
+        if (api.config.alertOnWarn) {
+            window.alert(warningMessage);
+        } else if (typeof window.console != UNDEFINED && typeof window.console.log != UNDEFINED) {
+            window.console.log(warningMessage);
+        }
+    }
+
+    api.warn = warn;
+
+    if ({}.hasOwnProperty) {
+        api.util.extend = function(o, props) {
+            for (var i in props) {
+                if (props.hasOwnProperty(i)) {
+                    o[i] = props[i];
+                }
+            }
+        };
+    } else {
+        fail("hasOwnProperty not supported");
+    }
+
+    var initListeners = [];
+    var moduleInitializers = [];
+
+    // Initialization
+    function init() {
+        if (api.initialized) {
+            return;
+        }
+        var testRange;
+        var implementsDomRange = false, implementsTextRange = false;
+
+        // First, perform basic feature tests
+
+        if (isHostMethod(document, "createRange")) {
+            testRange = document.createRange();
+            if (areHostMethods(testRange, domRangeMethods) && areHostProperties(testRange, domRangeProperties)) {
+                implementsDomRange = true;
+            }
+            testRange.detach();
+        }
+
+        var body = isHostObject(document, "body") ? document.body : document.getElementsByTagName("body")[0];
+
+        if (body && isHostMethod(body, "createTextRange")) {
+            testRange = body.createTextRange();
+            if (isTextRange(testRange)) {
+                implementsTextRange = true;
+            }
+        }
+
+        if (!implementsDomRange && !implementsTextRange) {
+            fail("Neither Range nor TextRange are implemented");
+        }
+
+        api.initialized = true;
+        api.features = {
+            implementsDomRange: implementsDomRange,
+            implementsTextRange: implementsTextRange
+        };
+
+        // Initialize modules and call init listeners
+        var allListeners = moduleInitializers.concat(initListeners);
+        for (var i = 0, len = allListeners.length; i < len; ++i) {
+            try {
+                allListeners[i](api);
+            } catch (ex) {
+                if (isHostObject(window, "console") && isHostMethod(window.console, "log")) {
+                    window.console.log("Init listener threw an exception. Continuing.", ex);
+                }
+
+            }
+        }
+    }
+
+    // Allow external scripts to initialize this library in case it's loaded after the document has loaded
+    api.init = init;
+
+    // Execute listener immediately if already initialized
+    api.addInitListener = function(listener) {
+        if (api.initialized) {
+            listener(api);
+        } else {
+            initListeners.push(listener);
+        }
+    };
+
+    var createMissingNativeApiListeners = [];
+
+    api.addCreateMissingNativeApiListener = function(listener) {
+        createMissingNativeApiListeners.push(listener);
+    };
+
+    function createMissingNativeApi(win) {
+        win = win || window;
+        init();
+
+        // Notify listeners
+        for (var i = 0, len = createMissingNativeApiListeners.length; i < len; ++i) {
+            createMissingNativeApiListeners[i](win);
+        }
+    }
+
+    api.createMissingNativeApi = createMissingNativeApi;
+
+    /**
+     * @constructor
+     */
+    function Module(name) {
+        this.name = name;
+        this.initialized = false;
+        this.supported = false;
+    }
+
+    Module.prototype.fail = function(reason) {
+        this.initialized = true;
+        this.supported = false;
+
+        throw new Error("Module '" + this.name + "' failed to load: " + reason);
+    };
+
+    Module.prototype.warn = function(msg) {
+        api.warn("Module " + this.name + ": " + msg);
+    };
+
+    Module.prototype.createError = function(msg) {
+        return new Error("Error in Rangy " + this.name + " module: " + msg);
+    };
+
+    api.createModule = function(name, initFunc) {
+        var module = new Module(name);
+        api.modules[name] = module;
+
+        moduleInitializers.push(function(api) {
+            initFunc(api, module);
+            module.initialized = true;
+            module.supported = true;
+        });
+    };
+
+    api.requireModules = function(modules) {
+        for (var i = 0, len = modules.length, module, moduleName; i < len; ++i) {
+            moduleName = modules[i];
+            module = api.modules[moduleName];
+            if (!module || !(module instanceof Module)) {
+                throw new Error("Module '" + moduleName + "' not found");
+            }
+            if (!module.supported) {
+                throw new Error("Module '" + moduleName + "' not supported");
+            }
+        }
+    };
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Wait for document to load before running tests
+
+    var docReady = false;
+
+    var loadHandler = function(e) {
+
+        if (!docReady) {
+            docReady = true;
+            if (!api.initialized) {
+                init();
+            }
+        }
+    };
+
+    // Test whether we have window and document objects that we will need
+    if (typeof window == UNDEFINED) {
+        fail("No window found");
+        return;
+    }
+    if (typeof document == UNDEFINED) {
+        fail("No document found");
+        return;
+    }
+
+    if (isHostMethod(document, "addEventListener")) {
+        document.addEventListener("DOMContentLoaded", loadHandler, false);
+    }
+
+    // Add a fallback in case the DOMContentLoaded event isn't supported
+    if (isHostMethod(window, "addEventListener")) {
+        window.addEventListener("load", loadHandler, false);
+    } else if (isHostMethod(window, "attachEvent")) {
+        window.attachEvent("onload", loadHandler);
+    } else {
+        fail("Window does not have required addEventListener or attachEvent method");
+    }
+
+    return api;
+})();
+rangy.createModule("DomUtil", function(api, module) {
+
+    var UNDEF = "undefined";
+    var util = api.util;
+
+    // Perform feature tests
+    if (!util.areHostMethods(document, ["createDocumentFragment", "createElement", "createTextNode"])) {
+        module.fail("document missing a Node creation method");
+    }
+
+    if (!util.isHostMethod(document, "getElementsByTagName")) {
+        module.fail("document missing getElementsByTagName method");
+    }
+
+    var el = document.createElement("div");
+    if (!util.areHostMethods(el, ["insertBefore", "appendChild", "cloneNode"] ||
+            !util.areHostObjects(el, ["previousSibling", "nextSibling", "childNodes", "parentNode"]))) {
+        module.fail("Incomplete Element implementation");
+    }
+
+    // innerHTML is required for Range's createContextualFragment method
+    if (!util.isHostProperty(el, "innerHTML")) {
+        module.fail("Element is missing innerHTML property");
+    }
+
+    var textNode = document.createTextNode("test");
+    if (!util.areHostMethods(textNode, ["splitText", "deleteData", "insertData", "appendData", "cloneNode"] ||
+            !util.areHostObjects(el, ["previousSibling", "nextSibling", "childNodes", "parentNode"]) ||
+            !util.areHostProperties(textNode, ["data"]))) {
+        module.fail("Incomplete Text Node implementation");
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Removed use of indexOf because of a bizarre bug in Opera that is thrown in one of the Acid3 tests. I haven't been
+    // able to replicate it outside of the test. The bug is that indexOf returns -1 when called on an Array that
+    // contains just the document as a single element and the value searched for is the document.
+    var arrayContains = /*Array.prototype.indexOf ?
+        function(arr, val) {
+            return arr.indexOf(val) > -1;
+        }:*/
+
+        function(arr, val) {
+            var i = arr.length;
+            while (i--) {
+                if (arr[i] === val) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+    // Opera 11 puts HTML elements in the null namespace, it seems, and IE 7 has undefined namespaceURI
+    function isHtmlNamespace(node) {
+        var ns;
+        return typeof node.namespaceURI == UNDEF || ((ns = node.namespaceURI) === null || ns == "http://www.w3.org/1999/xhtml");
+    }
+
+    function parentElement(node) {
+        var parent = node.parentNode;
+        return (parent.nodeType == 1) ? parent : null;
+    }
+
+    function getNodeIndex(node) {
+        var i = 0;
+        while( (node = node.previousSibling) ) {
+            i++;
+        }
+        return i;
+    }
+
+    function getNodeLength(node) {
+        var childNodes;
+        return isCharacterDataNode(node) ? node.length : ((childNodes = node.childNodes) ? childNodes.length : 0);
+    }
+
+    function getCommonAncestor(node1, node2) {
+        var ancestors = [], n;
+        for (n = node1; n; n = n.parentNode) {
+            ancestors.push(n);
+        }
+
+        for (n = node2; n; n = n.parentNode) {
+            if (arrayContains(ancestors, n)) {
+                return n;
+            }
+        }
+
+        return null;
+    }
+
+    function isAncestorOf(ancestor, descendant, selfIsAncestor) {
+        var n = selfIsAncestor ? descendant : descendant.parentNode;
+        while (n) {
+            if (n === ancestor) {
+                return true;
+            } else {
+                n = n.parentNode;
+            }
+        }
+        return false;
+    }
+
+    function getClosestAncestorIn(node, ancestor, selfIsAncestor) {
+        var p, n = selfIsAncestor ? node : node.parentNode;
+        while (n) {
+            p = n.parentNode;
+            if (p === ancestor) {
+                return n;
+            }
+            n = p;
+        }
+        return null;
+    }
+
+    function isCharacterDataNode(node) {
+        var t = node.nodeType;
+        return t == 3 || t == 4 || t == 8 ; // Text, CDataSection or Comment
+    }
+
+    function insertAfter(node, precedingNode) {
+        var nextNode = precedingNode.nextSibling, parent = precedingNode.parentNode;
+        if (nextNode) {
+            parent.insertBefore(node, nextNode);
+        } else {
+            parent.appendChild(node);
+        }
+        return node;
+    }
+
+    // Note that we cannot use splitText() because it is bugridden in IE 9.
+    function splitDataNode(node, index) {
+        var newNode = node.cloneNode(false);
+        newNode.deleteData(0, index);
+        node.deleteData(index, node.length - index);
+        insertAfter(newNode, node);
+        return newNode;
+    }
+
+    function getDocument(node) {
+        if (node.nodeType == 9) {
+            return node;
+        } else if (typeof node.ownerDocument != UNDEF) {
+            return node.ownerDocument;
+        } else if (typeof node.document != UNDEF) {
+            return node.document;
+        } else if (node.parentNode) {
+            return getDocument(node.parentNode);
+        } else {
+            throw new Error("getDocument: no document found for node");
+        }
+    }
+
+    function getWindow(node) {
+        var doc = getDocument(node);
+        if (typeof doc.defaultView != UNDEF) {
+            return doc.defaultView;
+        } else if (typeof doc.parentWindow != UNDEF) {
+            return doc.parentWindow;
+        } else {
+            throw new Error("Cannot get a window object for node");
+        }
+    }
+
+    function getIframeDocument(iframeEl) {
+        if (typeof iframeEl.contentDocument != UNDEF) {
+            return iframeEl.contentDocument;
+        } else if (typeof iframeEl.contentWindow != UNDEF) {
+            return iframeEl.contentWindow.document;
+        } else {
+            throw new Error("getIframeWindow: No Document object found for iframe element");
+        }
+    }
+
+    function getIframeWindow(iframeEl) {
+        if (typeof iframeEl.contentWindow != UNDEF) {
+            return iframeEl.contentWindow;
+        } else if (typeof iframeEl.contentDocument != UNDEF) {
+            return iframeEl.contentDocument.defaultView;
+        } else {
+            throw new Error("getIframeWindow: No Window object found for iframe element");
+        }
+    }
+
+    function getBody(doc) {
+        return util.isHostObject(doc, "body") ? doc.body : doc.getElementsByTagName("body")[0];
+    }
+
+    function getRootContainer(node) {
+        var parent;
+        while ( (parent = node.parentNode) ) {
+            node = parent;
+        }
+        return node;
+    }
+
+    function comparePoints(nodeA, offsetA, nodeB, offsetB) {
+        // See http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Comparing
+        var nodeC, root, childA, childB, n;
+        if (nodeA == nodeB) {
+
+            // Case 1: nodes are the same
+            return offsetA === offsetB ? 0 : (offsetA < offsetB) ? -1 : 1;
+        } else if ( (nodeC = getClosestAncestorIn(nodeB, nodeA, true)) ) {
+
+            // Case 2: node C (container B or an ancestor) is a child node of A
+            return offsetA <= getNodeIndex(nodeC) ? -1 : 1;
+        } else if ( (nodeC = getClosestAncestorIn(nodeA, nodeB, true)) ) {
+
+            // Case 3: node C (container A or an ancestor) is a child node of B
+            return getNodeIndex(nodeC) < offsetB  ? -1 : 1;
+        } else {
+
+            // Case 4: containers are siblings or descendants of siblings
+            root = getCommonAncestor(nodeA, nodeB);
+            childA = (nodeA === root) ? root : getClosestAncestorIn(nodeA, root, true);
+            childB = (nodeB === root) ? root : getClosestAncestorIn(nodeB, root, true);
+
+            if (childA === childB) {
+                // This shouldn't be possible
+
+                throw new Error("comparePoints got to case 4 and childA and childB are the same!");
+            } else {
+                n = root.firstChild;
+                while (n) {
+                    if (n === childA) {
+                        return -1;
+                    } else if (n === childB) {
+                        return 1;
+                    }
+                    n = n.nextSibling;
+                }
+                throw new Error("Should not be here!");
+            }
+        }
+    }
+
+    function fragmentFromNodeChildren(node) {
+        var fragment = getDocument(node).createDocumentFragment(), child;
+        while ( (child = node.firstChild) ) {
+            fragment.appendChild(child);
+        }
+        return fragment;
+    }
+
+    function inspectNode(node) {
+        if (!node) {
+            return "[No node]";
+        }
+        if (isCharacterDataNode(node)) {
+            return '"' + node.data + '"';
+        } else if (node.nodeType == 1) {
+            var idAttr = node.id ? ' id="' + node.id + '"' : "";
+            return "<" + node.nodeName + idAttr + ">[" + node.childNodes.length + "]";
+        } else {
+            return node.nodeName;
+        }
+    }
+
+    /**
+     * @constructor
+     */
+    function NodeIterator(root) {
+        this.root = root;
+        this._next = root;
+    }
+
+    NodeIterator.prototype = {
+        _current: null,
+
+        hasNext: function() {
+            return !!this._next;
+        },
+
+        next: function() {
+            var n = this._current = this._next;
+            var child, next;
+            if (this._current) {
+                child = n.firstChild;
+                if (child) {
+                    this._next = child;
+                } else {
+                    next = null;
+                    while ((n !== this.root) && !(next = n.nextSibling)) {
+                        n = n.parentNode;
+                    }
+                    this._next = next;
+                }
+            }
+            return this._current;
+        },
+
+        detach: function() {
+            this._current = this._next = this.root = null;
+        }
+    };
+
+    function createIterator(root) {
+        return new NodeIterator(root);
+    }
+
+    /**
+     * @constructor
+     */
+    function DomPosition(node, offset) {
+        this.node = node;
+        this.offset = offset;
+    }
+
+    DomPosition.prototype = {
+        equals: function(pos) {
+            return this.node === pos.node & this.offset == pos.offset;
+        },
+
+        inspect: function() {
+            return "[DomPosition(" + inspectNode(this.node) + ":" + this.offset + ")]";
+        }
+    };
+
+    /**
+     * @constructor
+     */
+    function DOMException(codeName) {
+        this.code = this[codeName];
+        this.codeName = codeName;
+        this.message = "DOMException: " + this.codeName;
+    }
+
+    DOMException.prototype = {
+        INDEX_SIZE_ERR: 1,
+        HIERARCHY_REQUEST_ERR: 3,
+        WRONG_DOCUMENT_ERR: 4,
+        NO_MODIFICATION_ALLOWED_ERR: 7,
+        NOT_FOUND_ERR: 8,
+        NOT_SUPPORTED_ERR: 9,
+        INVALID_STATE_ERR: 11
+    };
+
+    DOMException.prototype.toString = function() {
+        return this.message;
+    };
+
+    api.dom = {
+        arrayContains: arrayContains,
+        isHtmlNamespace: isHtmlNamespace,
+        parentElement: parentElement,
+        getNodeIndex: getNodeIndex,
+        getNodeLength: getNodeLength,
+        getCommonAncestor: getCommonAncestor,
+        isAncestorOf: isAncestorOf,
+        getClosestAncestorIn: getClosestAncestorIn,
+        isCharacterDataNode: isCharacterDataNode,
+        insertAfter: insertAfter,
+        splitDataNode: splitDataNode,
+        getDocument: getDocument,
+        getWindow: getWindow,
+        getIframeWindow: getIframeWindow,
+        getIframeDocument: getIframeDocument,
+        getBody: getBody,
+        getRootContainer: getRootContainer,
+        comparePoints: comparePoints,
+        inspectNode: inspectNode,
+        fragmentFromNodeChildren: fragmentFromNodeChildren,
+        createIterator: createIterator,
+        DomPosition: DomPosition
+    };
+
+    api.DOMException = DOMException;
+});rangy.createModule("DomRange", function(api, module) {
+    api.requireModules( ["DomUtil"] );
+
+
+    var dom = api.dom;
+    var DomPosition = dom.DomPosition;
+    var DOMException = api.DOMException;
+    
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Utility functions
+
+    function isNonTextPartiallySelected(node, range) {
+        return (node.nodeType != 3) &&
+               (dom.isAncestorOf(node, range.startContainer, true) || dom.isAncestorOf(node, range.endContainer, true));
+    }
+
+    function getRangeDocument(range) {
+        return dom.getDocument(range.startContainer);
+    }
+
+    function dispatchEvent(range, type, args) {
+        var listeners = range._listeners[type];
+        if (listeners) {
+            for (var i = 0, len = listeners.length; i < len; ++i) {
+                listeners[i].call(range, {target: range, args: args});
+            }
+        }
+    }
+
+    function getBoundaryBeforeNode(node) {
+        return new DomPosition(node.parentNode, dom.getNodeIndex(node));
+    }
+
+    function getBoundaryAfterNode(node) {
+        return new DomPosition(node.parentNode, dom.getNodeIndex(node) + 1);
+    }
+
+    function insertNodeAtPosition(node, n, o) {
+        var firstNodeInserted = node.nodeType == 11 ? node.firstChild : node;
+        if (dom.isCharacterDataNode(n)) {
+            if (o == n.length) {
+                dom.insertAfter(node, n);
+            } else {
+                n.parentNode.insertBefore(node, o == 0 ? n : dom.splitDataNode(n, o));
+            }
+        } else if (o >= n.childNodes.length) {
+            n.appendChild(node);
+        } else {
+            n.insertBefore(node, n.childNodes[o]);
+        }
+        return firstNodeInserted;
+    }
+
+    function cloneSubtree(iterator) {
+        var partiallySelected;
+        for (var node, frag = getRangeDocument(iterator.range).createDocumentFragment(), subIterator; node = iterator.next(); ) {
+            partiallySelected = iterator.isPartiallySelectedSubtree();
+
+            node = node.cloneNode(!partiallySelected);
+            if (partiallySelected) {
+                subIterator = iterator.getSubtreeIterator();
+                node.appendChild(cloneSubtree(subIterator));
+                subIterator.detach(true);
+            }
+
+            if (node.nodeType == 10) { // DocumentType
+                throw new DOMException("HIERARCHY_REQUEST_ERR");
+            }
+            frag.appendChild(node);
+        }
+        return frag;
+    }
+
+    function iterateSubtree(rangeIterator, func, iteratorState) {
+        var it, n;
+        iteratorState = iteratorState || { stop: false };
+        for (var node, subRangeIterator; node = rangeIterator.next(); ) {
+            //log.debug("iterateSubtree, partially selected: " + rangeIterator.isPartiallySelectedSubtree(), nodeToString(node));
+            if (rangeIterator.isPartiallySelectedSubtree()) {
+                // The node is partially selected by the Range, so we can use a new RangeIterator on the portion of the
+                // node selected by the Range.
+                if (func(node) === false) {
+                    iteratorState.stop = true;
+                    return;
+                } else {
+                    subRangeIterator = rangeIterator.getSubtreeIterator();
+                    iterateSubtree(subRangeIterator, func, iteratorState);
+                    subRangeIterator.detach(true);
+                    if (iteratorState.stop) {
+                        return;
+                    }
+                }
+            } else {
+                // The whole node is selected, so we can use efficient DOM iteration to iterate over the node and its
+                // descendant
+                it = dom.createIterator(node);
+                while ( (n = it.next()) ) {
+                    if (func(n) === false) {
+                        iteratorState.stop = true;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    function deleteSubtree(iterator) {
+        var subIterator;
+        while (iterator.next()) {
+            if (iterator.isPartiallySelectedSubtree()) {
+                subIterator = iterator.getSubtreeIterator();
+                deleteSubtree(subIterator);
+                subIterator.detach(true);
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
+    function extractSubtree(iterator) {
+
+        for (var node, frag = getRangeDocument(iterator.range).createDocumentFragment(), subIterator; node = iterator.next(); ) {
+
+
+            if (iterator.isPartiallySelectedSubtree()) {
+                node = node.cloneNode(false);
+                subIterator = iterator.getSubtreeIterator();
+                node.appendChild(extractSubtree(subIterator));
+                subIterator.detach(true);
+            } else {
+                iterator.remove();
+            }
+            if (node.nodeType == 10) { // DocumentType
+                throw new DOMException("HIERARCHY_REQUEST_ERR");
+            }
+            frag.appendChild(node);
+        }
+        return frag;
+    }
+
+    function getNodesInRange(range, nodeTypes, filter) {
+        //log.info("getNodesInRange, " + nodeTypes.join(","));
+        var filterNodeTypes = !!(nodeTypes && nodeTypes.length), regex;
+        var filterExists = !!filter;
+        if (filterNodeTypes) {
+            regex = new RegExp("^(" + nodeTypes.join("|") + ")$");
+        }
+
+        var nodes = [];
+        iterateSubtree(new RangeIterator(range, false), function(node) {
+            if ((!filterNodeTypes || regex.test(node.nodeType)) && (!filterExists || filter(node))) {
+                nodes.push(node);
+            }
+        });
+        return nodes;
+    }
+
+    function inspect(range) {
+        var name = (typeof range.getName == "undefined") ? "Range" : range.getName();
+        return "[" + name + "(" + dom.inspectNode(range.startContainer) + ":" + range.startOffset + ", " +
+                dom.inspectNode(range.endContainer) + ":" + range.endOffset + ")]";
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // RangeIterator code partially borrows from IERange by Tim Ryan (http://github.com/timcameronryan/IERange)
+
+    /**
+     * @constructor
+     */
+    function RangeIterator(range, clonePartiallySelectedTextNodes) {
+        this.range = range;
+        this.clonePartiallySelectedTextNodes = clonePartiallySelectedTextNodes;
+
+
+
+        if (!range.collapsed) {
+            this.sc = range.startContainer;
+            this.so = range.startOffset;
+            this.ec = range.endContainer;
+            this.eo = range.endOffset;
+            var root = range.commonAncestorContainer;
+
+            if (this.sc === this.ec && dom.isCharacterDataNode(this.sc)) {
+                this.isSingleCharacterDataNode = true;
+                this._first = this._last = this._next = this.sc;
+            } else {
+                this._first = this._next = (this.sc === root && !dom.isCharacterDataNode(this.sc)) ?
+                    this.sc.childNodes[this.so] : dom.getClosestAncestorIn(this.sc, root, true);
+                this._last = (this.ec === root && !dom.isCharacterDataNode(this.ec)) ?
+                    this.ec.childNodes[this.eo - 1] : dom.getClosestAncestorIn(this.ec, root, true);
+            }
+
+        }
+    }
+
+    RangeIterator.prototype = {
+        _current: null,
+        _next: null,
+        _first: null,
+        _last: null,
+        isSingleCharacterDataNode: false,
+
+        reset: function() {
+            this._current = null;
+            this._next = this._first;
+        },
+
+        hasNext: function() {
+            return !!this._next;
+        },
+
+        next: function() {
+            // Move to next node
+            var current = this._current = this._next;
+            if (current) {
+                this._next = (current !== this._last) ? current.nextSibling : null;
+
+                // Check for partially selected text nodes
+                if (dom.isCharacterDataNode(current) && this.clonePartiallySelectedTextNodes) {
+                    if (current === this.ec) {
+
+                        (current = current.cloneNode(true)).deleteData(this.eo, current.length - this.eo);
+                    }
+                    if (this._current === this.sc) {
+
+                        (current = current.cloneNode(true)).deleteData(0, this.so);
+                    }
+                }
+            }
+
+            return current;
+        },
+
+        remove: function() {
+            var current = this._current, start, end;
+
+            if (dom.isCharacterDataNode(current) && (current === this.sc || current === this.ec)) {
+                start = (current === this.sc) ? this.so : 0;
+                end = (current === this.ec) ? this.eo : current.length;
+                if (start != end) {
+                    current.deleteData(start, end - start);
+                }
+            } else {
+                if (current.parentNode) {
+                    current.parentNode.removeChild(current);
+                } else {
+
+                }
+            }
+        },
+
+        // Checks if the current node is partially selected
+        isPartiallySelectedSubtree: function() {
+            var current = this._current;
+            return isNonTextPartiallySelected(current, this.range);
+        },
+
+        getSubtreeIterator: function() {
+            var subRange;
+            if (this.isSingleCharacterDataNode) {
+                subRange = this.range.cloneRange();
+                subRange.collapse();
+            } else {
+                subRange = new Range(getRangeDocument(this.range));
+                var current = this._current;
+                var startContainer = current, startOffset = 0, endContainer = current, endOffset = dom.getNodeLength(current);
+
+                if (dom.isAncestorOf(current, this.sc, true)) {
+                    startContainer = this.sc;
+                    startOffset = this.so;
+                }
+                if (dom.isAncestorOf(current, this.ec, true)) {
+                    endContainer = this.ec;
+                    endOffset = this.eo;
+                }
+
+                updateBoundaries(subRange, startContainer, startOffset, endContainer, endOffset);
+            }
+            return new RangeIterator(subRange, this.clonePartiallySelectedTextNodes);
+        },
+
+        detach: function(detachRange) {
+            if (detachRange) {
+                this.range.detach();
+            }
+            this.range = this._current = this._next = this._first = this._last = this.sc = this.so = this.ec = this.eo = null;
+        }
+    };
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Exceptions
+
+    /**
+     * @constructor
+     */
+    function RangeException(codeName) {
+        this.code = this[codeName];
+        this.codeName = codeName;
+        this.message = "RangeException: " + this.codeName;
+    }
+
+    RangeException.prototype = {
+        BAD_BOUNDARYPOINTS_ERR: 1,
+        INVALID_NODE_TYPE_ERR: 2
+    };
+
+    RangeException.prototype.toString = function() {
+        return this.message;
+    };
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    /**
+     * Currently iterates through all nodes in the range on creation until I think of a decent way to do it
+     * TODO: Look into making this a proper iterator, not requiring preloading everything first
+     * @constructor
+     */
+    function RangeNodeIterator(range, nodeTypes, filter) {
+        this.nodes = getNodesInRange(range, nodeTypes, filter);
+        this._next = this.nodes[0];
+        this._position = 0;
+    }
+
+    RangeNodeIterator.prototype = {
+        _current: null,
+
+        hasNext: function() {
+            return !!this._next;
+        },
+
+        next: function() {
+            this._current = this._next;
+            this._next = this.nodes[ ++this._position ];
+            return this._current;
+        },
+
+        detach: function() {
+            this._current = this._next = this.nodes = null;
+        }
+    };
+
+    var beforeAfterNodeTypes = [1, 3, 4, 5, 7, 8, 10];
+    var rootContainerNodeTypes = [2, 9, 11];
+    var readonlyNodeTypes = [5, 6, 10, 12];
+    var insertableNodeTypes = [1, 3, 4, 5, 7, 8, 10, 11];
+    var surroundNodeTypes = [1, 3, 4, 5, 7, 8];
+
+    function createAncestorFinder(nodeTypes) {
+        return function(node, selfIsAncestor) {
+            var t, n = selfIsAncestor ? node : node.parentNode;
+            while (n) {
+                t = n.nodeType;
+                if (dom.arrayContains(nodeTypes, t)) {
+                    return n;
+                }
+                n = n.parentNode;
+            }
+            return null;
+        };
+    }
+
+    var getRootContainer = dom.getRootContainer;
+    var getDocumentOrFragmentContainer = createAncestorFinder( [9, 11] );
+    var getReadonlyAncestor = createAncestorFinder(readonlyNodeTypes);
+    var getDocTypeNotationEntityAncestor = createAncestorFinder( [6, 10, 12] );
+
+    function assertNoDocTypeNotationEntityAncestor(node, allowSelf) {
+        if (getDocTypeNotationEntityAncestor(node, allowSelf)) {
+            throw new RangeException("INVALID_NODE_TYPE_ERR");
+        }
+    }
+
+    function assertNotDetached(range) {
+        if (!range.startContainer) {
+            throw new DOMException("INVALID_STATE_ERR");
+        }
+    }
+
+    function assertValidNodeType(node, invalidTypes) {
+        if (!dom.arrayContains(invalidTypes, node.nodeType)) {
+            throw new RangeException("INVALID_NODE_TYPE_ERR");
+        }
+    }
+
+    function assertValidOffset(node, offset) {
+        if (offset < 0 || offset > (dom.isCharacterDataNode(node) ? node.length : node.childNodes.length)) {
+            throw new DOMException("INDEX_SIZE_ERR");
+        }
+    }
+
+    function assertSameDocumentOrFragment(node1, node2) {
+        if (getDocumentOrFragmentContainer(node1, true) !== getDocumentOrFragmentContainer(node2, true)) {
+            throw new DOMException("WRONG_DOCUMENT_ERR");
+        }
+    }
+
+    function assertNodeNotReadOnly(node) {
+        if (getReadonlyAncestor(node, true)) {
+            throw new DOMException("NO_MODIFICATION_ALLOWED_ERR");
+        }
+    }
+
+    function assertNode(node, codeName) {
+        if (!node) {
+            throw new DOMException(codeName);
+        }
+    }
+
+    function isOrphan(node) {
+        return !dom.arrayContains(rootContainerNodeTypes, node.nodeType) && !getDocumentOrFragmentContainer(node, true);
+    }
+
+    function isValidOffset(node, offset) {
+        return offset <= (dom.isCharacterDataNode(node) ? node.length : node.childNodes.length);
+    }
+
+    function assertRangeValid(range) {
+        assertNotDetached(range);
+        if (isOrphan(range.startContainer) || isOrphan(range.endContainer) ||
+                !isValidOffset(range.startContainer, range.startOffset) ||
+                !isValidOffset(range.endContainer, range.endOffset)) {
+            throw new Error("Range error: Range is no longer valid after DOM mutation (" + range.inspect() + ")");
+        }
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Test the browser's innerHTML support to decide how to implement createContextualFragment
+    var styleEl = document.createElement("style");
+    var htmlParsingConforms = false;
+    try {
+        styleEl.innerHTML = "<b>x</b>";
+        htmlParsingConforms = (styleEl.firstChild.nodeType == 3); // Opera incorrectly creates an element node
+    } catch (e) {
+        // IE 6 and 7 throw
+    }
+
+    api.features.htmlParsingConforms = htmlParsingConforms;
+
+    var createContextualFragment = htmlParsingConforms ?
+
+        // Implementation as per HTML parsing spec, trusting in the browser's implementation of innerHTML. See
+        // discussion and base code for this implementation at issue 67.
+        // Spec: http://html5.org/specs/dom-parsing.html#extensions-to-the-range-interface
+        // Thanks to Aleks Williams.
+        function(fragmentStr) {
+            // "Let node the context object's start's node."
+            var node = this.startContainer;
+            var doc = dom.getDocument(node);
+
+            // "If the context object's start's node is null, raise an INVALID_STATE_ERR
+            // exception and abort these steps."
+            if (!node) {
+                throw new DOMException("INVALID_STATE_ERR");
+            }
+
+            // "Let element be as follows, depending on node's interface:"
+            // Document, Document Fragment: null
+            var el = null;
+
+            // "Element: node"
+            if (node.nodeType == 1) {
+                el = node;
+
+            // "Text, Comment: node's parentElement"
+            } else if (dom.isCharacterDataNode(node)) {
+                el = dom.parentElement(node);
+            }
+
+            // "If either element is null or element's ownerDocument is an HTML document
+            // and element's local name is "html" and element's namespace is the HTML
+            // namespace"
+            if (el === null || (
+                el.nodeName == "HTML"
+                && dom.isHtmlNamespace(dom.getDocument(el).documentElement)
+                && dom.isHtmlNamespace(el)
+            )) {
+
+            // "let element be a new Element with "body" as its local name and the HTML
+            // namespace as its namespace.""
+                el = doc.createElement("body");
+            } else {
+                el = el.cloneNode(false);
+            }
+
+            // "If the node's document is an HTML document: Invoke the HTML fragment parsing algorithm."
+            // "If the node's document is an XML document: Invoke the XML fragment parsing algorithm."
+            // "In either case, the algorithm must be invoked with fragment as the input
+            // and element as the context element."
+            el.innerHTML = fragmentStr;
+
+            // "If this raises an exception, then abort these steps. Otherwise, let new
+            // children be the nodes returned."
+
+            // "Let fragment be a new DocumentFragment."
+            // "Append all new children to fragment."
+            // "Return fragment."
+            return dom.fragmentFromNodeChildren(el);
+        } :
+
+        // In this case, innerHTML cannot be trusted, so fall back to a simpler, non-conformant implementation that
+        // previous versions of Rangy used (with the exception of using a body element rather than a div)
+        function(fragmentStr) {
+            assertNotDetached(this);
+            var doc = getRangeDocument(this);
+            var el = doc.createElement("body");
+            el.innerHTML = fragmentStr;
+
+            return dom.fragmentFromNodeChildren(el);
+        };
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    var rangeProperties = ["startContainer", "startOffset", "endContainer", "endOffset", "collapsed",
+        "commonAncestorContainer"];
+
+    var s2s = 0, s2e = 1, e2e = 2, e2s = 3;
+    var n_b = 0, n_a = 1, n_b_a = 2, n_i = 3;
+
+    function RangePrototype() {}
+
+    RangePrototype.prototype = {
+        attachListener: function(type, listener) {
+            this._listeners[type].push(listener);
+        },
+
+        compareBoundaryPoints: function(how, range) {
+            assertRangeValid(this);
+            assertSameDocumentOrFragment(this.startContainer, range.startContainer);
+
+            var nodeA, offsetA, nodeB, offsetB;
+            var prefixA = (how == e2s || how == s2s) ? "start" : "end";
+            var prefixB = (how == s2e || how == s2s) ? "start" : "end";
+            nodeA = this[prefixA + "Container"];
+            offsetA = this[prefixA + "Offset"];
+            nodeB = range[prefixB + "Container"];
+            offsetB = range[prefixB + "Offset"];
+            return dom.comparePoints(nodeA, offsetA, nodeB, offsetB);
+        },
+
+        insertNode: function(node) {
+            assertRangeValid(this);
+            assertValidNodeType(node, insertableNodeTypes);
+            assertNodeNotReadOnly(this.startContainer);
+
+            if (dom.isAncestorOf(node, this.startContainer, true)) {
+                throw new DOMException("HIERARCHY_REQUEST_ERR");
+            }
+
+            // No check for whether the container of the start of the Range is of a type that does not allow
+            // children of the type of node: the browser's DOM implementation should do this for us when we attempt
+            // to add the node
+
+            var firstNodeInserted = insertNodeAtPosition(node, this.startContainer, this.startOffset);
+            this.setStartBefore(firstNodeInserted);
+        },
+
+        cloneContents: function() {
+            assertRangeValid(this);
+
+            var clone, frag;
+            if (this.collapsed) {
+                return getRangeDocument(this).createDocumentFragment();
+            } else {
+                if (this.startContainer === this.endContainer && dom.isCharacterDataNode(this.startContainer)) {
+                    clone = this.startContainer.cloneNode(true);
+                    clone.data = clone.data.slice(this.startOffset, this.endOffset);
+                    frag = getRangeDocument(this).createDocumentFragment();
+                    frag.appendChild(clone);
+                    return frag;
+                } else {
+                    var iterator = new RangeIterator(this, true);
+                    clone = cloneSubtree(iterator);
+                    iterator.detach();
+                }
+                return clone;
+            }
+        },
+
+        canSurroundContents: function() {
+            assertRangeValid(this);
+            assertNodeNotReadOnly(this.startContainer);
+            assertNodeNotReadOnly(this.endContainer);
+
+            // Check if the contents can be surrounded. Specifically, this means whether the range partially selects
+            // no non-text nodes.
+            var iterator = new RangeIterator(this, true);
+            var boundariesInvalid = (iterator._first && (isNonTextPartiallySelected(iterator._first, this)) ||
+                    (iterator._last && isNonTextPartiallySelected(iterator._last, this)));
+            iterator.detach();
+            return !boundariesInvalid;
+        },
+
+        surroundContents: function(node) {
+            assertValidNodeType(node, surroundNodeTypes);
+
+            if (!this.canSurroundContents()) {
+                throw new RangeException("BAD_BOUNDARYPOINTS_ERR");
+            }
+
+            // Extract the contents
+            var content = this.extractContents();
+
+            // Clear the children of the node
+            if (node.hasChildNodes()) {
+                while (node.lastChild) {
+                    node.removeChild(node.lastChild);
+                }
+            }
+
+            // Insert the new node and add the extracted contents
+            insertNodeAtPosition(node, this.startContainer, this.startOffset);
+            node.appendChild(content);
+
+            this.selectNode(node);
+        },
+
+        cloneRange: function() {
+            assertRangeValid(this);
+            var range = new Range(getRangeDocument(this));
+            var i = rangeProperties.length, prop;
+            while (i--) {
+                prop = rangeProperties[i];
+                range[prop] = this[prop];
+            }
+            return range;
+        },
+
+        toString: function() {
+            assertRangeValid(this);
+            var sc = this.startContainer;
+            if (sc === this.endContainer && dom.isCharacterDataNode(sc)) {
+                return (sc.nodeType == 3 || sc.nodeType == 4) ? sc.data.slice(this.startOffset, this.endOffset) : "";
+            } else {
+                var textBits = [], iterator = new RangeIterator(this, true);
+
+                iterateSubtree(iterator, function(node) {
+                    // Accept only text or CDATA nodes, not comments
+
+                    if (node.nodeType == 3 || node.nodeType == 4) {
+                        textBits.push(node.data);
+                    }
+                });
+                iterator.detach();
+                return textBits.join("");
+            }
+        },
+
+        // The methods below are all non-standard. The following batch were introduced by Mozilla but have since
+        // been removed from Mozilla.
+
+        compareNode: function(node) {
+            assertRangeValid(this);
+
+            var parent = node.parentNode;
+            var nodeIndex = dom.getNodeIndex(node);
+
+            if (!parent) {
+                throw new DOMException("NOT_FOUND_ERR");
+            }
+
+            var startComparison = this.comparePoint(parent, nodeIndex),
+                endComparison = this.comparePoint(parent, nodeIndex + 1);
+
+            if (startComparison < 0) { // Node starts before
+                return (endComparison > 0) ? n_b_a : n_b;
+            } else {
+                return (endComparison > 0) ? n_a : n_i;
+            }
+        },
+
+        comparePoint: function(node, offset) {
+            assertRangeValid(this);
+            assertNode(node, "HIERARCHY_REQUEST_ERR");
+            assertSameDocumentOrFragment(node, this.startContainer);
+
+            if (dom.comparePoints(node, offset, this.startContainer, this.startOffset) < 0) {
+                return -1;
+            } else if (dom.comparePoints(node, offset, this.endContainer, this.endOffset) > 0) {
+                return 1;
+            }
+            return 0;
+        },
+
+        createContextualFragment: createContextualFragment,
+
+        toHtml: function() {
+            assertRangeValid(this);
+            var container = getRangeDocument(this).createElement("div");
+            container.appendChild(this.cloneContents());
+            return container.innerHTML;
+        },
+
+        // touchingIsIntersecting determines whether this method considers a node that borders a range intersects
+        // with it (as in WebKit) or not (as in Gecko pre-1.9, and the default)
+        intersectsNode: function(node, touchingIsIntersecting) {
+            assertRangeValid(this);
+            assertNode(node, "NOT_FOUND_ERR");
+            if (dom.getDocument(node) !== getRangeDocument(this)) {
+                return false;
+            }
+
+            var parent = node.parentNode, offset = dom.getNodeIndex(node);
+            assertNode(parent, "NOT_FOUND_ERR");
+
+            var startComparison = dom.comparePoints(parent, offset, this.endContainer, this.endOffset),
+                endComparison = dom.comparePoints(parent, offset + 1, this.startContainer, this.startOffset);
+
+            return touchingIsIntersecting ? startComparison <= 0 && endComparison >= 0 : startComparison < 0 && endComparison > 0;
+        },
+
+
+        isPointInRange: function(node, offset) {
+            assertRangeValid(this);
+            assertNode(node, "HIERARCHY_REQUEST_ERR");
+            assertSameDocumentOrFragment(node, this.startContainer);
+
+            return (dom.comparePoints(node, offset, this.startContainer, this.startOffset) >= 0) &&
+                   (dom.comparePoints(node, offset, this.endContainer, this.endOffset) <= 0);
+        },
+
+        // The methods below are non-standard and invented by me.
+
+        // Sharing a boundary start-to-end or end-to-start does not count as intersection.
+        intersectsRange: function(range, touchingIsIntersecting) {
+            assertRangeValid(this);
+
+            if (getRangeDocument(range) != getRangeDocument(this)) {
+                throw new DOMException("WRONG_DOCUMENT_ERR");
+            }
+
+            var startComparison = dom.comparePoints(this.startContainer, this.startOffset, range.endContainer, range.endOffset),
+                endComparison = dom.comparePoints(this.endContainer, this.endOffset, range.startContainer, range.startOffset);
+
+            return touchingIsIntersecting ? startComparison <= 0 && endComparison >= 0 : startComparison < 0 && endComparison > 0;
+        },
+
+        intersection: function(range) {
+            if (this.intersectsRange(range)) {
+                var startComparison = dom.comparePoints(this.startContainer, this.startOffset, range.startContainer, range.startOffset),
+                    endComparison = dom.comparePoints(this.endContainer, this.endOffset, range.endContainer, range.endOffset);
+
+                var intersectionRange = this.cloneRange();
+
+                if (startComparison == -1) {
+                    intersectionRange.setStart(range.startContainer, range.startOffset);
+                }
+                if (endComparison == 1) {
+                    intersectionRange.setEnd(range.endContainer, range.endOffset);
+                }
+                return intersectionRange;
+            }
+            return null;
+        },
+
+        union: function(range) {
+            if (this.intersectsRange(range, true)) {
+                var unionRange = this.cloneRange();
+                if (dom.comparePoints(range.startContainer, range.startOffset, this.startContainer, this.startOffset) == -1) {
+                    unionRange.setStart(range.startContainer, range.startOffset);
+                }
+                if (dom.comparePoints(range.endContainer, range.endOffset, this.endContainer, this.endOffset) == 1) {
+                    unionRange.setEnd(range.endContainer, range.endOffset);
+                }
+                return unionRange;
+            } else {
+                throw new RangeException("Ranges do not intersect");
+            }
+        },
+
+        containsNode: function(node, allowPartial) {
+            if (allowPartial) {
+                return this.intersectsNode(node, false);
+            } else {
+                return this.compareNode(node) == n_i;
+            }
+        },
+
+        containsNodeContents: function(node) {
+            return this.comparePoint(node, 0) >= 0 && this.comparePoint(node, dom.getNodeLength(node)) <= 0;
+        },
+
+        containsRange: function(range) {
+            return this.intersection(range).equals(range);
+        },
+
+        containsNodeText: function(node) {
+            var nodeRange = this.cloneRange();
+            nodeRange.selectNode(node);
+            var textNodes = nodeRange.getNodes([3]);
+            if (textNodes.length > 0) {
+                nodeRange.setStart(textNodes[0], 0);
+                var lastTextNode = textNodes.pop();
+                nodeRange.setEnd(lastTextNode, lastTextNode.length);
+                var contains = this.containsRange(nodeRange);
+                nodeRange.detach();
+                return contains;
+            } else {
+                return this.containsNodeContents(node);
+            }
+        },
+
+        createNodeIterator: function(nodeTypes, filter) {
+            assertRangeValid(this);
+            return new RangeNodeIterator(this, nodeTypes, filter);
+        },
+
+        getNodes: function(nodeTypes, filter) {
+            assertRangeValid(this);
+            return getNodesInRange(this, nodeTypes, filter);
+        },
+
+        getDocument: function() {
+            return getRangeDocument(this);
+        },
+
+        collapseBefore: function(node) {
+            assertNotDetached(this);
+
+            this.setEndBefore(node);
+            this.collapse(false);
+        },
+
+        collapseAfter: function(node) {
+            assertNotDetached(this);
+
+            this.setStartAfter(node);
+            this.collapse(true);
+        },
+
+        getName: function() {
+            return "DomRange";
+        },
+
+        equals: function(range) {
+            return Range.rangesEqual(this, range);
+        },
+
+        inspect: function() {
+            return inspect(this);
+        }
+    };
+
+    function copyComparisonConstantsToObject(obj) {
+        obj.START_TO_START = s2s;
+        obj.START_TO_END = s2e;
+        obj.END_TO_END = e2e;
+        obj.END_TO_START = e2s;
+
+        obj.NODE_BEFORE = n_b;
+        obj.NODE_AFTER = n_a;
+        obj.NODE_BEFORE_AND_AFTER = n_b_a;
+        obj.NODE_INSIDE = n_i;
+    }
+
+    function copyComparisonConstants(constructor) {
+        copyComparisonConstantsToObject(constructor);
+        copyComparisonConstantsToObject(constructor.prototype);
+    }
+
+    function createRangeContentRemover(remover, boundaryUpdater) {
+        return function() {
+            assertRangeValid(this);
+
+            var sc = this.startContainer, so = this.startOffset, root = this.commonAncestorContainer;
+
+            var iterator = new RangeIterator(this, true);
+
+            // Work out where to position the range after content removal
+            var node, boundary;
+            if (sc !== root) {
+                node = dom.getClosestAncestorIn(sc, root, true);
+                boundary = getBoundaryAfterNode(node);
+                sc = boundary.node;
+                so = boundary.offset;
+            }
+
+            // Check none of the range is read-only
+            iterateSubtree(iterator, assertNodeNotReadOnly);
+
+            iterator.reset();
+
+            // Remove the content
+            var returnValue = remover(iterator);
+            iterator.detach();
+
+            // Move to the new position
+            boundaryUpdater(this, sc, so, sc, so);
+
+            return returnValue;
+        };
+    }
+
+    function createPrototypeRange(constructor, boundaryUpdater, detacher) {
+        function createBeforeAfterNodeSetter(isBefore, isStart) {
+            return function(node) {
+                assertNotDetached(this);
+                assertValidNodeType(node, beforeAfterNodeTypes);
+                assertValidNodeType(getRootContainer(node), rootContainerNodeTypes);
+
+                var boundary = (isBefore ? getBoundaryBeforeNode : getBoundaryAfterNode)(node);
+                (isStart ? setRangeStart : setRangeEnd)(this, boundary.node, boundary.offset);
+            };
+        }
+
+        function setRangeStart(range, node, offset) {
+            var ec = range.endContainer, eo = range.endOffset;
+            if (node !== range.startContainer || offset !== this.startOffset) {
+                // Check the root containers of the range and the new boundary, and also check whether the new boundary
+                // is after the current end. In either case, collapse the range to the new position
+                if (getRootContainer(node) != getRootContainer(ec) || dom.comparePoints(node, offset, ec, eo) == 1) {
+                    ec = node;
+                    eo = offset;
+                }
+                boundaryUpdater(range, node, offset, ec, eo);
+            }
+        }
+
+        function setRangeEnd(range, node, offset) {
+            var sc = range.startContainer, so = range.startOffset;
+            if (node !== range.endContainer || offset !== this.endOffset) {
+                // Check the root containers of the range and the new boundary, and also check whether the new boundary
+                // is after the current end. In either case, collapse the range to the new position
+                if (getRootContainer(node) != getRootContainer(sc) || dom.comparePoints(node, offset, sc, so) == -1) {
+                    sc = node;
+                    so = offset;
+                }
+                boundaryUpdater(range, sc, so, node, offset);
+            }
+        }
+
+        function setRangeStartAndEnd(range, node, offset) {
+            if (node !== range.startContainer || offset !== this.startOffset || node !== range.endContainer || offset !== this.endOffset) {
+                boundaryUpdater(range, node, offset, node, offset);
+            }
+        }
+
+        constructor.prototype = new RangePrototype();
+
+        api.util.extend(constructor.prototype, {
+            setStart: function(node, offset) {
+                assertNotDetached(this);
+                assertNoDocTypeNotationEntityAncestor(node, true);
+                assertValidOffset(node, offset);
+
+                setRangeStart(this, node, offset);
+            },
+
+            setEnd: function(node, offset) {
+                assertNotDetached(this);
+                assertNoDocTypeNotationEntityAncestor(node, true);
+                assertValidOffset(node, offset);
+
+                setRangeEnd(this, node, offset);
+            },
+
+            setStartBefore: createBeforeAfterNodeSetter(true, true),
+            setStartAfter: createBeforeAfterNodeSetter(false, true),
+            setEndBefore: createBeforeAfterNodeSetter(true, false),
+            setEndAfter: createBeforeAfterNodeSetter(false, false),
+
+            collapse: function(isStart) {
+                assertRangeValid(this);
+                if (isStart) {
+                    boundaryUpdater(this, this.startContainer, this.startOffset, this.startContainer, this.startOffset);
+                } else {
+                    boundaryUpdater(this, this.endContainer, this.endOffset, this.endContainer, this.endOffset);
+                }
+            },
+
+            selectNodeContents: function(node) {
+                // This doesn't seem well specified: the spec talks only about selecting the node's contents, which
+                // could be taken to mean only its children. However, browsers implement this the same as selectNode for
+                // text nodes, so I shall do likewise
+                assertNotDetached(this);
+                assertNoDocTypeNotationEntityAncestor(node, true);
+
+                boundaryUpdater(this, node, 0, node, dom.getNodeLength(node));
+            },
+
+            selectNode: function(node) {
+                assertNotDetached(this);
+                assertNoDocTypeNotationEntityAncestor(node, false);
+                assertValidNodeType(node, beforeAfterNodeTypes);
+
+                var start = getBoundaryBeforeNode(node), end = getBoundaryAfterNode(node);
+                boundaryUpdater(this, start.node, start.offset, end.node, end.offset);
+            },
+
+            extractContents: createRangeContentRemover(extractSubtree, boundaryUpdater),
+
+            deleteContents: createRangeContentRemover(deleteSubtree, boundaryUpdater),
+
+            canSurroundContents: function() {
+                assertRangeValid(this);
+                assertNodeNotReadOnly(this.startContainer);
+                assertNodeNotReadOnly(this.endContainer);
+
+                // Check if the contents can be surrounded. Specifically, this means whether the range partially selects
+                // no non-text nodes.
+                var iterator = new RangeIterator(this, true);
+                var boundariesInvalid = (iterator._first && (isNonTextPartiallySelected(iterator._first, this)) ||
+                        (iterator._last && isNonTextPartiallySelected(iterator._last, this)));
+                iterator.detach();
+                return !boundariesInvalid;
+            },
+
+            detach: function() {
+                detacher(this);
+            },
+
+            splitBoundaries: function() {
+                assertRangeValid(this);
+
+
+                var sc = this.startContainer, so = this.startOffset, ec = this.endContainer, eo = this.endOffset;
+                var startEndSame = (sc === ec);
+
+                if (dom.isCharacterDataNode(ec) && eo > 0 && eo < ec.length) {
+                    dom.splitDataNode(ec, eo);
+
+                }
+
+                if (dom.isCharacterDataNode(sc) && so > 0 && so < sc.length) {
+
+                    sc = dom.splitDataNode(sc, so);
+                    if (startEndSame) {
+                        eo -= so;
+                        ec = sc;
+                    } else if (ec == sc.parentNode && eo >= dom.getNodeIndex(sc)) {
+                        eo++;
+                    }
+                    so = 0;
+
+                }
+                boundaryUpdater(this, sc, so, ec, eo);
+            },
+
+            normalizeBoundaries: function() {
+                assertRangeValid(this);
+
+                var sc = this.startContainer, so = this.startOffset, ec = this.endContainer, eo = this.endOffset;
+
+                var mergeForward = function(node) {
+                    var sibling = node.nextSibling;
+                    if (sibling && sibling.nodeType == node.nodeType) {
+                        ec = node;
+                        eo = node.length;
+                        node.appendData(sibling.data);
+                        sibling.parentNode.removeChild(sibling);
+                    }
+                };
+
+                var mergeBackward = function(node) {
+                    var sibling = node.previousSibling;
+                    if (sibling && sibling.nodeType == node.nodeType) {
+                        sc = node;
+                        var nodeLength = node.length;
+                        so = sibling.length;
+                        node.insertData(0, sibling.data);
+                        sibling.parentNode.removeChild(sibling);
+                        if (sc == ec) {
+                            eo += so;
+                            ec = sc;
+                        } else if (ec == node.parentNode) {
+                            var nodeIndex = dom.getNodeIndex(node);
+                            if (eo == nodeIndex) {
+                                ec = node;
+                                eo = nodeLength;
+                            } else if (eo > nodeIndex) {
+                                eo--;
+                            }
+                        }
+                    }
+                };
+
+                var normalizeStart = true;
+
+                if (dom.isCharacterDataNode(ec)) {
+                    if (ec.length == eo) {
+                        mergeForward(ec);
+                    }
+                } else {
+                    if (eo > 0) {
+                        var endNode = ec.childNodes[eo - 1];
+                        if (endNode && dom.isCharacterDataNode(endNode)) {
+                            mergeForward(endNode);
+                        }
+                    }
+                    normalizeStart = !this.collapsed;
+                }
+
+                if (normalizeStart) {
+                    if (dom.isCharacterDataNode(sc)) {
+                        if (so == 0) {
+                            mergeBackward(sc);
+                        }
+                    } else {
+                        if (so < sc.childNodes.length) {
+                            var startNode = sc.childNodes[so];
+                            if (startNode && dom.isCharacterDataNode(startNode)) {
+                                mergeBackward(startNode);
+                            }
+                        }
+                    }
+                } else {
+                    sc = ec;
+                    so = eo;
+                }
+
+                boundaryUpdater(this, sc, so, ec, eo);
+            },
+
+            collapseToPoint: function(node, offset) {
+                assertNotDetached(this);
+
+                assertNoDocTypeNotationEntityAncestor(node, true);
+                assertValidOffset(node, offset);
+
+                setRangeStartAndEnd(this, node, offset);
+            }
+        });
+
+        copyComparisonConstants(constructor);
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    // Updates commonAncestorContainer and collapsed after boundary change
+    function updateCollapsedAndCommonAncestor(range) {
+        range.collapsed = (range.startContainer === range.endContainer && range.startOffset === range.endOffset);
+        range.commonAncestorContainer = range.collapsed ?
+            range.startContainer : dom.getCommonAncestor(range.startContainer, range.endContainer);
+    }
+
+    function updateBoundaries(range, startContainer, startOffset, endContainer, endOffset) {
+        var startMoved = (range.startContainer !== startContainer || range.startOffset !== startOffset);
+        var endMoved = (range.endContainer !== endContainer || range.endOffset !== endOffset);
+
+        range.startContainer = startContainer;
+        range.startOffset = startOffset;
+        range.endContainer = endContainer;
+        range.endOffset = endOffset;
+
+        updateCollapsedAndCommonAncestor(range);
+        dispatchEvent(range, "boundarychange", {startMoved: startMoved, endMoved: endMoved});
+    }
+
+    function detach(range) {
+        assertNotDetached(range);
+        range.startContainer = range.startOffset = range.endContainer = range.endOffset = null;
+        range.collapsed = range.commonAncestorContainer = null;
+        dispatchEvent(range, "detach", null);
+        range._listeners = null;
+    }
+
+    /**
+     * @constructor
+     */
+    function Range(doc) {
+        this.startContainer = doc;
+        this.startOffset = 0;
+        this.endContainer = doc;
+        this.endOffset = 0;
+        this._listeners = {
+            boundarychange: [],
+            detach: []
+        };
+        updateCollapsedAndCommonAncestor(this);
+    }
+
+    createPrototypeRange(Range, updateBoundaries, detach);
+
+    api.rangePrototype = RangePrototype.prototype;
+
+    Range.rangeProperties = rangeProperties;
+    Range.RangeIterator = RangeIterator;
+    Range.copyComparisonConstants = copyComparisonConstants;
+    Range.createPrototypeRange = createPrototypeRange;
+    Range.inspect = inspect;
+    Range.getRangeDocument = getRangeDocument;
+    Range.rangesEqual = function(r1, r2) {
+        return r1.startContainer === r2.startContainer &&
+               r1.startOffset === r2.startOffset &&
+               r1.endContainer === r2.endContainer &&
+               r1.endOffset === r2.endOffset;
+    };
+
+    api.DomRange = Range;
+    api.RangeException = RangeException;
+});rangy.createModule("WrappedRange", function(api, module) {
+    api.requireModules( ["DomUtil", "DomRange"] );
+
+    /**
+     * @constructor
+     */
+    var WrappedRange;
+    var dom = api.dom;
+    var DomPosition = dom.DomPosition;
+    var DomRange = api.DomRange;
+
+
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    /*
+    This is a workaround for a bug where IE returns the wrong container element from the TextRange's parentElement()
+    method. For example, in the following (where pipes denote the selection boundaries):
+
+    <ul id="ul"><li id="a">| a </li><li id="b"> b |</li></ul>
+
+    var range = document.selection.createRange();
+    alert(range.parentElement().id); // Should alert "ul" but alerts "b"
+
+    This method returns the common ancestor node of the following:
+    - the parentElement() of the textRange
+    - the parentElement() of the textRange after calling collapse(true)
+    - the parentElement() of the textRange after calling collapse(false)
+     */
+    function getTextRangeContainerElement(textRange) {
+        var parentEl = textRange.parentElement();
+
+        var range = textRange.duplicate();
+        range.collapse(true);
+        var startEl = range.parentElement();
+        range = textRange.duplicate();
+        range.collapse(false);
+        var endEl = range.parentElement();
+        var startEndContainer = (startEl == endEl) ? startEl : dom.getCommonAncestor(startEl, endEl);
+
+        return startEndContainer == parentEl ? startEndContainer : dom.getCommonAncestor(parentEl, startEndContainer);
+    }
+
+    function textRangeIsCollapsed(textRange) {
+        return textRange.compareEndPoints("StartToEnd", textRange) == 0;
+    }
+
+    // Gets the boundary of a TextRange expressed as a node and an offset within that node. This function started out as
+    // an improved version of code found in Tim Cameron Ryan's IERange (http://code.google.com/p/ierange/) but has
+    // grown, fixing problems with line breaks in preformatted text, adding workaround for IE TextRange bugs, handling
+    // for inputs and images, plus optimizations.
+    function getTextRangeBoundaryPosition(textRange, wholeRangeContainerElement, isStart, isCollapsed) {
+        var workingRange = textRange.duplicate();
+
+        workingRange.collapse(isStart);
+        var containerElement = workingRange.parentElement();
+
+        // Sometimes collapsing a TextRange that's at the start of a text node can move it into the previous node, so
+        // check for that
+        // TODO: Find out when. Workaround for wholeRangeContainerElement may break this
+        if (!dom.isAncestorOf(wholeRangeContainerElement, containerElement, true)) {
+            containerElement = wholeRangeContainerElement;
+
+        }
+
+
+
+        // Deal with nodes that cannot "contain rich HTML markup". In practice, this means form inputs, images and
+        // similar. See http://msdn.microsoft.com/en-us/library/aa703950%28VS.85%29.aspx
+        if (!containerElement.canHaveHTML) {
+            return new DomPosition(containerElement.parentNode, dom.getNodeIndex(containerElement));
+        }
+
+        var workingNode = dom.getDocument(containerElement).createElement("span");
+        var comparison, workingComparisonType = isStart ? "StartToStart" : "StartToEnd";
+        var previousNode, nextNode, boundaryPosition, boundaryNode;
+
+        // Move the working range through the container's children, starting at the end and working backwards, until the
+        // working range reaches or goes past the boundary we're interested in
+        do {
+            containerElement.insertBefore(workingNode, workingNode.previousSibling);
+            workingRange.moveToElementText(workingNode);
+        } while ( (comparison = workingRange.compareEndPoints(workingComparisonType, textRange)) > 0 &&
+                workingNode.previousSibling);
+
+        // We've now reached or gone past the boundary of the text range we're interested in
+        // so have identified the node we want
+        boundaryNode = workingNode.nextSibling;
+
+        if (comparison == -1 && boundaryNode && dom.isCharacterDataNode(boundaryNode)) {
+            // This is a character data node (text, comment, cdata). The working range is collapsed at the start of the
+            // node containing the text range's boundary, so we move the end of the working range to the boundary point
+            // and measure the length of its text to get the boundary's offset within the node.
+            workingRange.setEndPoint(isStart ? "EndToStart" : "EndToEnd", textRange);
+
+
+            var offset;
+
+            if (/[\r\n]/.test(boundaryNode.data)) {
+                /*
+                For the particular case of a boundary within a text node containing line breaks (within a <pre> element,
+                for example), we need a slightly complicated approach to get the boundary's offset in IE. The facts:
+
+                - Each line break is represented as \r in the text node's data/nodeValue properties
+                - Each line break is represented as \r\n in the TextRange's 'text' property
+                - The 'text' property of the TextRange does not contain trailing line breaks
+
+                To get round the problem presented by the final fact above, we can use the fact that TextRange's
+                moveStart() and moveEnd() methods return the actual number of characters moved, which is not necessarily
+                the same as the number of characters it was instructed to move. The simplest approach is to use this to
+                store the characters moved when moving both the start and end of the range to the start of the document
+                body and subtracting the start offset from the end offset (the "move-negative-gazillion" method).
+                However, this is extremely slow when the document is large and the range is near the end of it. Clearly
+                doing the mirror image (i.e. moving the range boundaries to the end of the document) has the same
+                problem.
+
+                Another approach that works is to use moveStart() to move the start boundary of the range up to the end
+                boundary one character at a time and incrementing a counter with the value returned by the moveStart()
+                call. However, the check for whether the start boundary has reached the end boundary is expensive, so
+                this method is slow (although unlike "move-negative-gazillion" is largely unaffected by the location of
+                the range within the document).
+
+                The method below is a hybrid of the two methods above. It uses the fact that a string containing the
+                TextRange's 'text' property with each \r\n converted to a single \r character cannot be longer than the
+                text of the TextRange, so the start of the range is moved that length initially and then a character at
+                a time to make up for any trailing line breaks not contained in the 'text' property. This has good
+                performance in most situations compared to the previous two methods.
+                */
+                var tempRange = workingRange.duplicate();
+                var rangeLength = tempRange.text.replace(/\r\n/g, "\r").length;
+
+                offset = tempRange.moveStart("character", rangeLength);
+                while ( (comparison = tempRange.compareEndPoints("StartToEnd", tempRange)) == -1) {
+                    offset++;
+                    tempRange.moveStart("character", 1);
+                }
+            } else {
+                offset = workingRange.text.length;
+            }
+            boundaryPosition = new DomPosition(boundaryNode, offset);
+        } else {
+
+
+            // If the boundary immediately follows a character data node and this is the end boundary, we should favour
+            // a position within that, and likewise for a start boundary preceding a character data node
+            previousNode = (isCollapsed || !isStart) && workingNode.previousSibling;
+            nextNode = (isCollapsed || isStart) && workingNode.nextSibling;
+
+
+
+            if (nextNode && dom.isCharacterDataNode(nextNode)) {
+                boundaryPosition = new DomPosition(nextNode, 0);
+            } else if (previousNode && dom.isCharacterDataNode(previousNode)) {
+                boundaryPosition = new DomPosition(previousNode, previousNode.length);
+            } else {
+                boundaryPosition = new DomPosition(containerElement, dom.getNodeIndex(workingNode));
+            }
+        }
+
+        // Clean up
+        workingNode.parentNode.removeChild(workingNode);
+
+        return boundaryPosition;
+    }
+
+    // Returns a TextRange representing the boundary of a TextRange expressed as a node and an offset within that node.
+    // This function started out as an optimized version of code found in Tim Cameron Ryan's IERange
+    // (http://code.google.com/p/ierange/)
+    function createBoundaryTextRange(boundaryPosition, isStart) {
+        var boundaryNode, boundaryParent, boundaryOffset = boundaryPosition.offset;
+        var doc = dom.getDocument(boundaryPosition.node);
+        var workingNode, childNodes, workingRange = doc.body.createTextRange();
+        var nodeIsDataNode = dom.isCharacterDataNode(boundaryPosition.node);
+
+        if (nodeIsDataNode) {
+            boundaryNode = boundaryPosition.node;
+            boundaryParent = boundaryNode.parentNode;
+        } else {
+            childNodes = boundaryPosition.node.childNodes;
+            boundaryNode = (boundaryOffset < childNodes.length) ? childNodes[boundaryOffset] : null;
+            boundaryParent = boundaryPosition.node;
+        }
+
+        // Position the range immediately before the node containing the boundary
+        workingNode = doc.createElement("span");
+
+        // Making the working element non-empty element persuades IE to consider the TextRange boundary to be within the
+        // element rather than immediately before or after it, which is what we want
+        workingNode.innerHTML = "&#feff;";
+
+        // insertBefore is supposed to work like appendChild if the second parameter is null. However, a bug report
+        // for IERange suggests that it can crash the browser: http://code.google.com/p/ierange/issues/detail?id=12
+        if (boundaryNode) {
+            boundaryParent.insertBefore(workingNode, boundaryNode);
+        } else {
+            boundaryParent.appendChild(workingNode);
+        }
+
+        workingRange.moveToElementText(workingNode);
+        workingRange.collapse(!isStart);
+
+        // Clean up
+        boundaryParent.removeChild(workingNode);
+
+        // Move the working range to the text offset, if required
+        if (nodeIsDataNode) {
+            workingRange[isStart ? "moveStart" : "moveEnd"]("character", boundaryOffset);
+        }
+
+        return workingRange;
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    if (api.features.implementsDomRange && (!api.features.implementsTextRange || !api.config.preferTextRange)) {
+        // This is a wrapper around the browser's native DOM Range. It has two aims:
+        // - Provide workarounds for specific browser bugs
+        // - provide convenient extensions, which are inherited from Rangy's DomRange
+
+        (function() {
+            var rangeProto;
+            var rangeProperties = DomRange.rangeProperties;
+            var canSetRangeStartAfterEnd;
+
+            function updateRangeProperties(range) {
+                var i = rangeProperties.length, prop;
+                while (i--) {
+                    prop = rangeProperties[i];
+                    range[prop] = range.nativeRange[prop];
+                }
+            }
+
+            function updateNativeRange(range, startContainer, startOffset, endContainer,endOffset) {
+                var startMoved = (range.startContainer !== startContainer || range.startOffset != startOffset);
+                var endMoved = (range.endContainer !== endContainer || range.endOffset != endOffset);
+
+                // Always set both boundaries for the benefit of IE9 (see issue 35)
+                if (startMoved || endMoved) {
+                    range.setEnd(endContainer, endOffset);
+                    range.setStart(startContainer, startOffset);
+                }
+            }
+
+            function detach(range) {
+                range.nativeRange.detach();
+                range.detached = true;
+                var i = rangeProperties.length, prop;
+                while (i--) {
+                    prop = rangeProperties[i];
+                    range[prop] = null;
+                }
+            }
+
+            var createBeforeAfterNodeSetter;
+
+            WrappedRange = function(range) {
+                if (!range) {
+                    throw new Error("Range must be specified");
+                }
+                this.nativeRange = range;
+                updateRangeProperties(this);
+            };
+
+            DomRange.createPrototypeRange(WrappedRange, updateNativeRange, detach);
+
+            rangeProto = WrappedRange.prototype;
+
+            rangeProto.selectNode = function(node) {
+                this.nativeRange.selectNode(node);
+                updateRangeProperties(this);
+            };
+
+            rangeProto.deleteContents = function() {
+                this.nativeRange.deleteContents();
+                updateRangeProperties(this);
+            };
+
+            rangeProto.extractContents = function() {
+                var frag = this.nativeRange.extractContents();
+                updateRangeProperties(this);
+                return frag;
+            };
+
+            rangeProto.cloneContents = function() {
+                return this.nativeRange.cloneContents();
+            };
+
+            // TODO: Until I can find a way to programmatically trigger the Firefox bug (apparently long-standing, still
+            // present in 3.6.8) that throws "Index or size is negative or greater than the allowed amount" for
+            // insertNode in some circumstances, all browsers will have to use the Rangy's own implementation of
+            // insertNode, which works but is almost certainly slower than the native implementation.
+/*
+            rangeProto.insertNode = function(node) {
+                this.nativeRange.insertNode(node);
+                updateRangeProperties(this);
+            };
+*/
+
+            rangeProto.surroundContents = function(node) {
+                this.nativeRange.surroundContents(node);
+                updateRangeProperties(this);
+            };
+
+            rangeProto.collapse = function(isStart) {
+                this.nativeRange.collapse(isStart);
+                updateRangeProperties(this);
+            };
+
+            rangeProto.cloneRange = function() {
+                return new WrappedRange(this.nativeRange.cloneRange());
+            };
+
+            rangeProto.refresh = function() {
+                updateRangeProperties(this);
+            };
+
+            rangeProto.toString = function() {
+                return this.nativeRange.toString();
+            };
+
+            // Create test range and node for feature detection
+
+            var testTextNode = document.createTextNode("test");
+            dom.getBody(document).appendChild(testTextNode);
+            var range = document.createRange();
+
+            /*--------------------------------------------------------------------------------------------------------*/
+
+            // Test for Firefox 2 bug that prevents moving the start of a Range to a point after its current end and
+            // correct for it
+
+            range.setStart(testTextNode, 0);
+            range.setEnd(testTextNode, 0);
+
+            try {
+                range.setStart(testTextNode, 1);
+                canSetRangeStartAfterEnd = true;
+
+                rangeProto.setStart = function(node, offset) {
+                    this.nativeRange.setStart(node, offset);
+                    updateRangeProperties(this);
+                };
+
+                rangeProto.setEnd = function(node, offset) {
+                    this.nativeRange.setEnd(node, offset);
+                    updateRangeProperties(this);
+                };
+
+                createBeforeAfterNodeSetter = function(name) {
+                    return function(node) {
+                        this.nativeRange[name](node);
+                        updateRangeProperties(this);
+                    };
+                };
+
+            } catch(ex) {
+
+
+                canSetRangeStartAfterEnd = false;
+
+                rangeProto.setStart = function(node, offset) {
+                    try {
+                        this.nativeRange.setStart(node, offset);
+                    } catch (ex) {
+                        this.nativeRange.setEnd(node, offset);
+                        this.nativeRange.setStart(node, offset);
+                    }
+                    updateRangeProperties(this);
+                };
+
+                rangeProto.setEnd = function(node, offset) {
+                    try {
+                        this.nativeRange.setEnd(node, offset);
+                    } catch (ex) {
+                        this.nativeRange.setStart(node, offset);
+                        this.nativeRange.setEnd(node, offset);
+                    }
+                    updateRangeProperties(this);
+                };
+
+                createBeforeAfterNodeSetter = function(name, oppositeName) {
+                    return function(node) {
+                        try {
+                            this.nativeRange[name](node);
+                        } catch (ex) {
+                            this.nativeRange[oppositeName](node);
+                            this.nativeRange[name](node);
+                        }
+                        updateRangeProperties(this);
+                    };
+                };
+            }
+
+            rangeProto.setStartBefore = createBeforeAfterNodeSetter("setStartBefore", "setEndBefore");
+            rangeProto.setStartAfter = createBeforeAfterNodeSetter("setStartAfter", "setEndAfter");
+            rangeProto.setEndBefore = createBeforeAfterNodeSetter("setEndBefore", "setStartBefore");
+            rangeProto.setEndAfter = createBeforeAfterNodeSetter("setEndAfter", "setStartAfter");
+
+            /*--------------------------------------------------------------------------------------------------------*/
+
+            // Test for and correct Firefox 2 behaviour with selectNodeContents on text nodes: it collapses the range to
+            // the 0th character of the text node
+            range.selectNodeContents(testTextNode);
+            if (range.startContainer == testTextNode && range.endContainer == testTextNode &&
+                    range.startOffset == 0 && range.endOffset == testTextNode.length) {
+                rangeProto.selectNodeContents = function(node) {
+                    this.nativeRange.selectNodeContents(node);
+                    updateRangeProperties(this);
+                };
+            } else {
+                rangeProto.selectNodeContents = function(node) {
+                    this.setStart(node, 0);
+                    this.setEnd(node, DomRange.getEndOffset(node));
+                };
+            }
+
+            /*--------------------------------------------------------------------------------------------------------*/
+
+            // Test for WebKit bug that has the beahviour of compareBoundaryPoints round the wrong way for constants
+            // START_TO_END and END_TO_START: https://bugs.webkit.org/show_bug.cgi?id=20738
+
+            range.selectNodeContents(testTextNode);
+            range.setEnd(testTextNode, 3);
+
+            var range2 = document.createRange();
+            range2.selectNodeContents(testTextNode);
+            range2.setEnd(testTextNode, 4);
+            range2.setStart(testTextNode, 2);
+
+            if (range.compareBoundaryPoints(range.START_TO_END, range2) == -1 &
+                    range.compareBoundaryPoints(range.END_TO_START, range2) == 1) {
+                // This is the wrong way round, so correct for it
+
+
+                rangeProto.compareBoundaryPoints = function(type, range) {
+                    range = range.nativeRange || range;
+                    if (type == range.START_TO_END) {
+                        type = range.END_TO_START;
+                    } else if (type == range.END_TO_START) {
+                        type = range.START_TO_END;
+                    }
+                    return this.nativeRange.compareBoundaryPoints(type, range);
+                };
+            } else {
+                rangeProto.compareBoundaryPoints = function(type, range) {
+                    return this.nativeRange.compareBoundaryPoints(type, range.nativeRange || range);
+                };
+            }
+
+            /*--------------------------------------------------------------------------------------------------------*/
+
+            // Test for existence of createContextualFragment and delegate to it if it exists
+            if (api.util.isHostMethod(range, "createContextualFragment")) {
+                rangeProto.createContextualFragment = function(fragmentStr) {
+                    return this.nativeRange.createContextualFragment(fragmentStr);
+                };
+            }
+
+            /*--------------------------------------------------------------------------------------------------------*/
+
+            // Clean up
+            dom.getBody(document).removeChild(testTextNode);
+            range.detach();
+            range2.detach();
+        })();
+
+        api.createNativeRange = function(doc) {
+            doc = doc || document;
+            return doc.createRange();
+        };
+    } else if (api.features.implementsTextRange) {
+        // This is a wrapper around a TextRange, providing full DOM Range functionality using rangy's DomRange as a
+        // prototype
+
+        WrappedRange = function(textRange) {
+            this.textRange = textRange;
+            this.refresh();
+        };
+
+        WrappedRange.prototype = new DomRange(document);
+
+        WrappedRange.prototype.refresh = function() {
+            var start, end;
+
+            // TextRange's parentElement() method cannot be trusted. getTextRangeContainerElement() works around that.
+            var rangeContainerElement = getTextRangeContainerElement(this.textRange);
+
+            if (textRangeIsCollapsed(this.textRange)) {
+                end = start = getTextRangeBoundaryPosition(this.textRange, rangeContainerElement, true, true);
+            } else {
+
+                start = getTextRangeBoundaryPosition(this.textRange, rangeContainerElement, true, false);
+                end = getTextRangeBoundaryPosition(this.textRange, rangeContainerElement, false, false);
+            }
+
+            this.setStart(start.node, start.offset);
+            this.setEnd(end.node, end.offset);
+        };
+
+        DomRange.copyComparisonConstants(WrappedRange);
+
+        // Add WrappedRange as the Range property of the global object to allow expression like Range.END_TO_END to work
+        var globalObj = (function() { return this; })();
+        if (typeof globalObj.Range == "undefined") {
+            globalObj.Range = WrappedRange;
+        }
+
+        api.createNativeRange = function(doc) {
+            doc = doc || document;
+            return doc.body.createTextRange();
+        };
+    }
+
+    if (api.features.implementsTextRange) {
+        WrappedRange.rangeToTextRange = function(range) {
+            if (range.collapsed) {
+                var tr = createBoundaryTextRange(new DomPosition(range.startContainer, range.startOffset), true);
+
+
+
+                return tr;
+
+                //return createBoundaryTextRange(new DomPosition(range.startContainer, range.startOffset), true);
+            } else {
+                var startRange = createBoundaryTextRange(new DomPosition(range.startContainer, range.startOffset), true);
+                var endRange = createBoundaryTextRange(new DomPosition(range.endContainer, range.endOffset), false);
+                var textRange = dom.getDocument(range.startContainer).body.createTextRange();
+                textRange.setEndPoint("StartToStart", startRange);
+                textRange.setEndPoint("EndToEnd", endRange);
+                return textRange;
+            }
+        };
+    }
+
+    WrappedRange.prototype.getName = function() {
+        return "WrappedRange";
+    };
+
+    api.WrappedRange = WrappedRange;
+
+    api.createRange = function(doc) {
+        doc = doc || document;
+        return new WrappedRange(api.createNativeRange(doc));
+    };
+
+    api.createRangyRange = function(doc) {
+        doc = doc || document;
+        return new DomRange(doc);
+    };
+
+    api.createIframeRange = function(iframeEl) {
+        return api.createRange(dom.getIframeDocument(iframeEl));
+    };
+
+    api.createIframeRangyRange = function(iframeEl) {
+        return api.createRangyRange(dom.getIframeDocument(iframeEl));
+    };
+
+    api.addCreateMissingNativeApiListener(function(win) {
+        var doc = win.document;
+        if (typeof doc.createRange == "undefined") {
+            doc.createRange = function() {
+                return api.createRange(this);
+            };
+        }
+        doc = win = null;
+    });
+});rangy.createModule("WrappedSelection", function(api, module) {
+    // This will create a selection object wrapper that follows the Selection object found in the WHATWG draft DOM Range
+    // spec (http://html5.org/specs/dom-range.html)
+
+    api.requireModules( ["DomUtil", "DomRange", "WrappedRange"] );
+
+    api.config.checkSelectionRanges = true;
+
+    var BOOLEAN = "boolean",
+        windowPropertyName = "_rangySelection",
+        dom = api.dom,
+        util = api.util,
+        DomRange = api.DomRange,
+        WrappedRange = api.WrappedRange,
+        DOMException = api.DOMException,
+        DomPosition = dom.DomPosition,
+        getSelection,
+        selectionIsCollapsed,
+        CONTROL = "Control";
+
+
+
+    function getWinSelection(winParam) {
+        return (winParam || window).getSelection();
+    }
+
+    function getDocSelection(winParam) {
+        return (winParam || window).document.selection;
+    }
+
+    // Test for the Range/TextRange and Selection features required
+    // Test for ability to retrieve selection
+    var implementsWinGetSelection = api.util.isHostMethod(window, "getSelection"),
+        implementsDocSelection = api.util.isHostObject(document, "selection");
+
+    var useDocumentSelection = implementsDocSelection && (!implementsWinGetSelection || api.config.preferTextRange);
+
+    if (useDocumentSelection) {
+        getSelection = getDocSelection;
+        api.isSelectionValid = function(winParam) {
+            var doc = (winParam || window).document, nativeSel = doc.selection;
+
+            // Check whether the selection TextRange is actually contained within the correct document
+            return (nativeSel.type != "None" || dom.getDocument(nativeSel.createRange().parentElement()) == doc);
+        };
+    } else if (implementsWinGetSelection) {
+        getSelection = getWinSelection;
+        api.isSelectionValid = function() {
+            return true;
+        };
+    } else {
+        module.fail("Neither document.selection or window.getSelection() detected.");
+    }
+
+    api.getNativeSelection = getSelection;
+
+    var testSelection = getSelection();
+    var testRange = api.createNativeRange(document);
+    var body = dom.getBody(document);
+
+    // Obtaining a range from a selection
+    var selectionHasAnchorAndFocus = util.areHostObjects(testSelection, ["anchorNode", "focusNode"] &&
+                                     util.areHostProperties(testSelection, ["anchorOffset", "focusOffset"]));
+    api.features.selectionHasAnchorAndFocus = selectionHasAnchorAndFocus;
+
+    // Test for existence of native selection extend() method
+    var selectionHasExtend = util.isHostMethod(testSelection, "extend");
+    api.features.selectionHasExtend = selectionHasExtend;
+
+    // Test if rangeCount exists
+    var selectionHasRangeCount = (typeof testSelection.rangeCount == "number");
+    api.features.selectionHasRangeCount = selectionHasRangeCount;
+
+    var selectionSupportsMultipleRanges = false;
+    var collapsedNonEditableSelectionsSupported = true;
+
+    if (util.areHostMethods(testSelection, ["addRange", "getRangeAt", "removeAllRanges"]) &&
+            typeof testSelection.rangeCount == "number" && api.features.implementsDomRange) {
+
+        (function() {
+            var iframe = document.createElement("iframe");
+            body.appendChild(iframe);
+
+            var iframeDoc = dom.getIframeDocument(iframe);
+            iframeDoc.open();
+            iframeDoc.write("<html><head></head><body>12</body></html>");
+            iframeDoc.close();
+
+            var sel = dom.getIframeWindow(iframe).getSelection();
+            var docEl = iframeDoc.documentElement;
+            var iframeBody = docEl.lastChild, textNode = iframeBody.firstChild;
+
+            // Test whether the native selection will allow a collapsed selection within a non-editable element
+            var r1 = iframeDoc.createRange();
+            r1.setStart(textNode, 1);
+            r1.collapse(true);
+            sel.addRange(r1);
+            collapsedNonEditableSelectionsSupported = (sel.rangeCount == 1);
+            sel.removeAllRanges();
+
+            // Test whether the native selection is capable of supporting multiple ranges
+            var r2 = r1.cloneRange();
+            r1.setStart(textNode, 0);
+            r2.setEnd(textNode, 2);
+            sel.addRange(r1);
+            sel.addRange(r2);
+
+            selectionSupportsMultipleRanges = (sel.rangeCount == 2);
+
+            // Clean up
+            r1.detach();
+            r2.detach();
+
+            body.removeChild(iframe);
+        })();
+    }
+
+    api.features.selectionSupportsMultipleRanges = selectionSupportsMultipleRanges;
+    api.features.collapsedNonEditableSelectionsSupported = collapsedNonEditableSelectionsSupported;
+
+    // ControlRanges
+    var implementsControlRange = false, testControlRange;
+
+    if (body && util.isHostMethod(body, "createControlRange")) {
+        testControlRange = body.createControlRange();
+        if (util.areHostProperties(testControlRange, ["item", "add"])) {
+            implementsControlRange = true;
+        }
+    }
+    api.features.implementsControlRange = implementsControlRange;
+
+    // Selection collapsedness
+    if (selectionHasAnchorAndFocus) {
+        selectionIsCollapsed = function(sel) {
+            return sel.anchorNode === sel.focusNode && sel.anchorOffset === sel.focusOffset;
+        };
+    } else {
+        selectionIsCollapsed = function(sel) {
+            return sel.rangeCount ? sel.getRangeAt(sel.rangeCount - 1).collapsed : false;
+        };
+    }
+
+    function updateAnchorAndFocusFromRange(sel, range, backwards) {
+        var anchorPrefix = backwards ? "end" : "start", focusPrefix = backwards ? "start" : "end";
+        sel.anchorNode = range[anchorPrefix + "Container"];
+        sel.anchorOffset = range[anchorPrefix + "Offset"];
+        sel.focusNode = range[focusPrefix + "Container"];
+        sel.focusOffset = range[focusPrefix + "Offset"];
+    }
+
+    function updateAnchorAndFocusFromNativeSelection(sel) {
+        var nativeSel = sel.nativeSelection;
+        sel.anchorNode = nativeSel.anchorNode;
+        sel.anchorOffset = nativeSel.anchorOffset;
+        sel.focusNode = nativeSel.focusNode;
+        sel.focusOffset = nativeSel.focusOffset;
+    }
+
+    function updateEmptySelection(sel) {
+        sel.anchorNode = sel.focusNode = null;
+        sel.anchorOffset = sel.focusOffset = 0;
+        sel.rangeCount = 0;
+        sel.isCollapsed = true;
+        sel._ranges.length = 0;
+    }
+
+    function getNativeRange(range) {
+        var nativeRange;
+        if (range instanceof DomRange) {
+            nativeRange = range._selectionNativeRange;
+            if (!nativeRange) {
+                nativeRange = api.createNativeRange(dom.getDocument(range.startContainer));
+                nativeRange.setEnd(range.endContainer, range.endOffset);
+                nativeRange.setStart(range.startContainer, range.startOffset);
+                range._selectionNativeRange = nativeRange;
+                range.attachListener("detach", function() {
+
+                    this._selectionNativeRange = null;
+                });
+            }
+        } else if (range instanceof WrappedRange) {
+            nativeRange = range.nativeRange;
+        } else if (api.features.implementsDomRange && (range instanceof dom.getWindow(range.startContainer).Range)) {
+            nativeRange = range;
+        }
+        return nativeRange;
+    }
+
+    function rangeContainsSingleElement(rangeNodes) {
+        if (!rangeNodes.length || rangeNodes[0].nodeType != 1) {
+            return false;
+        }
+        for (var i = 1, len = rangeNodes.length; i < len; ++i) {
+            if (!dom.isAncestorOf(rangeNodes[0], rangeNodes[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function getSingleElementFromRange(range) {
+        var nodes = range.getNodes();
+        if (!rangeContainsSingleElement(nodes)) {
+            throw new Error("getSingleElementFromRange: range " + range.inspect() + " did not consist of a single element");
+        }
+        return nodes[0];
+    }
+
+    function isTextRange(range) {
+        return !!range && typeof range.text != "undefined";
+    }
+
+    function updateFromTextRange(sel, range) {
+        // Create a Range from the selected TextRange
+        var wrappedRange = new WrappedRange(range);
+        sel._ranges = [wrappedRange];
+
+        updateAnchorAndFocusFromRange(sel, wrappedRange, false);
+        sel.rangeCount = 1;
+        sel.isCollapsed = wrappedRange.collapsed;
+    }
+
+    function updateControlSelection(sel) {
+        // Update the wrapped selection based on what's now in the native selection
+        sel._ranges.length = 0;
+        if (sel.docSelection.type == "None") {
+            updateEmptySelection(sel);
+        } else {
+            var controlRange = sel.docSelection.createRange();
+            if (isTextRange(controlRange)) {
+                // This case (where the selection type is "Control" and calling createRange() on the selection returns
+                // a TextRange) can happen in IE 9. It happens, for example, when all elements in the selected
+                // ControlRange have been removed from the ControlRange and removed from the document.
+                updateFromTextRange(sel, controlRange);
+            } else {
+                sel.rangeCount = controlRange.length;
+                var range, doc = dom.getDocument(controlRange.item(0));
+                for (var i = 0; i < sel.rangeCount; ++i) {
+                    range = api.createRange(doc);
+                    range.selectNode(controlRange.item(i));
+                    sel._ranges.push(range);
+                }
+                sel.isCollapsed = sel.rangeCount == 1 && sel._ranges[0].collapsed;
+                updateAnchorAndFocusFromRange(sel, sel._ranges[sel.rangeCount - 1], false);
+            }
+        }
+    }
+
+    function addRangeToControlSelection(sel, range) {
+        var controlRange = sel.docSelection.createRange();
+        var rangeElement = getSingleElementFromRange(range);
+
+        // Create a new ControlRange containing all the elements in the selected ControlRange plus the element
+        // contained by the supplied range
+        var doc = dom.getDocument(controlRange.item(0));
+        var newControlRange = dom.getBody(doc).createControlRange();
+        for (var i = 0, len = controlRange.length; i < len; ++i) {
+            newControlRange.add(controlRange.item(i));
+        }
+        try {
+            newControlRange.add(rangeElement);
+        } catch (ex) {
+            throw new Error("addRange(): Element within the specified Range could not be added to control selection (does it have layout?)");
+        }
+        newControlRange.select();
+
+        // Update the wrapped selection based on what's now in the native selection
+        updateControlSelection(sel);
+    }
+
+    var getSelectionRangeAt;
+
+    if (util.isHostMethod(testSelection,  "getRangeAt")) {
+        getSelectionRangeAt = function(sel, index) {
+            try {
+                return sel.getRangeAt(index);
+            } catch(ex) {
+                return null;
+            }
+        };
+    } else if (selectionHasAnchorAndFocus) {
+        getSelectionRangeAt = function(sel) {
+            var doc = dom.getDocument(sel.anchorNode);
+            var range = api.createRange(doc);
+            range.setStart(sel.anchorNode, sel.anchorOffset);
+            range.setEnd(sel.focusNode, sel.focusOffset);
+
+            // Handle the case when the selection was selected backwards (from the end to the start in the
+            // document)
+            if (range.collapsed !== this.isCollapsed) {
+                range.setStart(sel.focusNode, sel.focusOffset);
+                range.setEnd(sel.anchorNode, sel.anchorOffset);
+            }
+
+            return range;
+        };
+    }
+
+    /**
+     * @constructor
+     */
+    function WrappedSelection(selection, docSelection, win) {
+        this.nativeSelection = selection;
+        this.docSelection = docSelection;
+        this._ranges = [];
+        this.win = win;
+        this.refresh();
+    }
+
+    api.getSelection = function(win) {
+        win = win || window;
+        var sel = win[windowPropertyName];
+        var nativeSel = getSelection(win), docSel = implementsDocSelection ? getDocSelection(win) : null;
+        if (sel) {
+            sel.nativeSelection = nativeSel;
+            sel.docSelection = docSel;
+            sel.refresh(win);
+        } else {
+            sel = new WrappedSelection(nativeSel, docSel, win);
+            win[windowPropertyName] = sel;
+        }
+        return sel;
+    };
+
+    api.getIframeSelection = function(iframeEl) {
+        return api.getSelection(dom.getIframeWindow(iframeEl));
+    };
+
+    var selProto = WrappedSelection.prototype;
+
+    function createControlSelection(sel, ranges) {
+        // Ensure that the selection becomes of type "Control"
+        var doc = dom.getDocument(ranges[0].startContainer);
+        var controlRange = dom.getBody(doc).createControlRange();
+        for (var i = 0, el; i < rangeCount; ++i) {
+            el = getSingleElementFromRange(ranges[i]);
+            try {
+                controlRange.add(el);
+            } catch (ex) {
+                throw new Error("setRanges(): Element within the one of the specified Ranges could not be added to control selection (does it have layout?)");
+            }
+        }
+        controlRange.select();
+
+        // Update the wrapped selection based on what's now in the native selection
+        updateControlSelection(sel);
+    }
+
+    // Selecting a range
+    if (!useDocumentSelection && selectionHasAnchorAndFocus && util.areHostMethods(testSelection, ["removeAllRanges", "addRange"])) {
+        selProto.removeAllRanges = function() {
+            this.nativeSelection.removeAllRanges();
+            updateEmptySelection(this);
+        };
+
+        var addRangeBackwards = function(sel, range) {
+            var doc = DomRange.getRangeDocument(range);
+            var endRange = api.createRange(doc);
+            endRange.collapseToPoint(range.endContainer, range.endOffset);
+            sel.nativeSelection.addRange(getNativeRange(endRange));
+            sel.nativeSelection.extend(range.startContainer, range.startOffset);
+            sel.refresh();
+        };
+
+        if (selectionHasRangeCount) {
+            selProto.addRange = function(range, backwards) {
+                if (implementsControlRange && implementsDocSelection && this.docSelection.type == CONTROL) {
+                    addRangeToControlSelection(this, range);
+                } else {
+                    if (backwards && selectionHasExtend) {
+                        addRangeBackwards(this, range);
+                    } else {
+                        var previousRangeCount;
+                        if (selectionSupportsMultipleRanges) {
+                            previousRangeCount = this.rangeCount;
+                        } else {
+                            this.removeAllRanges();
+                            previousRangeCount = 0;
+                        }
+                        this.nativeSelection.addRange(getNativeRange(range));
+
+                        // Check whether adding the range was successful
+                        this.rangeCount = this.nativeSelection.rangeCount;
+
+                        if (this.rangeCount == previousRangeCount + 1) {
+                            // The range was added successfully
+
+                            // Check whether the range that we added to the selection is reflected in the last range extracted from
+                            // the selection
+                            if (api.config.checkSelectionRanges) {
+                                var nativeRange = getSelectionRangeAt(this.nativeSelection, this.rangeCount - 1);
+                                if (nativeRange && !DomRange.rangesEqual(nativeRange, range)) {
+                                    // Happens in WebKit with, for example, a selection placed at the start of a text node
+                                    range = new WrappedRange(nativeRange);
+                                }
+                            }
+                            this._ranges[this.rangeCount - 1] = range;
+                            updateAnchorAndFocusFromRange(this, range, selectionIsBackwards(this.nativeSelection));
+                            this.isCollapsed = selectionIsCollapsed(this);
+                        } else {
+                            // The range was not added successfully. The simplest thing is to refresh
+                            this.refresh();
+                        }
+                    }
+                }
+            };
+        } else {
+            selProto.addRange = function(range, backwards) {
+                if (backwards && selectionHasExtend) {
+                    addRangeBackwards(this, range);
+                } else {
+                    this.nativeSelection.addRange(getNativeRange(range));
+                    this.refresh();
+                }
+            };
+        }
+
+        selProto.setRanges = function(ranges) {
+            if (implementsControlRange && ranges.length > 1) {
+                createControlSelection(this, ranges);
+            } else {
+                this.removeAllRanges();
+                for (var i = 0, len = ranges.length; i < len; ++i) {
+                    this.addRange(ranges[i]);
+                }
+            }
+        };
+    } else if (util.isHostMethod(testSelection, "empty") && util.isHostMethod(testRange, "select") &&
+               implementsControlRange && useDocumentSelection) {
+
+        selProto.removeAllRanges = function() {
+            // Added try/catch as fix for issue #21
+            try {
+                this.docSelection.empty();
+
+                // Check for empty() not working (issue #24)
+                if (this.docSelection.type != "None") {
+                    // Work around failure to empty a control selection by instead selecting a TextRange and then
+                    // calling empty()
+                    var doc;
+                    if (this.anchorNode) {
+                        doc = dom.getDocument(this.anchorNode);
+                    } else if (this.docSelection.type == CONTROL) {
+                        var controlRange = this.docSelection.createRange();
+                        if (controlRange.length) {
+                            doc = dom.getDocument(controlRange.item(0)).body.createTextRange();
+                        }
+                    }
+                    if (doc) {
+                        var textRange = doc.body.createTextRange();
+                        textRange.select();
+                        this.docSelection.empty();
+                    }
+                }
+            } catch(ex) {}
+            updateEmptySelection(this);
+        };
+
+        selProto.addRange = function(range) {
+            if (this.docSelection.type == CONTROL) {
+                addRangeToControlSelection(this, range);
+            } else {
+                WrappedRange.rangeToTextRange(range).select();
+                this._ranges[0] = range;
+                this.rangeCount = 1;
+                this.isCollapsed = this._ranges[0].collapsed;
+                updateAnchorAndFocusFromRange(this, range, false);
+            }
+        };
+
+        selProto.setRanges = function(ranges) {
+            this.removeAllRanges();
+            var rangeCount = ranges.length;
+            if (rangeCount > 1) {
+                createControlSelection(this, ranges);
+            } else if (rangeCount) {
+                this.addRange(ranges[0]);
+            }
+        };
+    } else {
+        module.fail("No means of selecting a Range or TextRange was found");
+        return false;
+    }
+
+    selProto.getRangeAt = function(index) {
+        if (index < 0 || index >= this.rangeCount) {
+            throw new DOMException("INDEX_SIZE_ERR");
+        } else {
+            return this._ranges[index];
+        }
+    };
+
+    var refreshSelection;
+
+    if (useDocumentSelection) {
+        refreshSelection = function(sel) {
+            var range;
+            if (api.isSelectionValid(sel.win)) {
+                range = sel.docSelection.createRange();
+            } else {
+                range = dom.getBody(sel.win.document).createTextRange();
+                range.collapse(true);
+            }
+
+
+            if (sel.docSelection.type == CONTROL) {
+                updateControlSelection(sel);
+            } else if (isTextRange(range)) {
+                updateFromTextRange(sel, range);
+            } else {
+                updateEmptySelection(sel);
+            }
+        };
+    } else if (util.isHostMethod(testSelection, "getRangeAt") && typeof testSelection.rangeCount == "number") {
+        refreshSelection = function(sel) {
+            if (implementsControlRange && implementsDocSelection && sel.docSelection.type == CONTROL) {
+                updateControlSelection(sel);
+            } else {
+                sel._ranges.length = sel.rangeCount = sel.nativeSelection.rangeCount;
+                if (sel.rangeCount) {
+                    for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                        sel._ranges[i] = new api.WrappedRange(sel.nativeSelection.getRangeAt(i));
+                    }
+                    updateAnchorAndFocusFromRange(sel, sel._ranges[sel.rangeCount - 1], selectionIsBackwards(sel.nativeSelection));
+                    sel.isCollapsed = selectionIsCollapsed(sel);
+                } else {
+                    updateEmptySelection(sel);
+                }
+            }
+        };
+    } else if (selectionHasAnchorAndFocus && typeof testSelection.isCollapsed == BOOLEAN && typeof testRange.collapsed == BOOLEAN && api.features.implementsDomRange) {
+        refreshSelection = function(sel) {
+            var range, nativeSel = sel.nativeSelection;
+            if (nativeSel.anchorNode) {
+                range = getSelectionRangeAt(nativeSel, 0);
+                sel._ranges = [range];
+                sel.rangeCount = 1;
+                updateAnchorAndFocusFromNativeSelection(sel);
+                sel.isCollapsed = selectionIsCollapsed(sel);
+            } else {
+                updateEmptySelection(sel);
+            }
+        };
+    } else {
+        module.fail("No means of obtaining a Range or TextRange from the user's selection was found");
+        return false;
+    }
+
+    selProto.refresh = function(checkForChanges) {
+        var oldRanges = checkForChanges ? this._ranges.slice(0) : null;
+        refreshSelection(this);
+        if (checkForChanges) {
+            var i = oldRanges.length;
+            if (i != this._ranges.length) {
+                return false;
+            }
+            while (i--) {
+                if (!DomRange.rangesEqual(oldRanges[i], this._ranges[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
+    // Removal of a single range
+    var removeRangeManually = function(sel, range) {
+        var ranges = sel.getAllRanges(), removed = false;
+        sel.removeAllRanges();
+        for (var i = 0, len = ranges.length; i < len; ++i) {
+            if (removed || range !== ranges[i]) {
+                sel.addRange(ranges[i]);
+            } else {
+                // According to the draft WHATWG Range spec, the same range may be added to the selection multiple
+                // times. removeRange should only remove the first instance, so the following ensures only the first
+                // instance is removed
+                removed = true;
+            }
+        }
+        if (!sel.rangeCount) {
+            updateEmptySelection(sel);
+        }
+    };
+
+    if (implementsControlRange) {
+        selProto.removeRange = function(range) {
+            if (this.docSelection.type == CONTROL) {
+                var controlRange = this.docSelection.createRange();
+                var rangeElement = getSingleElementFromRange(range);
+
+                // Create a new ControlRange containing all the elements in the selected ControlRange minus the
+                // element contained by the supplied range
+                var doc = dom.getDocument(controlRange.item(0));
+                var newControlRange = dom.getBody(doc).createControlRange();
+                var el, removed = false;
+                for (var i = 0, len = controlRange.length; i < len; ++i) {
+                    el = controlRange.item(i);
+                    if (el !== rangeElement || removed) {
+                        newControlRange.add(controlRange.item(i));
+                    } else {
+                        removed = true;
+                    }
+                }
+                newControlRange.select();
+
+                // Update the wrapped selection based on what's now in the native selection
+                updateControlSelection(this);
+            } else {
+                removeRangeManually(this, range);
+            }
+        };
+    } else {
+        selProto.removeRange = function(range) {
+            removeRangeManually(this, range);
+        };
+    }
+
+    // Detecting if a selection is backwards
+    var selectionIsBackwards;
+    if (!useDocumentSelection && selectionHasAnchorAndFocus && api.features.implementsDomRange) {
+        selectionIsBackwards = function(sel) {
+            var backwards = false;
+            if (sel.anchorNode) {
+                backwards = (dom.comparePoints(sel.anchorNode, sel.anchorOffset, sel.focusNode, sel.focusOffset) == 1);
+            }
+            return backwards;
+        };
+
+        selProto.isBackwards = function() {
+            return selectionIsBackwards(this);
+        };
+    } else {
+        selectionIsBackwards = selProto.isBackwards = function() {
+            return false;
+        };
+    }
+
+    // Selection text
+    // This is conformant to the new WHATWG DOM Range draft spec but differs from WebKit and Mozilla's implementation
+    selProto.toString = function() {
+
+        var rangeTexts = [];
+        for (var i = 0, len = this.rangeCount; i < len; ++i) {
+            rangeTexts[i] = "" + this._ranges[i];
+        }
+        return rangeTexts.join("");
+    };
+
+    function assertNodeInSameDocument(sel, node) {
+        if (sel.anchorNode && (dom.getDocument(sel.anchorNode) !== dom.getDocument(node))) {
+            throw new DOMException("WRONG_DOCUMENT_ERR");
+        }
+    }
+
+    // No current browsers conform fully to the HTML 5 draft spec for this method, so Rangy's own method is always used
+    selProto.collapse = function(node, offset) {
+        assertNodeInSameDocument(this, node);
+        var range = api.createRange(dom.getDocument(node));
+        range.collapseToPoint(node, offset);
+        this.removeAllRanges();
+        this.addRange(range);
+        this.isCollapsed = true;
+    };
+
+    selProto.collapseToStart = function() {
+        if (this.rangeCount) {
+            var range = this._ranges[0];
+            this.collapse(range.startContainer, range.startOffset);
+        } else {
+            throw new DOMException("INVALID_STATE_ERR");
+        }
+    };
+
+    selProto.collapseToEnd = function() {
+        if (this.rangeCount) {
+            var range = this._ranges[this.rangeCount - 1];
+            this.collapse(range.endContainer, range.endOffset);
+        } else {
+            throw new DOMException("INVALID_STATE_ERR");
+        }
+    };
+
+    // The HTML 5 spec is very specific on how selectAllChildren should be implemented so the native implementation is
+    // never used by Rangy.
+    selProto.selectAllChildren = function(node) {
+        assertNodeInSameDocument(this, node);
+        var range = api.createRange(dom.getDocument(node));
+        range.selectNodeContents(node);
+        this.removeAllRanges();
+        this.addRange(range);
+    };
+
+    selProto.deleteFromDocument = function() {
+        // Sepcial behaviour required for Control selections
+        if (implementsControlRange && implementsDocSelection && this.docSelection.type == CONTROL) {
+            var controlRange = this.docSelection.createRange();
+            var element;
+            while (controlRange.length) {
+                element = controlRange.item(0);
+                controlRange.remove(element);
+                element.parentNode.removeChild(element);
+            }
+            this.refresh();
+        } else if (this.rangeCount) {
+            var ranges = this.getAllRanges();
+            this.removeAllRanges();
+            for (var i = 0, len = ranges.length; i < len; ++i) {
+                ranges[i].deleteContents();
+            }
+            // The HTML5 spec says nothing about what the selection should contain after calling deleteContents on each
+            // range. Firefox moves the selection to where the final selected range was, so we emulate that
+            this.addRange(ranges[len - 1]);
+        }
+    };
+
+    // The following are non-standard extensions
+    selProto.getAllRanges = function() {
+        return this._ranges.slice(0);
+    };
+
+    selProto.setSingleRange = function(range) {
+        this.setRanges( [range] );
+    };
+
+    selProto.containsNode = function(node, allowPartial) {
+        for (var i = 0, len = this._ranges.length; i < len; ++i) {
+            if (this._ranges[i].containsNode(node, allowPartial)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    selProto.toHtml = function() {
+        var html = "";
+        if (this.rangeCount) {
+            var container = DomRange.getRangeDocument(this._ranges[0]).createElement("div");
+            for (var i = 0, len = this._ranges.length; i < len; ++i) {
+                container.appendChild(this._ranges[i].cloneContents());
+            }
+            html = container.innerHTML;
+        }
+        return html;
+    };
+
+    function inspect(sel) {
+        var rangeInspects = [];
+        var anchor = new DomPosition(sel.anchorNode, sel.anchorOffset);
+        var focus = new DomPosition(sel.focusNode, sel.focusOffset);
+        var name = (typeof sel.getName == "function") ? sel.getName() : "Selection";
+
+        if (typeof sel.rangeCount != "undefined") {
+            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                rangeInspects[i] = DomRange.inspect(sel.getRangeAt(i));
+            }
+        }
+        return "[" + name + "(Ranges: " + rangeInspects.join(", ") +
+                ")(anchor: " + anchor.inspect() + ", focus: " + focus.inspect() + "]";
+
+    }
+
+    selProto.getName = function() {
+        return "WrappedSelection";
+    };
+
+    selProto.inspect = function() {
+        return inspect(this);
+    };
+
+    selProto.detach = function() {
+        this.win[windowPropertyName] = null;
+        this.win = this.anchorNode = this.focusNode = null;
+    };
+
+    WrappedSelection.inspect = inspect;
+
+    api.Selection = WrappedSelection;
+
+    api.selectionPrototype = selProto;
+
+    api.addCreateMissingNativeApiListener(function(win) {
+        if (typeof win.getSelection == "undefined") {
+            win.getSelection = function() {
+                return api.getSelection(this);
+            };
+        }
+        win = null;
+    });
+});

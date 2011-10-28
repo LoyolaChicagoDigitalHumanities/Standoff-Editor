@@ -57,7 +57,7 @@ img
 #logo
 {
 	float: left;
-	padding-top: 10px;
+	padding-top: 20px;
 }
 #userinfo
 {
@@ -317,12 +317,18 @@ table.paddedTable tr td, table.classicTable tr th
 	-moz-border-radius: 5px;
 	border-radius: 5px;	
 	height: 99%;
-	line-height:200%;
 	font:16px/18px "Lucida Grande", Tahoma, Arial, Sans-serif;
 	float: right;
+	overflow: auto;
+	line-height:200%;
 }
 .markupToolsHolder
 {
 	float: left;
 	padding-left: 6px;
+}
+#sharingOptionsHolder
+{
+	padding: 5px;
+	line-height: 150%;
 }

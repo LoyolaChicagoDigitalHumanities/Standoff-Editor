@@ -37,15 +37,43 @@ if(($action == "getContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strto
 
 
 
+
+// CLEAR MARKS
+else if(($action == "clearMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
+{
+	$functions = new functions;
+	
+	$conn = $functions->dbConnect();
+	
+	$userID = $_SESSION['session_userID'];
+  	
+  	$docID = mysql_real_escape_string($_SESSION['session_docID']);
+
+  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
+	$row = mysql_fetch_assoc($result);	
+	if($row['userID'] == $_SESSION['session_userID'])
+	{
+		mysql_query("DELETE FROM marks WHERE docID='$id'");
+		echo $row['content'];
+	}
+	
+	mysql_close($conn);	
+}
+
+
+
+
 // ADD MARK
 else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
 {
-
 	$sp = htmlspecialchars($_POST['sp']);
 	$ep = htmlspecialchars($_POST['ep']);
 	$ns = htmlspecialchars($_POST['ns']);
 	$tag = htmlspecialchars($_POST['tag']);
 	$attr = htmlspecialchars($_POST['attr']);
+	$url = htmlspecialchars($_POST['url']);
+	$text = htmlspecialchars($_POST['txt']);
+	$userInput = $_POST['userInput'];
 
 	$functions = new functions;
 	
@@ -59,7 +87,7 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 	$row = mysql_fetch_assoc($result);	
 	if($row['userID'] == $_SESSION['session_userID'])
 	{
-		mysql_query("INSERT INTO `marks` ( `docID` , `sp` , `ep`, `ns`, `attr`, `va`)   VALUES ('$docID', '$sp', '$ep', '$ns', '$attr', '$tag')");
+		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`, `temp`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text', '$userInput')");
 	}
 	
 	mysql_close($conn);	
@@ -181,11 +209,16 @@ else if(($action == "login")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank
 	$userID = $row['id'];
 	$email = $row['email'];
 	$fname = $row['name'];
+	$status = $row['status'];
 	
 	if(!$userID)
 	{
 		$_SESSION['msg'] = array("msg" => "Invalid username and/or password", "title" => "Unable to Login", "link" => "index.php", "legend" => "Try Again");				
 	}	
+	else if(!$status)
+	{
+		$_SESSION['msg'] = array("msg" => "The website is under construction. Only approved members are allowed to use the editor at this point. Please come back later!", "title" => "Construction Mode", "link" => "index.php", "legend" => "Home Page");				
+	}		
 	else
 	{
 		$_SESSION['session_userID'] = $userID;

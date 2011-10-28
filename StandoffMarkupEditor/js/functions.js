@@ -29,13 +29,13 @@ $(document).ready(function()
 
 	 
 	 
-	 
-	 
-	    
+	  
     // needed variable(s)
     var savedSel;
     var loading_image = "<div class='loading'><img src='images/loading.gif' border='0' alt='loading…'></div>";
 
+	
+	
 	
 	
 	// get the content of the document
@@ -48,11 +48,7 @@ $(document).ready(function()
 	}); 
  	
  	
- 	
- 	
- 	
- 	
- 	
+ 	 	
 	// event when mouse is out of user input area 	
 	$("#userInput").mouseout(function()
 	{
@@ -60,10 +56,12 @@ $(document).ready(function()
 	});
  	
  	
- 	
- 	
- 	
  
+ 
+ 
+ 
+ 	
+ 	
 	// event when the add mark button is clicked
 	$("#addMarkButton").click(function()
 	{	
@@ -79,26 +77,38 @@ $(document).ready(function()
 	
 	 	
  	
- 	
- 	
- 	
- 	
+ 	// event when the attribute's + button is clicked
+	$("#addAttrButton").click(function()
+	{
+		//alert();
+	});	
+	
+	
+	
+	 	
 	// event when the + button is clicked
 	$("#markButton").click(function()
-	{
+	{		
 		var ns = document.getElementById('ns').value;
 		var tag = document.getElementById('tag').value;
 		var attr = document.getElementById('attr').value;
+		var url = document.getElementById('url').value;
+		var txt = document.getElementById('text').value;
+		var userInput = document.getElementById('userInput').innerHTML;		
+		
+		
 		
 		rangy.restoreSelection(savedSel);
 		
-		if((ns != '')&&(tag != '')&&(attr != '')&&(reportSelectionText() != ''))
+		if((ns != '')&&(tag != '')&&(reportSelectionText() != ''))
 		{						 			
 			$("#menu").hide("fast");
 			
 			document.getElementById('ns').value = "";
 			document.getElementById('tag').value = "";
 			document.getElementById('attr').value = "";
+			document.getElementById('url').value = "";
+			document.getElementById('text').value = "";			
 			 
 			document.getElementById('userInput').focus();
 			 
@@ -107,7 +117,7 @@ $(document).ready(function()
 			var ep = thisSelection.focusOffset;
 
 			 					 			
-			$.post("do.php?action=addMark", { ns:ns, tag:tag, attr:attr, sp:sp, ep:ep}, function(data){});
+			$.post("do.php?action=addMark", {ns:ns, tag:tag, attr:attr, sp:sp, ep:ep, userInput:userInput, url:url, txt:txt}, function(data){});
 			 			
 			surroundRange();
 			rangy.removeMarkers(savedSel);						 			
@@ -123,11 +133,6 @@ $(document).ready(function()
 			{
 				alert("You have to fill the tag field");
 				document.getElementById('tag').focus();
-			}
-			else if(attr == '')
-			{
-				alert("You have to fill the attribute field");
-				document.getElementById('attr').focus();
 			}
 			else
 			{
@@ -147,7 +152,7 @@ $(document).ready(function()
 	{
 	    $("#userInput")  
 	        .html(loading_image)  
-	        .load('do.php?action=getContent', null, function(responseText){  
+	        .load('do.php?action=clearMarks', null, function(responseText){  
 	     });  	     
 	}); 
 });
@@ -316,6 +321,13 @@ function updateBackground(type, elementName)
 }
 
 
+// disables the return key
+function stopRKey(evt)
+{
+	var evt  = (evt) ? evt : ((event) ? event : null);
+	var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+	if ((evt.keyCode == 13) && (node.type=="text")) { return false; }
+}
 
 
 // delete document
