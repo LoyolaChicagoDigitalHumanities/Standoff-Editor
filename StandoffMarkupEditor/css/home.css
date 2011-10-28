@@ -63,7 +63,7 @@ img
 #menu
 {
 	float: right;
-	padding: 15px 30px 0px 0px;
+	padding: 20px 0px 0px 0px;
 }
 #holders
 {
@@ -83,8 +83,13 @@ img
 {
 	float: left;
 	background-image: url('../images/explanations.png');
+	background-repeat: no-repeat;
 	width: 400px;
 	height: 250px;
+}
+#demoHolder
+{
+	margin: 250px 0px 0px 240px;
 }
 #info
 {
@@ -100,7 +105,7 @@ img
 	margin: 0px;
 	margin: 30px 30px 0px 0px;
 	text-align: right;
-	font-size: 11px;
+	font-size: 9px;
 }
 .infoElement
 {
@@ -109,4 +114,18 @@ img
 .explanation
 {
 	padding-right: 60px;
+}
+.teamMemberName
+{
+	padding: 5px 0px 3px 5px;
+	font-weight: bold;
+}
+.teamMemberRole
+{
+	padding: 0px 0px 5px 5px;
+}
+.teamMemberPic
+{
+	margin-top: 3px;
+	border: 1px solid #c2c2c2;
 }

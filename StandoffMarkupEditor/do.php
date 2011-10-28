@@ -34,7 +34,26 @@ if(($action == "getContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strto
 
 
 
+// GET MARKED CONTENT 
+if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
+{
+	$functions = new functions;
+	
+	$conn = $functions->dbConnect();
+	
+	$userID = $_SESSION['session_userID'];
+  	
+  	$docID = mysql_real_escape_string($_SESSION['session_docID']);
 
+  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
+	$row = mysql_fetch_assoc($result);	
+	if($row['userID'] == $_SESSION['session_userID'])
+	{
+		echo $row['markedContent'];
+	}
+	
+	mysql_close($conn);	
+}
 
 
 
@@ -53,8 +72,12 @@ else if(($action == "clearMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(
 	$row = mysql_fetch_assoc($result);	
 	if($row['userID'] == $_SESSION['session_userID'])
 	{
-		mysql_query("DELETE FROM marks WHERE docID='$id'");
-		echo $row['content'];
+		$plainText = $row['content'];
+		
+		mysql_query("DELETE FROM marks WHERE docID='$docID'");
+		mysql_query("UPDATE documents set markedContent = '$plainText' WHERE id='$docID'");
+		
+		echo $plainText;
 	}
 	
 	mysql_close($conn);	
@@ -87,7 +110,9 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 	$row = mysql_fetch_assoc($result);	
 	if($row['userID'] == $_SESSION['session_userID'])
 	{
-		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`, `temp`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text', '$userInput')");
+		mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$docID'");
+		
+		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text')");
 	}
 	
 	mysql_close($conn);	
@@ -271,7 +296,11 @@ else if(($action == "processStep1")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 	$row = mysql_fetch_assoc($result);	
 	if($row['userID'] == $_SESSION['session_userID'])
 	{
-		mysql_query("UPDATE documents set content = '$userInput' WHERE id='$id'");
+		if($row['content'] != $userInput)
+		{
+			mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$id'");
+			mysql_query("UPDATE documents set content = '$userInput' WHERE id='$id'");
+		}
 		
 		$page = "edit.php?id=$id&step=2";
 	}

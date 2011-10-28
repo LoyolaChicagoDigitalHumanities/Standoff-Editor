@@ -43,7 +43,7 @@ $(document).ready(function()
 	{
 	    $("#userInput")  
 	        .html(loading_image)  
-	        .load('do.php?action=getContent', null, function(responseText){  
+	        .load('do.php?action=getMarkedContent', null, function(responseText){  
 	     });	     	  	     
 	}); 
  	

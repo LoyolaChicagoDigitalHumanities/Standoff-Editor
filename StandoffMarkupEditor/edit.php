@@ -27,6 +27,7 @@ if($_SESSION['session_rank'] == 1)
 		}
 		
 		$content = $row['content'];
+		$markedContent = $row['markedContent'];
 		
 		$e1 = "Inactive"; 
 		$e2 = "Inactive"; 
@@ -42,9 +43,6 @@ if($_SESSION['session_rank'] == 1)
 			$e1 = "Active";
 			$prevStep = 1;
 			
-			// delete all markups (if any)
-			mysql_query("DELETE FROM marks WHERE docID='$docID'");
-			
 			$static_value = array ($content);	  
 			$static_name  = array ("{CONTENT}");			
 			$stepContent = $engine->load_template("html/step1.html");
@@ -59,7 +57,7 @@ if($_SESSION['session_rank'] == 1)
 			$e2 = "Active";
 			$prevStep = 1;
 						
-			$static_value = array ($content);	  
+			$static_value = array ($markedContent);	  
 			$static_name  = array ("{CONTENT}");			
 			$stepContent = $engine->load_template("html/step2.html");
 			$stepContent = $engine->replace_static($static_name, $static_value,  $stepContent);
