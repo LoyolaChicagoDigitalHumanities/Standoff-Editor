@@ -16,12 +16,31 @@ if($_SESSION['session_rank'] > 0)
 	$functions = new functions;
 	$conn = $functions->dbConnect();
 	
-	$counter = 0;
 	
-	$result = mysql_query("SELECT * FROM documents WHERE userID = '$userID' ORDER BY name ASC");				
+	
+	$result = mysql_query("SELECT * FROM documents WHERE userID = '$userID'");				
 	while($row = mysql_fetch_array($result, MYSQL_ASSOC))
 	{
-		$thisID =  $row['id'];
+		$docsArray[] = $row['id'];
+	}
+	
+
+	$result = mysql_query("SELECT * FROM access WHERE userID = '$userID'");				
+	while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	{
+		$docsArray[] = $row['docID'];
+	}
+	
+	arsort($docsArray);
+		
+	
+	$counter = 0;
+	while($counter < count($docsArray))
+	{
+		$thisID = $docsArray[$counter];
+		
+		$result = mysql_query("SELECT name FROM documents WHERE id = '$thisID'");	
+		$row = mysql_fetch_assoc($result);			
 		$thisName =  $row['name'];
 		
 		$list .= "<div class=\"documentsElement\" id=\"e$thisID\" onclick=\"loadDocument('$thisID');\" onmouseover=\"updateBackground('up', 'e$thisID');\" onmouseout=\"updateBackground('down', 'e$thisID');\">$thisName</a></div>

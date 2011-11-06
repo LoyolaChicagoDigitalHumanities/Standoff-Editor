@@ -1,10 +1,15 @@
 <div id="sharingOptionsHolder">
-	Give access to the following user:
+	Give Access to the Following User:
 	<br>
-	<input type="text" id="suggestion" class="suggestionInput" value="Enter username here" onfocus="this.value='';">
-	<div id="suggestions"></div>
-	<br><br>
-	Users Who have Access to this document
-	<br>
-	{LIST}
+	<div>
+		<input type="text" id="suggestionsInput" onfocus="clearSuggestionField();" onblur="hideSuggestions()" onkeyup="showSuggestions()" value="Enter User Name">
+	</div>
+	<div id="suggestionsBox">
+		<div id="suggestionsContent"><span style="padding:5px;">No results found</span></div>
+	</div>
+	<div id="emptySpace"></div>
+	Users Who Have Access to this Document:
+	<div id="sharedUsersHolder">
+		{LIST}
+	</div>
 </div>

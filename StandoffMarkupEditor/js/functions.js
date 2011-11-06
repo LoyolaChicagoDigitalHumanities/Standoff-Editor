@@ -142,10 +142,7 @@ $(document).ready(function()
 			}									
 		} 	     
 	}); 
-
-	 	
-
- 	
+		
  	
 	// event when the clear marks button is clicked
 	$("#clearMarksButton").click(function()
@@ -155,6 +152,11 @@ $(document).ready(function()
 	        .load('do.php?action=clearMarks', null, function(responseText){  
 	     });  	     
 	}); 
+	
+	
+	
+	
+	
 });
 
 
@@ -345,7 +347,7 @@ function loadStep(url, stepID)
 {
 	if(stepID == '1')
 	{
-		if(confirm("If you step back, you will lose the current marks. Do you still want to proceed?"))
+		if(confirm("If you step back and make changes, you will lose the current marks. Do you still want to proceed?"))
 		{
 			window.location = url;
 		}
@@ -354,4 +356,68 @@ function loadStep(url, stepID)
 	{
 		window.location = url;
 	}
+}
+
+
+
+
+
+// clear user input for suggestion
+function clearSuggestionField()
+{
+	document.getElementById('suggestionsInput').value = "";
+	document.getElementById('suggestionsInput').style.color = "#000";	
+}
+
+
+// show suggestions
+function showSuggestions()
+{
+	if(document.getElementById('suggestionsInput').value != "")
+	{
+		var userInput = document.getElementById('suggestionsInput').value;
+		$.post("do.php?action=showSuggestions", {userInput:userInput}, function(data){
+			document.getElementById('suggestionsContent').innerHTML = data;
+		});
+		
+		
+		$('#suggestionsBox').fadeIn('slow', function() {});
+	}
+	else
+	{
+		$('#suggestionsBox').fadeOut('slow', function() {});
+	}
+}
+
+
+// hide suggestions
+function hideSuggestions()
+{
+	$('#suggestionsBox').fadeOut('slow', function() {});
+	document.getElementById('suggestionsInput').value = "Enter User Name";
+	document.getElementById('suggestionsInput').style.color = "#797878";
+}
+
+
+
+
+// go to the given url
+function goToURL(url)
+{
+	window.location = url;
+}
+
+
+
+// change color of the given element to high
+function colorUp(eID)
+{
+	document.getElementById(eID).style.backgroundColor = '#b2d7e2';
+}
+
+
+// change color of the given element to low
+function colorDown(eID)
+{
+	document.getElementById(eID).style.backgroundColor = '#c9e5ed';
 }

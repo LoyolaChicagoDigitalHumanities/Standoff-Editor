@@ -2,6 +2,7 @@
 
 require 'requires/session.php';
 require_once 'requires/functions.php';
+require_once 'requires/template.php';
 
 $action = $_GET['action'];
 $userRank = $_SESSION['session_rank'];
@@ -15,16 +16,15 @@ $userRank = $_SESSION['session_rank'];
 if(($action == "getContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
 {
 	$functions = new functions;
+
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
 	
 	$conn = $functions->dbConnect();
-	
-	$userID = $_SESSION['session_userID'];
-  	
-  	$docID = mysql_real_escape_string($_SESSION['session_docID']);
-
+	$docID = mysql_real_escape_string($_SESSION['session_docID']);
   	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
-	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	$row = mysql_fetch_assoc($result);		
+	
+	if($userHasAccess)
 	{
 		echo $row['content'];
 	}
@@ -38,16 +38,15 @@ if(($action == "getContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strto
 if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
 {
 	$functions = new functions;
+
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
 	
 	$conn = $functions->dbConnect();
-	
-	$userID = $_SESSION['session_userID'];
-  	
-  	$docID = mysql_real_escape_string($_SESSION['session_docID']);
-
+	$docID = mysql_real_escape_string($_SESSION['session_docID']);
   	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
-	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	$row = mysql_fetch_assoc($result);		
+	
+	if($userHasAccess)
 	{
 		echo $row['markedContent'];
 	}
@@ -62,15 +61,15 @@ else if(($action == "clearMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(
 {
 	$functions = new functions;
 	
-	$conn = $functions->dbConnect();
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);	
 	
-	$userID = $_SESSION['session_userID'];
-  	
+	$conn = $functions->dbConnect();
+	  	
   	$docID = mysql_real_escape_string($_SESSION['session_docID']);
 
   	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
 	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	if($userHasAccess)
 	{
 		$plainText = $row['content'];
 		
@@ -100,15 +99,14 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 
 	$functions = new functions;
 	
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);	
+	
 	$conn = $functions->dbConnect();
 	
-	$userID = $_SESSION['session_userID'];  	
-  	
+	$userID = mysql_real_escape_string($_SESSION['session_userID']);	  	
   	$docID = mysql_real_escape_string($_SESSION['session_docID']);
 
-  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
-	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	if($userHasAccess)
 	{
 		mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$docID'");
 		
@@ -127,8 +125,7 @@ else if(($action == "signup")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 	
 	$functions = new functions;
 	$conn = $functions->dbConnect();
-	
-			
+				
 		
 	$username = htmlspecialchars($_POST['username']);
 	$password = htmlspecialchars($_POST['password']);
@@ -285,16 +282,18 @@ else if(($action == "create")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 else if(($action == "processStep1")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
 {
 	$userInput = htmlspecialchars($_POST['input']);
-	
+		
 	$functions = new functions;
 	
+	$userHasAccess = $functions->hasAccess($_GET['id'], $_SESSION['session_userID']);	
+	
 	$conn = $functions->dbConnect();
-	  	
-  	$id = mysql_real_escape_string($_GET['id']);
+	
+	$id = mysql_real_escape_string($_GET['id']);
 
   	$result = mysql_query("SELECT * FROM documents WHERE id = '$id'");	
 	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	if($userHasAccess)
 	{
 		if($row['content'] != $userInput)
 		{
@@ -315,21 +314,20 @@ else if(($action == "processStep1")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 	echo "<script type=\"text/javascript\">window.location='$page';</script>";	
 }
 
+
+
+
 // process step 2	
 else if(($action == "processStep2")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
 {	
+	$id = $_GET['id'];
+	
 	$functions = new functions;
 	
-	$conn = $functions->dbConnect();
-	  	
-  	$id = mysql_real_escape_string($_GET['id']);
+	$userHasAccess = $functions->hasAccess($id, $_SESSION['session_userID']);	
 
-  	$result = mysql_query("SELECT * FROM documents WHERE id = '$id'");	
-	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
-	{
-		// do something
-				
+	if($userHasAccess)
+	{				
 		$page = "edit.php?id=$id&step=3";
 	}
 	else
@@ -337,9 +335,7 @@ else if(($action == "processStep2")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
 		$page = "msg.php";
 	}	
-	
-	mysql_close($conn);	
-	
+		
 	echo "<script type=\"text/javascript\">window.location='$page';</script>";	
 }
 
@@ -347,19 +343,15 @@ else if(($action == "processStep2")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 
 // process step 3	
 else if(($action == "processStep3")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
-{	
+{		
+	$id = $_GET['id'];
+	
 	$functions = new functions;
 	
-	$conn = $functions->dbConnect();
-	  	
-  	$id = mysql_real_escape_string($_GET['id']);
-
-  	$result = mysql_query("SELECT * FROM documents WHERE id = '$id'");	
-	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
-	{
-		// do something
-				
+	$userHasAccess = $functions->hasAccess($id, $_SESSION['session_userID']);
+	
+	if($userHasAccess)
+	{	
 		$page = "edit.php?id=$id&step=4";
 	}
 	else
@@ -367,9 +359,7 @@ else if(($action == "processStep3")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
 		$page = "msg.php";
 	}	
-	
-	mysql_close($conn);	
-	
+		
 	echo "<script type=\"text/javascript\">window.location='$page';</script>";	
 }
 
@@ -381,32 +371,240 @@ else if(($action == "processStep4")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 	echo "<script type=\"text/javascript\">window.location='index.php';</script>";	
 }
 
+
 // delete document
 else if(($action == "delete")&&($userRank == 1))
 {
+	$id = $_GET['id'];
+	
 	$functions = new functions;
 	
+	$userOwnsDocument = $functions->ownsDocument($id, $_SESSION['session_userID']);	
+	$userHasAccess = $functions->hasAccess($id, $_SESSION['session_userID']);
+	
 	$conn = $functions->dbConnect();
-	  	
-  	$id = mysql_real_escape_string($_GET['id']);
 
-  	$result = mysql_query("SELECT * FROM documents WHERE id = '$id'");	
-	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	if($userOwnsDocument)
 	{
-		mysql_query("DELETE FROM documents WHERE id='$id'");
-		$page = "index";
+		$isThisDocumentShared = $functions->isShared($id);	
+		
+		if($isThisDocumentShared)
+		{
+			$_SESSION['msg'] = array("msg" => "Your request could not be processed because this document is currently being shared with other users. In order to remove this document from your folder, you have to transfer the ownership of document to another user", "title" => "Document is Shared", "link" => "index.php", "legend" => "Home Page");
+			$page = "edit.php?id=$id&step=4";		
+		}
+		else
+		{
+			mysql_query("DELETE FROM documents WHERE id='$id'");
+			$page = "index";
+		}
 	}
 	else
 	{
-		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
-		$page = "msg";
+		if($userHasAccess)
+		{
+			$userID = $_SESSION['session_userID'];
+			
+			mysql_query("DELETE FROM access WHERE docID='$id' AND userID = '$userID'");
+			$page = "index";		
+		}
+		else
+		{
+			$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+			$page = "msg";
+		}
 	}	
 	
 	mysql_close($conn);	
 	
 	echo "<script type=\"text/javascript\">window.location='$page.php';</script>";
 }
+
+
+
+// Show Suggestions
+else if(($action == "showSuggestions")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+{
+	$functions = new functions;
+	
+	$engine = new template;
+		
+	$conn = $functions->dbConnect();
+		
+	$queryString = $_POST['userInput'];
+	$docID = $_SESSION['session_docID'];
+	$limit = 5;
+	$counter = 0;
+	
+    $result = mysql_query("SELECT userID FROM documents WHERE id = '$docID'");	
+	$row = mysql_fetch_assoc($result);	
+	$ownerID = $row['userID'];	
+	
+	$result = mysql_query("SELECT * FROM users WHERE name LIKE '%" . $queryString . "%' OR username LIKE '%" . $queryString . "%' OR email LIKE '%" . $queryString . "%'");				
+	while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	{
+		$thisUserID = $row['id'];
+		$thisUserName = $row['name'];
+		
+		if($counter < 5)
+		{
+			if(($thisUserID != $_SESSION['session_userID'])&&($ownerID != $thisUserID)&&($row['status'] == 1))
+			{
+			    $result2 = mysql_query("SELECT id FROM access WHERE userID = '$thisUserID' AND docID = '$docID'");	
+				$row2 = mysql_fetch_assoc($result2);	
+				
+				if(!$row2['id'])
+				{
+					$static_value = array ($thisUserID, $thisUserName, $docID);	  
+					$static_name  = array ("{USER_ID}","{NAME}", "{DOC_ID}");
+					$template = $engine->load_template("html/suggestion.html");
+					$toReturn .= $engine->replace_static($static_name, $static_value,  $template);	
+					$counter++;
+				}
+			}
+		}
+		else
+		{
+			break;
+		}			
+	}
+	
+	mysql_close($conn);
+	
+	
+	if($counter < 1)
+	{
+		$thisMessage = "No results found";
+		
+		$static_value = array ($thisMessage);	  
+		$static_name  = array ("{MSG}");
+		$template = $engine->load_template("html/noSuggestion.html");
+		$toReturn = $engine->replace_static($static_name, $static_value,  $template);	
+	}
+	
+	
+	echo $toReturn;
+}
+
+
+
+
+
+
+// share given document with the given user
+else if(($action == "shareWithUser")&&($userRank == 1))
+{
+	$docID = $_GET['docID'];
+	$userID = $_GET['userID'];
+	
+	$functions = new functions;
+				
+	$userOwnsDocument = $functions->ownsDocument($docID, $_SESSION['session_userID']);
+	
+	$conn = $functions->dbConnect();	
+	
+	if($userOwnsDocument)
+	{
+		$docID = mysql_real_escape_string($docID);
+		$userID = mysql_real_escape_string($userID);
+		
+	  	$result = mysql_query("SELECT * FROM access WHERE userID = '$userID' AND docID = '$docID'");	
+		$row = mysql_fetch_assoc($result);	
+		if((!$row[0])&&($userID != $_SESSION['session_userID']))
+		{
+			mysql_query("INSERT INTO `access` (`userID` , `docID`) VALUES ('$userID', '$docID')");
+		}
+		
+		$page = "edit.php?id=$docID&step=4";
+	}
+	else
+	{
+		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+		$page = "msg.php";	
+	}
+	
+	mysql_close($conn);
+	
+	echo "<script type=\"text/javascript\">window.location='$page';</script>";
+}
+
+
+
+
+
+
+
+// Unshare given document with the given user
+else if(($action == "unshare")&&($userRank == 1))
+{
+	$docID = $_GET['docID'];
+	$userID = $_GET['userID'];
+	
+	$functions = new functions;
+				
+	$userOwnsDocument = $functions->ownsDocument($docID, $_SESSION['session_userID']);
+	
+	$conn = $functions->dbConnect();	
+	
+	if($userOwnsDocument)
+	{
+		mysql_query("DELETE FROM access WHERE docID='$docID' AND userID = '$userID'");
+		
+		
+		$page = "edit.php?id=$docID&step=4";
+	}
+	else
+	{
+		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+		$page = "msg.php";	
+	}
+	
+	mysql_close($conn);
+	
+	echo "<script type=\"text/javascript\">window.location='$page';</script>";
+}
+
+
+
+
+
+// share given document with the given user
+else if(($action == "setOwner")&&($userRank == 1))
+{
+	$docID = $_GET['docID'];
+	$userID = $_GET['userID'];
+	
+	$functions = new functions;
+				
+	$userOwnsDocument = $functions->ownsDocument($docID, $_SESSION['session_userID']);
+	
+	$myID = $_SESSION['session_userID'];
+	
+	$conn = $functions->dbConnect();	
+	
+	if($userOwnsDocument)
+	{
+		$docID = mysql_real_escape_string($docID);
+		$userID = mysql_real_escape_string($userID);
+		
+		mysql_query("DELETE FROM access WHERE docID='$docID' AND userID = '$userID'");
+	  	mysql_query("UPDATE documents set userID = '$userID' WHERE id='$docID'");
+	  	mysql_query("INSERT INTO `access` (`userID` , `docID`) VALUES ('$myID', '$docID')");
+		
+		$page = "edit.php?id=$docID&step=4";
+	}
+	else
+	{
+		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+		$page = "msg.php";	
+	}
+	
+	mysql_close($conn);
+	
+	echo "<script type=\"text/javascript\">window.location='$page';</script>";
+}
+
+
 
 
 

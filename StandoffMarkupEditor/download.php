@@ -8,16 +8,18 @@ $userRank = $_SESSION['session_rank'];
 
 
 if($userRank == 1)
-{
+{	
 	$functions = new functions;
 	
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
+	
 	$conn = $functions->dbConnect();
-  	
-  	$docID = mysql_real_escape_string($_SESSION['session_docID']);	
+	
+	$docID = mysql_real_escape_string($_SESSION['session_docID']);	
 
   	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
 	$row = mysql_fetch_assoc($result);	
-	if($row['userID'] == $_SESSION['session_userID'])
+	if($userHasAccess)
 	{		
 		$thidDocName = $row['name'];
 		$date = date("YmdHis"); 
