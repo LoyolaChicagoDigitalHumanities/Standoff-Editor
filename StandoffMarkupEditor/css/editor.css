@@ -68,7 +68,6 @@ img
 {
 	height: 477px;
 	margin: 11px 0px 20px 0px;
-	overflow: auto;
 	padding: 5px;
 }
 #footer
@@ -123,8 +122,18 @@ span
 {
 	height:55px;
 }
-
-
+#listOfDocumentsWrapper
+{
+	overflow: auto;
+	height: 450px;	
+}
+#listOfDocuments
+{
+	height: 450px;
+	width: 600px;
+	vertical-align:middle;
+	display:table-cell; 
+}
 #buttons
 {
   margin:0px;
@@ -304,7 +313,7 @@ table.paddedTable tr td, table.classicTable tr th
 	padding-top: 5px;
 	
 }
-#documentDelete
+#documentOptionsButtonsHolder
 {
 	float:right;
 }

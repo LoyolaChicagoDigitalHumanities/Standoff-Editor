@@ -3,6 +3,7 @@
 	<br><br>
 <a href="javascript:void(0);" id="clearMarksButton"><img alt="Clear Marks" id="theButton2" src="images/button_clearmarks.png" onmouseover="updateButton('1', 'theButton2');" onmouseout="updateButton('0', 'theButton2');"></a>		
 </div>
+<input type="hidden" value="{LAST_SPAN_ID}" id="spanIDHistory">
 <div id="userInput" class="markupHolder">{CONTENT}</div>
 	<div id="menu">
 		<table class="paddedTable">
@@ -10,7 +11,7 @@
 				<td class="menuLegend">
 					Name Space:
 				</td>
-				<td style="width:100%" colspan="2">
+				<td style="width:100%">
 					<input name="ns" id="ns" class="classicField">
 				</td>
 			</tr>
@@ -18,26 +19,23 @@
 				<td class="menuLegend">
 					Tag:
 				</td>
-				<td style="width:100%" colspan="2">
+				<td style="width:100%">
 					<input name="tag" id="tag" class="classicField">
 				</td>
 			</tr>
 			<tr>
 				<td class="menuLegend">
-					Attribute:
+					Attribute(s):
 				</td>
 				<td style="width:100%">
 					<input name="attr" id="attr" class="classicField">
-				</td>
-				<td>
-					<a href="javascript:void(0)"><img src="images/button_add_attr.png"></a>
 				</td>
 			</tr>
 			<tr>
 				<td class="menuLegend">
 					URL:
 				</td>
-				<td style="width:100%" colspan="2">
+				<td style="width:100%">
 					<input name="url" id="url" class="classicField">
 				</td>
 			</tr>
@@ -45,12 +43,12 @@
 				<td class="menuLegend">
 					Text:
 				</td>
-				<td style="width:100%" colspan="2">
+				<td style="width:100%">
 					<input name="text" id="text" class="classicField">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3" style="text-align:right">
+				<td colspan="2" style="text-align:right">
 					<a id="markButton" href="javascript:void(0);">
 						<img alt="Add" id="plusButton" src="images/button_add.png">
 					</a>

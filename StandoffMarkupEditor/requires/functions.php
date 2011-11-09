@@ -11,8 +11,8 @@ class functions
 	***************************************/
 	function dbConnect()
 	{
-		$conn = mysql_connect("***********************", "**************", "**************");
-		mysql_select_db("***************");
+		$conn = mysql_connect("localhost", "standoff_eyad", "eyad");
+		mysql_select_db("standoff_editors");
 		
 		return $conn;
 	}	
@@ -112,7 +112,23 @@ class functions
 		mysql_close($conn);
 		
 		return $shared;
-	}					
+	}
+	
+	
+	
+	/***************************************
+	*
+	* Returns an array that contains both 
+	* the starting and ending point
+	* of the given selection
+	*
+	***************************************/	
+	function getPoints($userInput, $spanID)
+	{
+		$toRetun = array();
+		
+		return $toRetun;
+	}							
 }
 
 ?>

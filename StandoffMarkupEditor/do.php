@@ -88,29 +88,34 @@ else if(($action == "clearMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(
 // ADD MARK
 else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
 {
-	$sp = htmlspecialchars($_POST['sp']);
-	$ep = htmlspecialchars($_POST['ep']);
+	$functions = new functions;
+	
 	$ns = htmlspecialchars($_POST['ns']);
 	$tag = htmlspecialchars($_POST['tag']);
 	$attr = htmlspecialchars($_POST['attr']);
 	$url = htmlspecialchars($_POST['url']);
 	$text = htmlspecialchars($_POST['txt']);
-	$userInput = $_POST['userInput'];
+	$newSpanID = htmlspecialchars($_POST['newSpanID']);
+	$markedContet = $_POST['userInput'];
 
-	$functions = new functions;
+	$markedContet = preg_replace('/<span[^>]+id="junk_[^"]*"[^>]*>(.*?)<\/span>/s', '', $markedContet);
+
+	$pointsArray = $functions->getPoints($markedContet, $newSpanID); 
+	$sp = $pointsArray[0];
+	$ep = $pointsArray[1];
 	
 	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);	
 	
 	$conn = $functions->dbConnect();
-	
-	$userID = mysql_real_escape_string($_SESSION['session_userID']);	  	
-  	$docID = mysql_real_escape_string($_SESSION['session_docID']);
 
+	$userID = mysql_real_escape_string($_SESSION['session_userID']);	  	
+  	$docID = mysql_real_escape_string($_SESSION['session_docID']);	
+  	
 	if($userHasAccess)
 	{
-		mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$docID'");
+		mysql_query("UPDATE documents set markedContent = '$markedContet' WHERE id='$docID'");
 		
-		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text')");
+		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`, `spanID`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text', '$newSpanID')");
 	}
 	
 	mysql_close($conn);	
@@ -382,11 +387,11 @@ else if(($action == "delete")&&($userRank == 1))
 	$userOwnsDocument = $functions->ownsDocument($id, $_SESSION['session_userID']);	
 	$userHasAccess = $functions->hasAccess($id, $_SESSION['session_userID']);
 	
-	$conn = $functions->dbConnect();
 
 	if($userOwnsDocument)
 	{
-		$isThisDocumentShared = $functions->isShared($id);	
+		$isThisDocumentShared = $functions->isShared($id);
+		
 		
 		if($isThisDocumentShared)
 		{
@@ -395,8 +400,13 @@ else if(($action == "delete")&&($userRank == 1))
 		}
 		else
 		{
+			$conn = $functions->dbConnect();	
+			
 			mysql_query("DELETE FROM documents WHERE id='$id'");
+			mysql_query("DELETE FROM marks WHERE docID='$id'");
 			$page = "index";
+			
+			mysql_close($conn);
 		}
 	}
 	else
@@ -405,8 +415,12 @@ else if(($action == "delete")&&($userRank == 1))
 		{
 			$userID = $_SESSION['session_userID'];
 			
+			$conn = $functions->dbConnect();
+			
 			mysql_query("DELETE FROM access WHERE docID='$id' AND userID = '$userID'");
-			$page = "index";		
+			$page = "index";	
+			
+			mysql_close($conn);	
 		}
 		else
 		{
@@ -414,8 +428,6 @@ else if(($action == "delete")&&($userRank == 1))
 			$page = "msg";
 		}
 	}	
-	
-	mysql_close($conn);	
 	
 	echo "<script type=\"text/javascript\">window.location='$page.php';</script>";
 }
@@ -543,6 +555,7 @@ else if(($action == "unshare")&&($userRank == 1))
 	$functions = new functions;
 				
 	$userOwnsDocument = $functions->ownsDocument($docID, $_SESSION['session_userID']);
+	$userHasAccess = $functions->hasAccess($docID, $userID);
 	
 	$conn = $functions->dbConnect();	
 	
@@ -552,6 +565,13 @@ else if(($action == "unshare")&&($userRank == 1))
 		
 		
 		$page = "edit.php?id=$docID&step=4";
+	}
+	else if(($userHasAccess)&&($userID == $_SESSION['session_userID']))
+	{
+		mysql_query("DELETE FROM access WHERE docID='$docID' AND userID = '$userID'");
+		
+		
+		$page = "edit.php?id=$docID&step=4";	
 	}
 	else
 	{
@@ -605,7 +625,37 @@ else if(($action == "setOwner")&&($userRank == 1))
 }
 
 
+// Rename the given document
+else if(($action == "rename")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+{
+	$docID = $_GET['id'];
+	$newDocName = $_POST['name'];
+	$step = $_GET['step'];
+	
+	$functions = new functions;
 
+	$userHasAccess = $functions->hasAccess($docID, $_SESSION['session_userID']);
+	
+	$conn = $functions->dbConnect();
+	
+	$docID = mysql_real_escape_string($docID);
+	
+	if($userHasAccess)
+	{
+	  	mysql_query("UPDATE documents set name = '$newDocName' WHERE id='$docID'");
+	  			
+		$page = "edit.php?id=$docID&step=$step";	
+	}
+	else
+	{
+		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+		$page = "msg.php";		
+	}
+	
+	mysql_close($conn);
+	
+	echo "<script type=\"text/javascript\">window.location='$page';</script>";
+}
 
 
 // logout

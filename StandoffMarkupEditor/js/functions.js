@@ -83,7 +83,7 @@ $(document).ready(function()
 		//alert();
 	});	
 	
-	
+
 	
 	 	
 	// event when the + button is clicked
@@ -93,8 +93,7 @@ $(document).ready(function()
 		var tag = document.getElementById('tag').value;
 		var attr = document.getElementById('attr').value;
 		var url = document.getElementById('url').value;
-		var txt = document.getElementById('text').value;
-		var userInput = document.getElementById('userInput').innerHTML;		
+		var txt = document.getElementById('text').value;		
 		
 		
 		
@@ -104,6 +103,11 @@ $(document).ready(function()
 		{						 			
 			$("#menu").hide("fast");
 			
+			var newSpanID = parseInt(document.getElementById('spanIDHistory').value)+1;
+			document.getElementById('spanIDHistory').value = newSpanID;
+			
+			surroundRange(newSpanID);
+			
 			document.getElementById('ns').value = "";
 			document.getElementById('tag').value = "";
 			document.getElementById('attr').value = "";
@@ -111,15 +115,11 @@ $(document).ready(function()
 			document.getElementById('text').value = "";			
 			 
 			document.getElementById('userInput').focus();
-			 
-			var thisSelection = rangy.getSelection();
-			var sp = thisSelection.anchorOffset;
-			var ep = thisSelection.focusOffset;
-
+			
+			var userInput = document.getElementById('userInput').innerHTML; 
 			 					 			
-			$.post("do.php?action=addMark", {ns:ns, tag:tag, attr:attr, sp:sp, ep:ep, userInput:userInput, url:url, txt:txt}, function(data){});
-			 			
-			surroundRange();
+			$.post("do.php?action=addMark", {ns:ns, tag:tag, attr:attr, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID}, function(data){});		
+			
 			rangy.removeMarkers(savedSel);						 			
 		}
 		else
@@ -188,12 +188,13 @@ function getFirstRange()
 
 
 // surround user selection
-function surroundRange()
+function surroundRange(spanID)
 {
     var range = getFirstRange();
     if (range)
     {
         var el = document.createElement("span");
+        el.id = spanID;
         el.style.backgroundColor = "#ffe5e5";
         el.style.border="1px solid #ff0000";
         el.style.color = "#ff0000";
@@ -305,7 +306,7 @@ function loadDocument(id)
 }
 
 
-// update background
+// update background image of the given element
 function updateBackground(type, elementName)
 {
     var newImage;
@@ -320,6 +321,39 @@ function updateBackground(type, elementName)
     }
     
     document.getElementById(elementName).style.backgroundImage = newImage;	
+}
+
+
+// change color of the given element to high
+function colorUp(eID)
+{
+	document.getElementById(eID).style.backgroundColor = '#b2d7e2';
+}
+
+
+// change color of the given element to low
+function colorDown(eID)
+{
+	document.getElementById(eID).style.backgroundColor = '#c9e5ed';
+}
+
+
+// Update transparency of the given element
+function updateTransparency(type, elementID)
+{	 
+	 var opacityValue;
+	 
+	 if(type == "low")
+	 {
+	 	opacityValue = 7;
+	 }
+	 else
+	 {
+	 	opacityValue = 10;
+	 }
+	 
+	 document.getElementById(elementID).style.opacity = opacityValue/10;
+	 document.getElementById(elementID).style.filter = 'alpha(opacity=' + opacityValue*10 + ')';
 }
 
 
@@ -405,19 +439,4 @@ function hideSuggestions()
 function goToURL(url)
 {
 	window.location = url;
-}
-
-
-
-// change color of the given element to high
-function colorUp(eID)
-{
-	document.getElementById(eID).style.backgroundColor = '#b2d7e2';
-}
-
-
-// change color of the given element to low
-function colorDown(eID)
-{
-	document.getElementById(eID).style.backgroundColor = '#c9e5ed';
 }

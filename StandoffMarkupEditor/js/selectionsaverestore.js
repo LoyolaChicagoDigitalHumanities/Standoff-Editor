@@ -10,7 +10,7 @@ rangy.createModule("SaveRestore", function(api, module) {
     }
 
     function insertRangeBoundaryMarker(range, atStart) {
-        var markerId = "selectionBoundary_" + (+new Date()) + "_" + ("" + Math.random()).slice(2);
+        var markerId = "junk_" + (+new Date()) + "_" + ("" + Math.random()).slice(2);
         var markerEl;
         var doc = dom.getDocument(range.startContainer);
 
@@ -23,7 +23,7 @@ rangy.createModule("SaveRestore", function(api, module) {
         markerEl.id = markerId;
         markerEl.style.lineHeight = "0";
         markerEl.style.display = "none";
-        markerEl.className = "rangySelectionBoundary";
+        //markerEl.className = "rangeBoundary";
         markerEl.appendChild(doc.createTextNode(markerTextChar));
 
         boundaryRange.insertNode(markerEl);

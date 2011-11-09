@@ -2,8 +2,8 @@
 	<div id="documentName">
 		Document: {TITLE}
 	</div>
-	<div id="documentDelete">
-		<a href="javascript:void(0);" onclick="confirmDelete('{ID}');" title="Delete Document"><img src="images/button_delete.png"></a>
+	<div id="documentOptionsButtonsHolder">
+		<a href="options.php?width=500&amp;height=160&amp;step={STEP}" class="thickbox" title="Document Options"><img src="images/button_options.png" id="optionsButton" onmouseover="updateTransparency('low','optionsButton');" onmouseout="updateTransparency('high','optionsButton');"></a>
 	</div>
 </div>
 

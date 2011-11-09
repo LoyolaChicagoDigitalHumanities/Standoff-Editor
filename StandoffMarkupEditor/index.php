@@ -31,7 +31,10 @@ if($_SESSION['session_rank'] > 0)
 		$docsArray[] = $row['docID'];
 	}
 	
-	arsort($docsArray);
+	if(count($docsArray) > 0)
+	{
+		arsort($docsArray);
+	}
 		
 	
 	$counter = 0;

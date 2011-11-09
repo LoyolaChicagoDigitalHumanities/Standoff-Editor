@@ -3,10 +3,10 @@
 	{FORM}
 	</div>
 	<div style="float:left">
-		<a href="index.php"><img src="images/button_folder.png"></a>
+		<a href="index.php"><img src="images/button_folder.png" id="folderButton" onmouseover="updateTransparency('low','folderButton');" onmouseout="updateTransparency('high','folderButton');"></a>
 	</div>
 	<div style="float:right">
-		<a href="javascript:void(0)" onclick="loadStep('edit.php?id={ID}&step={PREV}', '{PREV}');"><img src="images/button_prev.png"></a>
-		<input type="image" src="images/button_next.png">
+		<a href="javascript:void(0)" onclick="loadStep('edit.php?id={ID}&step={PREV}', '{PREV}');"><img src="images/button_prev.png" id="prevButton" onmouseover="updateTransparency('low','prevButton');" onmouseout="updateTransparency('high','prevButton');"></a>
+		<input type="image" src="images/button_next.png" id="nextButton" onmouseover="updateTransparency('low','nextButton');" onmouseout="updateTransparency('high','nextButton');">
 	</div>
 </form>

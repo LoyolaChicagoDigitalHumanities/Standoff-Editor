@@ -26,6 +26,7 @@ if($_SESSION['session_rank'] == 1)
 	if($userHasAccess)
 	{
 		$thisDocumentID = $row['id'];
+		$thisDocumentName = $row['name'];
 		
 		if((empty($step))||(!is_numeric($step))||($step<1)||($step>5))
 		{
@@ -62,9 +63,11 @@ if($_SESSION['session_rank'] == 1)
 		{
 			$e2 = "Active";
 			$prevStep = 1;
+			
+			$lastSpanID = 0; // Change me
 						
-			$static_value = array ($markedContent);	  
-			$static_name  = array ("{CONTENT}");			
+			$static_value = array ($markedContent, $lastSpanID);	  
+			$static_name  = array ("{CONTENT}", "{LAST_SPAN_ID}");			
 			$stepContent = $engine->load_template("html/step2.html");
 			$stepContent = $engine->replace_static($static_name, $static_value,  $stepContent);
 		}	
@@ -96,6 +99,8 @@ if($_SESSION['session_rank'] == 1)
 			
 			$userIDsArray = array();
 			
+			$docID = mysql_real_escape_string($docID);
+			
 		    $result = mysql_query("SELECT userID FROM documents WHERE id = '$docID'");	
 			$row = mysql_fetch_assoc($result);
 			$ownerID = $row['userID'];
@@ -116,17 +121,28 @@ if($_SESSION['session_rank'] == 1)
 					$row = mysql_fetch_assoc($result);
 					$collectedUserName = $row['name'];
 					
-					if(($collectedUserID == $ownerID)||(!$userOwnsDocument))
+					$disabled_1 = "disabled";
+					$disabled_2 = "disabled";					
+					
+					if(!$userOwnsDocument)
 					{
-						$disableThis = "disabled";
+						if($collectedUserID == $_SESSION['session_userID'])
+						{
+							$disabled_1 = "";
+						}		
 					}
 					else
 					{
-						$disableThis = "";
+						if($collectedUserID != $_SESSION['session_userID'])
+						{
+							$disabled_1 = "";
+							$disabled_2 = "";
+						}					
 					}
+
 										
-					$static_value = array ($collectedUserID, $docID, $collectedUserName, $disableThis);	  
-					$static_name  = array ("{USER_ID}", "{DOC_ID}", "{NAME}", "{DISABLED}");			
+					$static_value = array ($collectedUserID, $docID, $collectedUserName, $disabled_1, $disabled_2);	  
+					$static_name  = array ("{USER_ID}", "{DOC_ID}", "{NAME}", "{DISABLED_1}", "{DISABLED_2}");			
 					$thisOneUser = $engine->load_template("html/user.html");
 					$list .= $engine->replace_static($static_name, $static_value,  $thisOneUser);					
 				}
@@ -142,10 +158,10 @@ if($_SESSION['session_rank'] == 1)
 			$stepContent = $engine->replace_static($static_name, $static_value,  $stepContent);
 		}
 		
-
 		
-		$static_value = array ($e1, $e2, $e3, $e4, $row['name'], $docID);	  
-		$static_name  = array ("{e_1}","{e_2}","{e_3}","{e_4}", "{TITLE}", "{ID}");		
+		
+		$static_value = array ($e1, $e2, $e3, $e4, $thisDocumentName, $docID, $step);	  
+		$static_name  = array ("{e_1}","{e_2}","{e_3}","{e_4}", "{TITLE}", "{ID}", "{STEP}");		
 		$steps = $engine->load_template("html/steps.html");	
 		$steps = $engine->replace_static($static_name, $static_value, $steps);
 		
