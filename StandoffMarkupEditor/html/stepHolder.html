@@ -2,11 +2,17 @@
 	<div id="stepHolder">
 	{FORM}
 	</div>
-	<div style="float:left">
-		<a href="index.php"><img src="images/button_folder.png" id="folderButton" onmouseover="updateTransparency('low','folderButton');" onmouseout="updateTransparency('high','folderButton');"></a>
-	</div>
-	<div style="float:right">
-		<a href="javascript:void(0)" onclick="loadStep('edit.php?id={ID}&step={PREV}', '{PREV}');"><img src="images/button_prev.png" id="prevButton" onmouseover="updateTransparency('low','prevButton');" onmouseout="updateTransparency('high','prevButton');"></a>
-		<input type="image" src="images/button_next.png" id="nextButton" onmouseover="updateTransparency('low','nextButton');" onmouseout="updateTransparency('high','nextButton');">
+	<div id="navButtonsHolder">
+		<table width="100%">
+			<tr>
+				<td>
+					<a href="index.php"><img src="images/button_folder.png" id="folderButton" onmouseover="updateTransparency('low','folderButton');" onmouseout="updateTransparency('high','folderButton');"></a>
+				</td>
+				<td width="100%" align="right">
+					<a href="javascript:void(0)" onclick="loadStep('edit.php?id={ID}&step={PREV}', '{PREV}');"><img src="images/button_prev.png" id="prevButton" onmouseover="updateTransparency('low','prevButton');" onmouseout="updateTransparency('high','prevButton');"></a>
+					<input type="image" src="images/button_next.png" id="nextButton" onmouseover="updateTransparency('low','nextButton');" onmouseout="updateTransparency('high','nextButton');">				
+				</td>
+			</tr>
+		</table>
 	</div>
 </form>

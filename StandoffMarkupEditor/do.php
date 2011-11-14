@@ -19,17 +19,17 @@ if(($action == "getContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strto
 
 	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
 	
-	$conn = $functions->dbConnect();
-	$docID = mysql_real_escape_string($_SESSION['session_docID']);
-  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
-	$row = mysql_fetch_assoc($result);		
-	
 	if($userHasAccess)
 	{
+		$conn = $functions->dbConnect();
+		$docID = mysql_real_escape_string($_SESSION['session_docID']);
+	  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
+		$row = mysql_fetch_assoc($result);		
+		
+		mysql_close($conn);	
+		
 		echo $row['content'];
 	}
-	
-	mysql_close($conn);	
 }
 
 
@@ -40,18 +40,64 @@ if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&
 	$functions = new functions;
 
 	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
-	
-	$conn = $functions->dbConnect();
-	$docID = mysql_real_escape_string($_SESSION['session_docID']);
-  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
-	$row = mysql_fetch_assoc($result);		
-	
+		
 	if($userHasAccess)
 	{
+		$conn = $functions->dbConnect();
+		$docID = mysql_real_escape_string($_SESSION['session_docID']);
+	  	$result = mysql_query("SELECT * FROM documents WHERE id = '$docID'");	
+		$row = mysql_fetch_assoc($result);		
+		
+		mysql_close($conn);	
+		
 		echo $row['markedContent'];
 	}
 	
-	mysql_close($conn);	
+	
+}
+
+
+// GET ALL MARKS OF THE GIVEN DOCUMENT
+else if(($action == "getAllMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
+{
+	$functions = new functions;
+	$engine = new template;
+
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
+	
+	if($userHasAccess)
+	{
+		$counter = 0;
+		$conn = $functions->dbConnect();
+		$docID = mysql_real_escape_string($_SESSION['session_docID']);
+	  	$result = mysql_query("SELECT * FROM marks WHERE docID = '$docID'");			
+		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		{
+			$thisID = $row['id'];
+			$thisSP = $row['sp'];
+			$thisEP = $row['ep'];
+			$thisContent = $row['content'];
+			
+			if(strlen($thisContent) > 20)
+			{
+				$thisContent = substr($thisContent, 0, 20) . '...';
+			}
+			
+			$static_value = array ($thisSP, $thisEP, $thisContent, $thisID);	  
+			$static_name  = array ("{SP}","{EP}", "{CONTENT}", "{ID}");
+			$template = $engine->load_template("html/mark.html");
+			$toPrint .= $engine->replace_static($static_name, $static_value,  $template);
+			
+			$counter++;
+		}			
+		
+		mysql_close($conn);	
+	}
+	
+	if($counter < 1)
+	$toPrint = "No marks found";
+	
+	echo $toPrint;
 }
 
 
@@ -96,11 +142,13 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 	$url = htmlspecialchars($_POST['url']);
 	$text = htmlspecialchars($_POST['txt']);
 	$newSpanID = htmlspecialchars($_POST['newSpanID']);
+	$selectedText = htmlspecialchars($_POST['selectedText']);
 	$markedContet = $_POST['userInput'];
+	$selectionLength = htmlspecialchars($_POST['thisLength']);
 
 	$markedContet = preg_replace('/<span[^>]+id="junk_[^"]*"[^>]*>(.*?)<\/span>/s', '', $markedContet);
 
-	$pointsArray = $functions->getPoints($markedContet, $newSpanID); 
+	$pointsArray = $functions->getPoints($markedContet, $newSpanID, $selectionLength); 
 	$sp = $pointsArray[0];
 	$ep = $pointsArray[1];
 	
@@ -115,7 +163,7 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 	{
 		mysql_query("UPDATE documents set markedContent = '$markedContet' WHERE id='$docID'");
 		
-		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`, `spanID`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text', '$newSpanID')");
+		mysql_query("INSERT INTO `marks` (`docID` , `sp` , `ep`, `ns`, `va`, `url`, `text`, `spanID`, `content`) VALUES ('$docID', '$sp', '$ep', '$ns', '$tag', '$url', '$text', '$newSpanID', '$selectedText')");
 	}
 	
 	mysql_close($conn);	
@@ -657,6 +705,30 @@ else if(($action == "rename")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 	echo "<script type=\"text/javascript\">window.location='$page';</script>";
 }
 
+
+
+// Rest the password
+else if(($action == "reset")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+{
+	$conn = $functions->dbConnect();	
+	
+	$email = htmlspecialchars($_POST['email']);
+	$email = mysql_real_escape_string($email);
+	
+	$result = mysql_query("SELECT * FROM users WHERE email = '$email'");	
+	$row = mysql_fetch_assoc($result);	
+	
+	if($row['id'])
+	{
+		
+	}
+	else
+	{
+	
+	}
+	
+	mysql_close($conn);
+}
 
 // logout
 else if(($action == "logout")&&($userRank == 1))

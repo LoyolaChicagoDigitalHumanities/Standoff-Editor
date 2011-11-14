@@ -123,9 +123,17 @@ class functions
 	* of the given selection
 	*
 	***************************************/	
-	function getPoints($userInput, $spanID)
+	function getPoints($userInput, $spanID, $selectionLength)
 	{
 		$toRetun = array();
+		
+		$toFind = "<span id=\"$spanID";
+		
+		$sp = strpos($userInput, $toFind);
+		$ep = $sp + $selectionLength;
+		
+		$toRetun[] = $sp;
+		$toRetun[] = $ep;
 		
 		return $toRetun;
 	}							

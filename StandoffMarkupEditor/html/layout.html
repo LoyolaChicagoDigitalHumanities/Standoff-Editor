@@ -18,26 +18,28 @@
 	<script language="javascript" type="text/javascript">document.onkeypress = stopRKey;</script>	
 	<link rel="icon" href="favicon.ico" type="image/x-icon"> 
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<title>Markup Editor - Profile</title> 
+	<title>Markup Editor - {PAGE_NAME}</title> 
 </head>
 
 <body>
 	<noscript><meta http-equiv="REFRESH" content="0; url=javascript.php"></noscript>
 	<div id="container">
-		<div id="header">
-			<div id="logo">
-				<a href="index.php"><img src="images/logo.png"></a>
+		<div id="subContainer">
+			<div id="header">
+				<div id="logo">
+					<a href="index.php"><img src="images/logo.png"></a>
+				</div>
+				<div id="userinfo">
+					You are logged in as {FULL_NAME} &nbsp;<a href="do.php?action=logout">(Logout)</a>
+				</div>
 			</div>
-			<div id="userinfo">
-				You are logged in as {FULL_NAME} &nbsp;<a href="do.php?action=logout">(Logout)</a>
-			</div>
-		</div>
-		<div id="content">
-			{CONTENT}
-		</div>	
-		<div id="footer">
-			A Project of Loyola University Chicago's <a href="http://www.ctsdh.luc.edu/" target="_blank">Center for Textual Studies</a> & <a href="http://home.etl.luc.edu/" target="_blank">Emerging Technologies Laboratory</a> 
-		</div>					
+			<div id="content">
+				{CONTENT}
+			</div>					
+		</div>			
 	</div>
+	<div id="footer">
+		A Project of Loyola University Chicago's <a href="http://www.ctsdh.luc.edu/" target="_blank">Center for Textual Studies</a> & <a href="http://home.etl.luc.edu/" target="_blank">Emerging Technologies Laboratory</a> 
+	</div>		
 </body>
 </html>

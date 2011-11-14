@@ -1,13 +1,10 @@
 body 
 {
 	margin:0;
-	padding:10px;
+	padding:0px;
 	font:13px/16px "Lucida Grande", Tahoma, Arial, Sans-serif;
 	color:#ffffff;
 	background-color:#043e54;
-	background-image:url('../images/background2.png');
-	background-repeat: repeat-x;
-	background-position: top;
 }
 a:link 
 {	
@@ -44,9 +41,19 @@ img
 }
 #container
 {
-	width: 900px;
-	margin: 0 auto;
+	background-image:url('../images/background2.jpg');
+	background-repeat: repeat-x;
+	background-position: top;
+	min-height: 300px;	
+	background-color: #0e96cf;
+	margin: 0px;
 	padding: 0px;
+}
+#subContainer
+{
+	margin: 0 auto;
+	width: 900px;
+	padding-top: 10px;
 }
 #header
 {
@@ -66,17 +73,22 @@ img
 }
 #content
 {
-	height: 477px;
-	margin: 11px 0px 20px 0px;
+	margin-top: 15px;
 	padding: 5px;
+	background-color: #0e96cf;
 }
 #footer
 {
-	padding: 0px;
-	margin: 0px;
-	margin: 30px 30px 0px 0px;
+	clear: both;
+	margin:0px;
 	text-align: right;
 	font-size: 9px;
+	background-color: #043e54;
+	background-image:url('../images/footer_2.jpg');
+	background-repeat: repeat-x;
+	background-position: top;
+	height: 30px;
+	padding: 20px 150px 0px 0px;		
 }
 #marks
 {
@@ -104,35 +116,18 @@ span
 {
 	font-size: 18px;
 }
-#menu
-{
-	border: 1px solid #79c4e3;
-	background-color: #e2e8ee;
-	padding: 5px;
-	margin:0px 0px 0px 130px;
-	width:300px;
-	display:none;
-	position:absolute; 
-	-moz-box-shadow: 5px 5px 5px #ccc;
-    -webkit-box-shadow: 5px 5px 5px #ccc;
-    box-shadow: 5px 5px 5px #ccc;  
-}
 
 #menuHolder
 {
 	height:55px;
 }
-#listOfDocumentsWrapper
-{
-	overflow: auto;
-	height: 450px;	
-}
 #listOfDocuments
 {
 	height: 450px;
 	width: 600px;
-	vertical-align:middle;
-	display:table-cell; 
+	vertical-align: middle;
+	display: table-cell;
+	font-size: 18px;
 }
 #buttons
 {
@@ -157,7 +152,7 @@ span
 	border-radius: 5px;	
 	outline: none;
 	resize: none;	
-	height: 99%;
+	height: 357px;
 	line-height: 200%;
 }
 .classicLegend
@@ -168,7 +163,7 @@ span
 .menuLegend
 {
 	white-space: nowrap;
-	color: #0e96cf;
+	color: #000;
 	font-size: 12px;
 }
 .loading
@@ -228,27 +223,13 @@ table.paddedTable tr td, table.classicTable tr th
 	float: right;
 	display: none;
 }
-#listOfDocumentsHolder
-{
-	width: 580px;
-	min-height: 98%;
-	float: right;
-	font-size: 20px;
-	padding: 5px;
-	vertical-align:middle;
-}
 #folderIcon
 {
 	background-image:url('../images/icon_folder.png');
 	background-repeat: no-repeat;
 	background-position-y: center;
-	float: left;
 	width: 256px;
-	height: 100%;	 
-}
-#newDocumentButtonHolder
-{
-	margin-top: 370px;
+	height:300px;	 
 }
 .documentsElement
 {
@@ -293,7 +274,12 @@ table.paddedTable tr td, table.classicTable tr th
 	color: #65cee7;
   	-moz-border-radius: 5px; 
  	border-radius: 5px;	
- 	height: 300px;
+ 	min-height: 360px;
+}
+#navButtonsHolder
+{
+	clear:both;
+	padding-top: 10px;
 }
 #documentNameHolder
 {
@@ -319,22 +305,18 @@ table.paddedTable tr td, table.classicTable tr th
 }
 .markupHolder
 {
-	width: 83.8%;
+	width: 69%;
 	border: 1px solid #cdcdcd;
 	background-color: #f2f2f2;
 	color: #000;
 	-moz-border-radius: 5px;
 	border-radius: 5px;	
-	height: 99%;
 	font:16px/18px "Lucida Grande", Tahoma, Arial, Sans-serif;
 	float: right;
 	overflow: auto;
 	line-height:200%;
-}
-.markupToolsHolder
-{
-	float: left;
-	padding-left: 6px;
+	height: 351px;
+	padding: 3px;
 }
 #sharingOptionsHolder
 {
@@ -397,4 +379,74 @@ table.paddedTable tr td, table.classicTable tr th
 .noSuggestionElement
 {
 	padding: 6px;
+}
+#marksSideMenu
+{
+	border: 1px solid #fff;
+	background-color: #b0b0b0;
+	height:100px;
+	width: 243px;
+	margin-top: 8px;
+	overflow: auto;
+	color: #000;
+	font-size: 12px;
+	padding: 5px;
+}
+#toolsSideMenu
+{
+	border: 1px solid #fff;
+	padding: 5px;
+	background-color: #b0b0b0;
+	height:180px;
+	width: 243px;
+	margin-top: 8px;
+	color: 000;
+}
+.sideMenuScrollable
+{
+	overflow: auto;
+	height: 148px;
+	padding: 0px 5px 5px 0px;
+}
+.sideMenuUnscrollable
+{
+	text-align: right;
+	margin-top: 5px;
+	padding-right: 10px;
+}
+.sideMenuScrollable::-webkit-scrollbar
+{
+	-webkit-appearance: none;
+	width: 7px;
+}
+.sideMenuScrollable::-webkit-scrollbar-thumb
+{
+	border-radius: 4px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+#marksSideMenu::-webkit-scrollbar
+{
+	-webkit-appearance: none;
+	width: 7px;
+}
+#marksSideMenu::-webkit-scrollbar-thumb
+{
+	border-radius: 4px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+.markElement
+{
+  background-image:url('../images/mark_bg.jpg');
+  background-repeat: repeat-x;  
+  height: 16px;
+  border: 1px solid #ff0000;
+  -moz-border-radius: 6px;
+  border-radius: 6px;	
+  color: #ff0000;
+  background-color: #fedcdc;
+  font-size: 12px;	
+  padding: 3px;  
+  margin-bottom: 4px;
 }

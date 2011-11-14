@@ -38,14 +38,26 @@ $(document).ready(function()
 	
 	
 	
-	// get the content of the document
+	// get all marks of this document
+	$("#marksSideMenu").ready(function()
+	{
+	    $("#marksSideMenu")  
+	        .html(loading_image)  
+	        .load('do.php?action=getAllMarks', null, function(responseText){  
+	     });	     	  	     
+	});
+	
+	
+	
+	
+	// get the marked text of this document
 	$("#userInput").ready(function()
 	{
 	    $("#userInput")  
 	        .html(loading_image)  
 	        .load('do.php?action=getMarkedContent', null, function(responseText){  
 	     });	     	  	     
-	}); 
+	});	 
  	
  	
  	 	
@@ -54,34 +66,7 @@ $(document).ready(function()
 	{
 		savedSel = rangy.saveSelection();
 	});
- 	
- 	
- 
- 
- 
- 
- 	
- 	
-	// event when the add mark button is clicked
-	$("#addMarkButton").click(function()
-	{	
-		if( $("#menu").is(":visible") )
-		{
-			$("#menu").hide("fast");	
-		}
-		else
-		{					
-			$("#menu").show("fast");
-		}	  	     
-	}); 
-	
-	 	
- 	
- 	// event when the attribute's + button is clicked
-	$("#addAttrButton").click(function()
-	{
-		//alert();
-	});	
+
 	
 
 	
@@ -100,9 +85,7 @@ $(document).ready(function()
 		rangy.restoreSelection(savedSel);
 		
 		if((ns != '')&&(tag != '')&&(reportSelectionText() != ''))
-		{						 			
-			$("#menu").hide("fast");
-			
+		{						 						
 			var newSpanID = parseInt(document.getElementById('spanIDHistory').value)+1;
 			document.getElementById('spanIDHistory').value = newSpanID;
 			
@@ -117,8 +100,14 @@ $(document).ready(function()
 			document.getElementById('userInput').focus();
 			
 			var userInput = document.getElementById('userInput').innerHTML; 
+			var selectedText = rangy.getSelection().toString();
 			 					 			
-			$.post("do.php?action=addMark", {ns:ns, tag:tag, attr:attr, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID}, function(data){});		
+			$.post("do.php?action=addMark", {ns:ns, tag:tag, attr:attr, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID, selectedText:selectedText}, function(data){
+			    $("#marksSideMenu")  
+			        .html(loading_image)  
+			        .load('do.php?action=getAllMarks', null, function(responseText){  
+			     });			
+			});		
 			
 			rangy.removeMarkers(savedSel);						 			
 		}
@@ -138,7 +127,6 @@ $(document).ready(function()
 			{
 				alert("No selection was made");
 				document.getElementById('userInput').focus();
-				$("#menu").hide("fast");
 			}									
 		} 	     
 	}); 
@@ -150,12 +138,19 @@ $(document).ready(function()
 	    $("#userInput")  
 	        .html(loading_image)  
 	        .load('do.php?action=clearMarks', null, function(responseText){  
-	     });  	     
+	     }); 
+	     
+	    $("#marksSideMenu")  
+	        .html(loading_image)  
+	        .load('do.php?action=getAllMarks', null, function(responseText){  
+	     });	     
 	}); 
 	
 	
-	
-	
+	$("a.removeMarkButton").click(function(event)
+	{
+	   event.preventDefault();     	   
+	});	
 	
 });
 
