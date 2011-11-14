@@ -450,3 +450,19 @@ table.paddedTable tr td, table.classicTable tr th
   padding: 3px;  
   margin-bottom: 4px;
 }
+.attributeFieldContainer
+{
+	float: left;
+	width:110px;
+	margin-bottom: 5px;
+}
+.attributeAddContainer
+{
+	float: right;
+	width: 18px;
+	margin-bottom: 5px;
+}
+.addNewAttrButton
+{
+	cursor: pointer;
+}

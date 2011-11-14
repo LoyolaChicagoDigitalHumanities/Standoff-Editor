@@ -1,4 +1,5 @@
 <input type="hidden" value="{LAST_SPAN_ID}" id="spanIDHistory">
+<input type="hidden" value="1" id="newAttrCounter">
 <div id="userInput" class="markupHolder">{CONTENT}</div>
 <a href="javascript:void(0);" id="clearMarksButton"><img alt="Clear Marks" id="theButton2" src="images/button_clearmarks.png" onmouseover="updateButton('1', 'theButton2');" onmouseout="updateButton('0', 'theButton2');"></a>
 
@@ -25,11 +26,14 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="menuLegend">
-					Attribute(s):
+				<td class="menuLegend" valign="top">
+					Attribute:
 				</td>
 				<td style="width:100%">
-					<input name="attr" id="attr" class="classicField">
+					<div id="attributesHolder">
+						<div class='attributeFieldContainer'><input name='attr1' id='attr1' class='classicField'></div>
+						<div class='attributeAddContainer'><img src='images/button_add_attr.png' class='addNewAttrButton' onclick='addNewAttr();'></div>
+					</div>
 				</td>
 			</tr>
 			<tr>

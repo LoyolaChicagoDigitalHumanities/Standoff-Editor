@@ -58,46 +58,60 @@ if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&
 
 
 // GET ALL MARKS OF THE GIVEN DOCUMENT
-else if(($action == "getAllMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
+else if(($action == "getAllMarks")||($action == "removeMark"))
 {
-	$functions = new functions;
-	$engine = new template;
-
-	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
-	
-	if($userHasAccess)
+	if((isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
 	{
-		$counter = 0;
-		$conn = $functions->dbConnect();
-		$docID = mysql_real_escape_string($_SESSION['session_docID']);
-	  	$result = mysql_query("SELECT * FROM marks WHERE docID = '$docID'");			
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$thisID = $row['id'];
-			$thisSP = $row['sp'];
-			$thisEP = $row['ep'];
-			$thisContent = $row['content'];
-			
-			if(strlen($thisContent) > 20)
-			{
-				$thisContent = substr($thisContent, 0, 20) . '...';
-			}
-			
-			$static_value = array ($thisSP, $thisEP, $thisContent, $thisID);	  
-			$static_name  = array ("{SP}","{EP}", "{CONTENT}", "{ID}");
-			$template = $engine->load_template("html/mark.html");
-			$toPrint .= $engine->replace_static($static_name, $static_value,  $template);
-			
-			$counter++;
-		}			
+		$functions = new functions;
+		$engine = new template;
+	
+		$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
 		
-		mysql_close($conn);	
+		if($userHasAccess)
+		{
+			$counter = 0;
+			
+			$conn = $functions->dbConnect();
+			
+			if($action == "removeMark")
+			{
+				$markID = $_GET['id'];
+				
+  				$docID = mysql_real_escape_string($_SESSION['session_docID']);	
+
+				mysql_query("DELETE FROM marks WHERE docID = '$docID' AND id = '$markID'");
+			}			
+			
+			$docID = mysql_real_escape_string($_SESSION['session_docID']);
+		  	$result = mysql_query("SELECT * FROM marks WHERE docID = '$docID'");			
+			while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			{
+				$thisID = $row['id'];
+				$thisSP = $row['sp'];
+				$thisEP = $row['ep'];
+				$thisContent = $row['content'];
+				
+				if(strlen($thisContent) > 20)
+				{
+					$thisContent = substr($thisContent, 0, 20) . '...';
+				}
+				
+				$static_value = array ($thisSP, $thisEP, $thisContent, $thisID);	  
+				$static_name  = array ("{SP}","{EP}", "{CONTENT}", "{ID}");
+				$template = $engine->load_template("html/mark.html");
+				$toPrint .= $engine->replace_static($static_name, $static_value,  $template);
+				
+				$counter++;
+			}			
+			
+			mysql_close($conn);	
+		}
+		
+		if($counter < 1)
+		$toPrint = "No marks found";
+		
+		echo $toPrint;
 	}
-	
-	if($counter < 1)
-	$toPrint = "No marks found";
-	
-	echo $toPrint;
 }
 
 
@@ -168,6 +182,8 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 	
 	mysql_close($conn);	
 }
+
+
 
 
 

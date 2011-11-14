@@ -76,12 +76,10 @@ $(document).ready(function()
 	{		
 		var ns = document.getElementById('ns').value;
 		var tag = document.getElementById('tag').value;
-		var attr = document.getElementById('attr').value;
+		var totalAttr = document.getElementById('newAttrCounter').value;
 		var url = document.getElementById('url').value;
 		var txt = document.getElementById('text').value;		
-		
-		
-		
+
 		rangy.restoreSelection(savedSel);
 		
 		if((ns != '')&&(tag != '')&&(reportSelectionText() != ''))
@@ -93,7 +91,6 @@ $(document).ready(function()
 			
 			document.getElementById('ns').value = "";
 			document.getElementById('tag').value = "";
-			document.getElementById('attr').value = "";
 			document.getElementById('url').value = "";
 			document.getElementById('text').value = "";			
 			 
@@ -102,7 +99,7 @@ $(document).ready(function()
 			var userInput = document.getElementById('userInput').innerHTML; 
 			var selectedText = rangy.getSelection().toString();
 			 					 			
-			$.post("do.php?action=addMark", {ns:ns, tag:tag, attr:attr, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID, selectedText:selectedText}, function(data){
+			$.post("do.php?action=addMark", {ns:ns, tag:tag, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID, selectedText:selectedText}, function(data){
 			    $("#marksSideMenu")  
 			        .html(loading_image)  
 			        .load('do.php?action=getAllMarks', null, function(responseText){  
@@ -145,12 +142,6 @@ $(document).ready(function()
 	        .load('do.php?action=getAllMarks', null, function(responseText){  
 	     });	     
 	}); 
-	
-	
-	$("a.removeMarkButton").click(function(event)
-	{
-	   event.preventDefault();     	   
-	});	
 	
 });
 
@@ -434,4 +425,64 @@ function hideSuggestions()
 function goToURL(url)
 {
 	window.location = url;
+}
+
+
+
+// remove the given mark and reloading document content
+function removeMark(id)
+{
+	if (window.XMLHttpRequest)
+	{
+	  	// code for IE7+, Firefox, Chrome, Opera, Safari
+	  	xmlhttp=new XMLHttpRequest();
+	}
+	else
+	{
+	  	// code for IE6, IE5
+	  	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	  
+	xmlhttp.onreadystatechange=function()
+	{
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	    	document.getElementById('marksSideMenu').innerHTML = xmlhttp.responseText;
+	    }
+	}
+
+    xmlhttp.open("GET","do.php?action=removeMark&id=" + id,true);
+    xmlhttp.setRequestHeader('X-Sent-From','StandoffMarkupEditor');
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xmlhttp.setRequestHeader("Connection", "close");		
+    xmlhttp.send(); 
+
+	xmlhttp.onreadystatechange=function()
+	{
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	    	document.getElementById('userInput').innerHTML = xmlhttp.responseText;
+	    }
+	}
+
+    xmlhttp.open("GET","do.php?action=getMarkedContent",true);
+    xmlhttp.setRequestHeader('X-Sent-From','StandoffMarkupEditor');
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xmlhttp.setRequestHeader("Connection", "close");		
+    xmlhttp.send(); 	  
+}
+
+
+
+// add new attribute field 
+function addNewAttr()
+{
+	var newCount = parseInt(document.getElementById('newAttrCounter').value)+1;
+	
+	var newElementContent = "<div class='attributeFieldContainer'><input name='attr" + newCount + "' id='attr" + newCount + "' class='classicField'></div><div class='attributeAddContainer'><img src='images/button_add_attr.png' class='addNewAttrButton' onclick='addNewAttr();'></div>";
+	
+	document.getElementById('attributesHolder').innerHTML += newElementContent;
+	document.getElementById('newAttrCounter').value = newCount;
 }
