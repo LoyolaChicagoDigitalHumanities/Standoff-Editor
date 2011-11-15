@@ -440,18 +440,35 @@ function goToURL(url)
 
 
 // remove unwanted spans
-function unwrapSpanTag(input)
+function unwrapSpanTag(s)
 {
 
   var a = document.createElement('div');
-  a.innerHTML = input;
-  var node, next = a.firstChild;
+  a.innerHTML = s;
+  var span, spans = a.getElementsByTagName('span');
+  var frag, arr = [];
 
-  while (node = next) {
-    next = next.nextSibling
+  // Stabilise spans collection in array
+  for (var i=0, iLen=spans.length; i<iLen; i++) {
+    arr[i] = spans[i];
+  }
 
-    if (node.tagName && node.tagName.toLowerCase() == 'span' && !node.id) {
-      a.replaceChild(document.createTextNode(node.textContent || node.innerText), node);
+  // Process spans
+  for (i=0; i<iLen; i++) {
+    span = arr[i];
+
+    // If no id, put content into a fragment
+    if (!span.id) {
+
+      // Some older IEs may not like createDocumentFragment
+      frag = document.createDocumentFragment();
+
+      while (span.firstChild) {
+        frag.appendChild(span.firstChild);
+      }
+
+      // Replace span with its content in the fragment
+      span.parentNode.replaceChild(frag, span);
     }
   }
   return a.innerHTML;
@@ -460,7 +477,7 @@ function unwrapSpanTag(input)
 
 
 
-// remove the given mark and reloading document content
+// remove the given mark and reloade document content
 function removeMark(thisID, thisSpanID)
 {		
 	document.getElementById(thisSpanID).removeAttribute("style");
@@ -468,6 +485,8 @@ function removeMark(thisID, thisSpanID)
 	
 	var dirtyText = document.getElementById('userInput').innerHTML;
 	var cleanText = unwrapSpanTag(dirtyText);
+	
+	//var cleanText = dirtyText.replace(/<span>([A-Za-z0-9]*)<\/span>/g, '$1');
 	
 	document.getElementById('userInput').innerHTML = cleanText;
 		
