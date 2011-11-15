@@ -1,17 +1,4 @@
-/**
- * @license CSS Class Applier module for Rangy.
- * Adds, removes and toggles CSS classes on Ranges and Selections
- *
- * Part of Rangy, a cross-browser JavaScript range and selection library
- * http://code.google.com/p/rangy/
- *
- * Depends on Rangy core.
- *
- * Copyright 2011, Tim Down
- * Licensed under the MIT license.
- * Version: 1.2.2
- * Build date: 13 November 2011
- */
+
 rangy.createModule("CssClassApplier", function(api, module) {
     api.requireModules( ["WrappedSelection", "WrappedRange"] );
 
