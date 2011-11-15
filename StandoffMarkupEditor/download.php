@@ -25,7 +25,7 @@ if($userRank == 1)
 		$date = date("YmdHis"); 
 		if($_GET['type'] == "plain")
 		{
-			$contents = $row['content'];
+			$content = $row['content'];
 			
 			header('Pragma: no-cache');
 			header('Expires: 0');
@@ -35,20 +35,31 @@ if($userRank == 1)
 			header('Content-Transfer-Encoding: binary');
 			ob_clean();
 			flush();
-			echo $contents;
+			echo $content;
 		}
 		else if($_GET['type'] == "xml")
 		{
 			$result = mysql_query("SELECT * FROM marks WHERE docID = '$docID' ORDER BY id ASC");				
 			while($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{
+				$attributes = "";
+				$spanCounter = 1;
+				$thisSpanID = $row['spanID'];
+	  			$result2 = mysql_query("SELECT * FROM attributes WHERE docID = '$docID' AND spanID = '$thisSpanID'");	
+				while($row2 = mysql_fetch_array($result2, MYSQL_ASSOC))
+				{
+					$attributes .= "\n	<attr$spanCounter>" . $row2['content'] . "</attr$spanCounter>";
+					$spanCounter++;
+				}					
+			
 $contents .= "
 <node>
 	<sp>" . $row['sp'] . "</sp>
 	<ep>" . $row['ep'] . "</ep>
 	<ns>" . $row['ns'] . "</ns>
-	<attr>" . $row['attr'] . "</attr>
-	<va>" . $row['va'] . "</va>
+	<tag>" . $row['va'] . "</tag>
+	<text>" . $row['text'] . "</text>
+	<url>" . $row['url'] . "</url>$attributes
 </node>
 ";
 			}	
@@ -71,16 +82,24 @@ echo "<?xml version=\"1.0\"?>
 
 			$result = mysql_query("SELECT * FROM marks WHERE docID = '$docID' ORDER BY id ASC");				
 			while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-			{
+			{								
 				$thisSP = $row['sp'];
 				$thisEP = $row['ep'];
 				$thisNS = $row['ns'];
-				$thisATTR = $row['attr'];
 				$thisVA = $row['va'];
 				$thisURL = $row['url'];
 				$thisTXT = $row['txt'];
 				
-				$posts[] = array('sp'=> $thisSP, 'ep'=> $thisEP, 'ns'=> $thisNS, 'attr'=> $thisATTR, 'va'=> $thisVA, 'url'=> $thisURL, 'text'=> $thisTXT);
+				$posts[] = array('sp'=> $thisSP, 'ep'=> $thisEP, 'ns'=> $thisNS, 'tag'=> $thisVA, 'url'=> $thisURL, 'text'=> $thisTXT);
+				
+				$spanCounter = 1;
+				$thisSpanID = $row['spanID'];
+	  			$result2 = mysql_query("SELECT * FROM attributes WHERE docID = '$docID' AND spanID = '$thisSpanID'");	
+				while($row2 = mysql_fetch_array($result2, MYSQL_ASSOC))
+				{
+					$spanCounter++;
+					$posts["attr$spanCounter"] = $row2['content'];
+				}				
 			}	
 			
 			$response['posts'] = $posts;

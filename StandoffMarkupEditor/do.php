@@ -99,12 +99,16 @@ else if(($action == "getAllMarks")||($action == "removeMark"))
 			$conn = $functions->dbConnect();
 			
 			if($action == "removeMark")
-			{
-				$markID = $_GET['id'];
-				
-  				$docID = mysql_real_escape_string($_SESSION['session_docID']);	
+			{				
+  				$docID = mysql_real_escape_string($_SESSION['session_docID']);
+  				$markID = mysql_real_escape_string($_GET['id']);	
+  				
+	  			$result = mysql_query("SELECT * FROM marks WHERE id = '$markID'");	
+				$row = mysql_fetch_assoc($result);
+				$thisSpanID = $row['spanID'];	  				
 
 				mysql_query("DELETE FROM marks WHERE docID = '$docID' AND id = '$markID'");
+				mysql_query("DELETE FROM attributes WHERE docID = '$docID' AND spanID = '$thisSpanID'");
 			}			
 			
 			$docID = mysql_real_escape_string($_SESSION['session_docID']);
@@ -160,6 +164,7 @@ else if(($action == "clearMarks")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(
 		$plainText = $row['content'];
 		
 		mysql_query("DELETE FROM marks WHERE docID='$docID'");
+		mysql_query("DELETE FROM attributes WHERE docID='$docID'");
 		mysql_query("UPDATE documents set markedContent = '$plainText' WHERE id='$docID'");
 		
 		echo $plainText;
@@ -346,6 +351,9 @@ else if(($action == "login")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank
 }
 		
 		
+		
+		
+		
 // create new document
 else if(($action == "create")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
 {
@@ -366,6 +374,34 @@ else if(($action == "create")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 	
 	echo "<script type=\"text/javascript\">window.location='edit.php?id=$id';</script>";	
 }	
+
+
+
+
+
+
+// link an attribute to a newly created span
+else if(($action == "linkAttribute")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+{
+	$functions = new functions;
+
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
+		
+	if($userHasAccess)
+	{
+		$conn = $functions->dbConnect();
+		
+		$docID = mysql_real_escape_string($_SESSION['session_docID']);
+		$spanID = htmlspecialchars($_POST['spanID']);
+		$value = htmlspecialchars($_POST['attrValue']);
+				
+	  	mysql_query("INSERT INTO `attributes` (`docID` , `spanID` , `content`) VALUES ('$docID', '$spanID', '$value')");
+	  	
+		mysql_close($conn);			
+	}	
+}	
+
+
 
 
 
@@ -502,6 +538,7 @@ else if(($action == "delete")&&($userRank == 1))
 			
 			mysql_query("DELETE FROM documents WHERE id='$id'");
 			mysql_query("DELETE FROM marks WHERE docID='$id'");
+			mysql_query("DELETE FROM attributes WHERE docID='$id'");
 			$page = "index";
 			
 			mysql_close($conn);

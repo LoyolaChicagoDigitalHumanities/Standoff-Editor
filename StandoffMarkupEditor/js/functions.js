@@ -113,7 +113,20 @@ $(document).ready(function()
 			        .html(loading_image)  
 			        .load('do.php?action=getAllMarks', null, function(responseText){  
 			     });			
-			});		
+			});
+			
+			var totalAttributes = parseInt(document.getElementById('newAttrCounter').value);
+			var counter = 0;
+			var tempElementID = "";
+			while(counter < totalAttributes)
+			{
+				counter++;
+				
+				tempElementID = "attr" + counter;
+				var valueOfTemp = document.getElementById(tempElementID).value;
+				document.getElementById(tempElementID).value = "";
+				$.post("do.php?action=linkAttribute", {attrValue:valueOfTemp, spanID:newSpanID}, function(data){}); 
+			}		
 			
 			rangy.removeMarkers(savedSel);						 			
 		}
@@ -551,6 +564,9 @@ function addNewAttr()
 	
 	var newElementContent = "<div class='attributeFieldContainer'><input name='attr" + newCount + "' id='attr" + newCount + "' class='classicField'></div><div class='attributeAddContainer'><img src='images/button_add_attr.png' class='addNewAttrButton' onclick='addNewAttr();'></div>";
 	
-	document.getElementById('attributesHolder').innerHTML += newElementContent;
+	var newElement = document.createElement('div');
+	newElement.innerHTML = newElementContent;	
+	
+	document.getElementById('attributesHolder').appendChild(newElement); 		
 	document.getElementById('newAttrCounter').value = newCount;
 }
