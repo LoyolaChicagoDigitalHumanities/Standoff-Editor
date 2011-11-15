@@ -60,13 +60,15 @@ if($_SESSION['session_rank'] > 0)
 		$list = "$list";
 	}
 	
+	$thisPageName = "My Documents";
+	
 	$static_value = array ($list);	  
 	$static_name  = array ("{LIST}");
 	$thisContent = $engine->load_template("html/profile.html");
 	$thisContent = $engine->replace_static($static_name, $static_value,  $thisContent);
 		
-	$static_value = array ($thisFullname, $thisContent);	  
-	$static_name  = array ("{FULL_NAME}","{CONTENT}");
+	$static_value = array ($thisFullname, $thisContent, $thisPageName);	  
+	$static_name  = array ("{FULL_NAME}","{CONTENT}", "{PAGE_NAME}");
 	$template = $engine->load_template("html/layout.html");
 	$template = $engine->replace_static($static_name, $static_value,  $template);		
 }

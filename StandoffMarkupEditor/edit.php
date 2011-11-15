@@ -47,6 +47,8 @@ if($_SESSION['session_rank'] == 1)
 		// STEP 1
 		if($step == 1)
 		{
+			$thisPageName = "Step 1 - $thisDocumentName";
+			
 			$e1 = "Active";
 			$prevStep = 1;
 			
@@ -61,6 +63,8 @@ if($_SESSION['session_rank'] == 1)
 		// STEP 2		
 		else if($step == 2)
 		{
+			$thisPageName = "Step 2 - $thisDocumentName";
+			
 			$e2 = "Active";
 			$prevStep = 1;
 			
@@ -77,6 +81,8 @@ if($_SESSION['session_rank'] == 1)
 		// STEP 3		
 		else if($step == 3)
 		{
+			$thisPageName = "Step 3 - $thisDocumentName";
+			
 			$e3 = "Active";
 			$prevStep = 2;
 			
@@ -88,6 +94,8 @@ if($_SESSION['session_rank'] == 1)
 		// STEP 4		
 		else
 		{
+			$thisPageName = "Step 4 - $thisDocumentName";
+			
 			$e4 = "Active";
 			$prevStep = 3;
 			
@@ -172,8 +180,8 @@ if($_SESSION['session_rank'] == 1)
 		
 		$thisContent = $steps . $step;					
 		
-		$static_value = array ($thisFullname, $thisContent);	  
-		$static_name  = array ("{FULL_NAME}","{CONTENT}");
+		$static_value = array ($thisFullname, $thisContent, $thisPageName);	  
+		$static_name  = array ("{FULL_NAME}","{CONTENT}", "{PAGE_NAME}");
 		$template = $engine->load_template("html/layout.html");
 		$template = $engine->replace_static($static_name, $static_value,  $template);
 		

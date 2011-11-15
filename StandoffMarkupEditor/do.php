@@ -459,7 +459,19 @@ else if(($action == "processStep3")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 // process step 4	
 else if(($action == "processStep4")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
 {		
-	echo "<script type=\"text/javascript\">window.location='index.php';</script>";	
+	$documentID = $_SESSION['session_docID'];
+	
+	echo "
+	<script>
+	if (confirm('You have just finished editing this document. Would you like to view your documents folder?')){
+	
+		window.location = 'index.php';
+	}
+	else{
+		window.location = 'edit.php?id=$documentID';
+	}
+	</script>
+	";
 }
 
 
