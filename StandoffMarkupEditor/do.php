@@ -35,7 +35,7 @@ if(($action == "getContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strto
 
 
 // GET MARKED CONTENT 
-if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
+else if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
 {
 	$functions = new functions;
 
@@ -51,6 +51,31 @@ if(($action == "getMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&
 		mysql_close($conn);	
 		
 		echo $row['markedContent'];
+	}
+	
+	
+}
+
+
+
+
+// SET MARKED CONTENT 
+else if(($action == "setMarkedContent")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))
+{
+	$functions = new functions;
+
+	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);
+		
+	if($userHasAccess)
+	{
+		$conn = $functions->dbConnect();
+		$docID = mysql_real_escape_string($_SESSION['session_docID']);
+		
+		$newMarkedContent = $_POST['cleanText'];
+		
+	  	mysql_query("UPDATE documents set markedContent = '$newMarkedContent' WHERE id='$docID'");
+	  	
+		mysql_close($conn);			
 	}
 	
 	
@@ -90,14 +115,15 @@ else if(($action == "getAllMarks")||($action == "removeMark"))
 				$thisSP = $row['sp'];
 				$thisEP = $row['ep'];
 				$thisContent = $row['content'];
+				$thisSpanID = $row['spanID'];
 				
 				if(strlen($thisContent) > 20)
 				{
 					$thisContent = substr($thisContent, 0, 20) . '...';
 				}
 				
-				$static_value = array ($thisSP, $thisEP, $thisContent, $thisID);	  
-				$static_name  = array ("{SP}","{EP}", "{CONTENT}", "{ID}");
+				$static_value = array ($thisSP, $thisEP, $thisContent, $thisID, $thisSpanID);	  
+				$static_name  = array ("{SP}","{EP}", "{CONTENT}", "{ID}", "{SPAN}");
 				$template = $engine->load_template("html/mark.html");
 				$toPrint .= $engine->replace_static($static_name, $static_value,  $template);
 				
@@ -155,16 +181,12 @@ else if(($action == "addMark")&&(isset($_SERVER['HTTP_X_REQUESTED_WITH']))&&(str
 	$attr = htmlspecialchars($_POST['attr']);
 	$url = htmlspecialchars($_POST['url']);
 	$text = htmlspecialchars($_POST['txt']);
+	$sp = htmlspecialchars($_POST['sp']);
+	$ep = htmlspecialchars($_POST['ep']);
 	$newSpanID = htmlspecialchars($_POST['newSpanID']);
 	$selectedText = htmlspecialchars($_POST['selectedText']);
 	$markedContet = $_POST['userInput'];
 	$selectionLength = htmlspecialchars($_POST['thisLength']);
-
-	$markedContet = preg_replace('/<span[^>]+id="junk_[^"]*"[^>]*>(.*?)<\/span>/s', '', $markedContet);
-
-	$pointsArray = $functions->getPoints($markedContet, $newSpanID, $selectionLength); 
-	$sp = $pointsArray[0];
-	$ep = $pointsArray[1];
 	
 	$userHasAccess = $functions->hasAccess($_SESSION['session_docID'], $_SESSION['session_userID']);	
 	

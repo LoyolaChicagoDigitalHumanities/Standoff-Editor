@@ -168,11 +168,8 @@ span
 }
 .loading
 {
-	width:240px;
-	margin-top: 150px;
 	text-align: center;
 }
-
 .classicTable
 {
 	margin:0px;
@@ -453,7 +450,7 @@ table.paddedTable tr td, table.classicTable tr th
 .attributeFieldContainer
 {
 	float: left;
-	width:110px;
+	width:107px;
 	margin-bottom: 5px;
 }
 .attributeAddContainer
@@ -463,6 +460,10 @@ table.paddedTable tr td, table.classicTable tr th
 	margin-bottom: 5px;
 }
 .addNewAttrButton
+{
+	cursor: pointer;
+}
+.redRemoveButton
 {
 	cursor: pointer;
 }

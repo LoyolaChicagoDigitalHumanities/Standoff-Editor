@@ -113,30 +113,7 @@ class functions
 		
 		return $shared;
 	}
-	
-	
-	
-	/***************************************
-	*
-	* Returns an array that contains both 
-	* the starting and ending point
-	* of the given selection
-	*
-	***************************************/	
-	function getPoints($userInput, $spanID, $selectionLength)
-	{
-		$toRetun = array();
-		
-		$toFind = "<span id=\"$spanID";
-		
-		$sp = strpos($userInput, $toFind);
-		$ep = $sp + $selectionLength;
-		
-		$toRetun[] = $sp;
-		$toRetun[] = $ep;
-		
-		return $toRetun;
-	}							
+							
 }
 
 ?>

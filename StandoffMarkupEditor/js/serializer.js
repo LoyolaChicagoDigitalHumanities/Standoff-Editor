@@ -1,3 +1,18 @@
+/**
+ * @license Serializer module for Rangy.
+ * Serializes Ranges and Selections. An example use would be to store a user's selection on a particular page in a
+ * cookie or local storage and restore it on the user's next visit to the same page.
+ *
+ * Part of Rangy, a cross-browser JavaScript range and selection library
+ * http://code.google.com/p/rangy/
+ *
+ * Depends on Rangy core.
+ *
+ * Copyright 2011, Tim Down
+ * Licensed under the MIT license.
+ * Version: 1.2.2
+ * Build date: 13 November 2011
+ */
 rangy.createModule("Serializer", function(api, module) {
     api.requireModules( ["WrappedSelection", "WrappedRange"] );
     var UNDEF = "undefined";

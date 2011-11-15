@@ -1,3 +1,12 @@
+/**
+ * @license Rangy, a cross-browser JavaScript range and selection library
+ * http://code.google.com/p/rangy/
+ *
+ * Copyright 2011, Tim Down
+ * Licensed under the MIT license.
+ * Version: 1.2.2
+ * Build date: 13 November 2011
+ */
 window['rangy'] = (function() {
 
 
@@ -56,7 +65,7 @@ window['rangy'] = (function() {
     }
 
     var api = {
-        version: "1.2.1",
+        version: "1.2.2",
         initialized: false,
         supported: true,
 
@@ -1561,7 +1570,7 @@ rangy.createModule("DomUtil", function(api, module) {
 
         function setRangeStart(range, node, offset) {
             var ec = range.endContainer, eo = range.endOffset;
-            if (node !== range.startContainer || offset !== this.startOffset) {
+            if (node !== range.startContainer || offset !== range.startOffset) {
                 // Check the root containers of the range and the new boundary, and also check whether the new boundary
                 // is after the current end. In either case, collapse the range to the new position
                 if (getRootContainer(node) != getRootContainer(ec) || dom.comparePoints(node, offset, ec, eo) == 1) {
@@ -1574,7 +1583,7 @@ rangy.createModule("DomUtil", function(api, module) {
 
         function setRangeEnd(range, node, offset) {
             var sc = range.startContainer, so = range.startOffset;
-            if (node !== range.endContainer || offset !== this.endOffset) {
+            if (node !== range.endContainer || offset !== range.endOffset) {
                 // Check the root containers of the range and the new boundary, and also check whether the new boundary
                 // is after the current end. In either case, collapse the range to the new position
                 if (getRootContainer(node) != getRootContainer(sc) || dom.comparePoints(node, offset, sc, so) == -1) {
@@ -1586,7 +1595,7 @@ rangy.createModule("DomUtil", function(api, module) {
         }
 
         function setRangeStartAndEnd(range, node, offset) {
-            if (node !== range.startContainer || offset !== this.startOffset || node !== range.endContainer || offset !== this.endOffset) {
+            if (node !== range.startContainer || offset !== range.startOffset || node !== range.endContainer || offset !== range.endOffset) {
                 boundaryUpdater(range, node, offset, node, offset);
             }
         }

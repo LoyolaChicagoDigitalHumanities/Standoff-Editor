@@ -70,6 +70,7 @@ $(document).ready(function()
 	
 
 	
+	
 	 	
 	// event when the + button is clicked
 	$("#markButton").click(function()
@@ -81,11 +82,13 @@ $(document).ready(function()
 		var txt = document.getElementById('text').value;		
 
 		rangy.restoreSelection(savedSel);
-		
+				
 		if((ns != '')&&(tag != '')&&(reportSelectionText() != ''))
 		{						 						
 			var newSpanID = parseInt(document.getElementById('spanIDHistory').value)+1;
 			document.getElementById('spanIDHistory').value = newSpanID;
+			
+			var selectedText = rangy.getSelection().toString();
 			
 			surroundRange(newSpanID);
 			
@@ -95,11 +98,16 @@ $(document).ready(function()
 			document.getElementById('text').value = "";			
 			 
 			document.getElementById('userInput').focus();
+						
+			$('span[id^="junk"]').remove();
 			
-			var userInput = document.getElementById('userInput').innerHTML; 
-			var selectedText = rangy.getSelection().toString();
+			var userInput = document.getElementById('userInput').innerHTML;
+			var sp = 0;
+			var ep = 0; 
+			var	backupContent = userInput;		
+			
 			 					 			
-			$.post("do.php?action=addMark", {ns:ns, tag:tag, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID, selectedText:selectedText}, function(data){
+			$.post("do.php?action=addMark", {ns:ns, tag:tag, url:url, txt:txt, userInput:userInput, newSpanID:newSpanID, selectedText:selectedText, sp:sp, ep:ep}, function(data){
 			    $("#marksSideMenu")  
 			        .html(loading_image)  
 			        .load('do.php?action=getAllMarks', null, function(responseText){  
@@ -142,6 +150,7 @@ $(document).ready(function()
 	        .load('do.php?action=getAllMarks', null, function(responseText){  
 	     });	     
 	}); 
+		
 	
 });
 
@@ -429,8 +438,48 @@ function goToURL(url)
 
 
 
+
+// remove unwanted spans
+function unwrapSpanTag(input)
+{
+
+  var a = document.createElement('div');
+  a.innerHTML = input;
+  var node, next = a.firstChild;
+
+  while (node = next) {
+    next = next.nextSibling
+
+    if (node.tagName && node.tagName.toLowerCase() == 'span' && !node.id) {
+      a.replaceChild(document.createTextNode(node.textContent || node.innerText), node);
+    }
+  }
+  return a.innerHTML;
+  
+}
+
+
+
 // remove the given mark and reloading document content
-function removeMark(id)
+function removeMark(thisID, thisSpanID)
+{		
+	document.getElementById(thisSpanID).removeAttribute("style");
+	document.getElementById(thisSpanID).removeAttribute("id");
+	
+	var dirtyText = document.getElementById('userInput').innerHTML;
+	var cleanText = unwrapSpanTag(dirtyText);
+	
+	document.getElementById('userInput').innerHTML = cleanText;
+		
+	makeAJAXrequest("marksSideMenu", "do.php?action=removeMark&id=" + thisID);
+
+	$.post("do.php?action=setMarkedContent", {cleanText:cleanText}, function(data){});    	  
+}
+
+
+
+// make an Ajax GET request using the given url to update the given div element
+function makeAJAXrequest(elementID, requestURL)
 {
 	if (window.XMLHttpRequest)
 	{
@@ -447,31 +496,16 @@ function removeMark(id)
 	{
 	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-	    	document.getElementById('marksSideMenu').innerHTML = xmlhttp.responseText;
+	    	document.getElementById(elementID).innerHTML = xmlhttp.responseText;
 	    }
 	}
 
-    xmlhttp.open("GET","do.php?action=removeMark&id=" + id,true);
+    xmlhttp.open("GET", requestURL, true);
     xmlhttp.setRequestHeader('X-Sent-From','StandoffMarkupEditor');
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     xmlhttp.setRequestHeader("Connection", "close");		
     xmlhttp.send(); 
-
-	xmlhttp.onreadystatechange=function()
-	{
-	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-	    	document.getElementById('userInput').innerHTML = xmlhttp.responseText;
-	    }
-	}
-
-    xmlhttp.open("GET","do.php?action=getMarkedContent",true);
-    xmlhttp.setRequestHeader('X-Sent-From','StandoffMarkupEditor');
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    xmlhttp.setRequestHeader("Connection", "close");		
-    xmlhttp.send(); 	  
 }
 
 

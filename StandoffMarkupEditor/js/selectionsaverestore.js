@@ -1,3 +1,17 @@
+/**
+ * @license Selection save and restore module for Rangy.
+ * Saves and restores user selections using marker invisible elements in the DOM.
+ *
+ * Part of Rangy, a cross-browser JavaScript range and selection library
+ * http://code.google.com/p/rangy/
+ *
+ * Depends on Rangy core.
+ *
+ * Copyright 2011, Tim Down
+ * Licensed under the MIT license.
+ * Version: 1.2.2
+ * Build date: 13 November 2011
+ */
 rangy.createModule("SaveRestore", function(api, module) {
     api.requireModules( ["DomUtil", "DomRange", "WrappedRange"] );
 
@@ -23,7 +37,7 @@ rangy.createModule("SaveRestore", function(api, module) {
         markerEl.id = markerId;
         markerEl.style.lineHeight = "0";
         markerEl.style.display = "none";
-        //markerEl.className = "rangeBoundary";
+        //markerEl.className = "rangySelectionBoundary";
         markerEl.appendChild(doc.createTextNode(markerTextChar));
 
         boundaryRange.insertNode(markerEl);
