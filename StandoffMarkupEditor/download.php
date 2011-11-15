@@ -79,30 +79,38 @@ echo "<?xml version=\"1.0\"?>
 		}
 		else
 		{
-
+			
 			$result = mysql_query("SELECT * FROM marks WHERE docID = '$docID' ORDER BY id ASC");				
 			while($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{								
+				$posts = array();
+				
 				$thisSP = $row['sp'];
 				$thisEP = $row['ep'];
 				$thisNS = $row['ns'];
 				$thisVA = $row['va'];
 				$thisURL = $row['url'];
 				$thisTXT = $row['txt'];
-				
-				$posts[] = array('sp'=> $thisSP, 'ep'=> $thisEP, 'ns'=> $thisNS, 'tag'=> $thisVA, 'url'=> $thisURL, 'text'=> $thisTXT);
+								
+				$posts['sp'] = $thisSP;
+				$posts['ep'] = $thisEP;
+				$posts['ns'] = $thisNS;
+				$posts['tag'] = $thisVA;
+				$posts['url'] = $thisURL;
+				$posts['text'] = $thisTXT;
 				
 				$spanCounter = 1;
 				$thisSpanID = $row['spanID'];
 	  			$result2 = mysql_query("SELECT * FROM attributes WHERE docID = '$docID' AND spanID = '$thisSpanID'");	
 				while($row2 = mysql_fetch_array($result2, MYSQL_ASSOC))
 				{
-					$spanCounter++;
 					$posts["attr$spanCounter"] = $row2['content'];
-				}				
+					$spanCounter++;					
+				}
+				
+				$response[] = $posts;			
 			}	
 			
-			$response['posts'] = $posts;
 			$contents = json_encode($response);
 			
 			header('Pragma: no-cache');
