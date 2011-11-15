@@ -102,8 +102,9 @@ $(document).ready(function()
 			$('span[id^="junk"]').remove();
 			
 			var userInput = document.getElementById('userInput').innerHTML;
-			var sp = 0;
-			var ep = 0; 
+			var selectionTextLength = selectedText.length;
+			var sp = getStartPoint(newSpanID, userInput);
+			var ep = sp + selectionTextLength - 1; 
 			var	backupContent = userInput;		
 			
 			 					 			
@@ -438,6 +439,22 @@ function goToURL(url)
 
 
 
+// get the start point of the given selection using spanID
+function getStartPoint(spanID, originalText)
+{
+	var toFind = '<span id="' + spanID;
+	var index = originalText.indexOf(toFind);
+	var subStringOfOriginal = originalText.substring(0, index);
+  	
+  	subStringOfOriginal = subStringOfOriginal.replace(/<\/span>/g, '');
+  	subStringOfOriginal = subStringOfOriginal.replace(/<span[^\>]+\>/g, '');
+  	
+  	var sp = subStringOfOriginal.length;
+
+	return sp;
+}
+
+
 
 // remove unwanted spans
 function unwrapSpanTag(s)
@@ -485,9 +502,7 @@ function removeMark(thisID, thisSpanID)
 	
 	var dirtyText = document.getElementById('userInput').innerHTML;
 	var cleanText = unwrapSpanTag(dirtyText);
-	
-	//var cleanText = dirtyText.replace(/<span>([A-Za-z0-9]*)<\/span>/g, '$1');
-	
+		
 	document.getElementById('userInput').innerHTML = cleanText;
 		
 	makeAJAXrequest("marksSideMenu", "do.php?action=removeMark&id=" + thisID);
