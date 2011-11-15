@@ -258,7 +258,7 @@ else if(($action == "signup")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 	} 
 				 			
 
-	// check if first name meets requirements
+	// check if name meets requirements
 	if(!preg_match('/^[A-Za-z ]{2,20}$/', $fname))
 	{ 
 		$_SESSION['msg'] = array("msg" => "Your name has to be 2-20 characters long and has to contain English Alphabets only", "title" => "Invalid First Name", "link" => "index.php", "legend" => "Try Again");	
@@ -529,8 +529,8 @@ else if(($action == "delete")&&($userRank == 1))
 		
 		if($isThisDocumentShared)
 		{
-			$_SESSION['msg'] = array("msg" => "Your request could not be processed because this document is currently being shared with other users. In order to remove this document from your folder, you have to transfer the ownership of document to another user", "title" => "Document is Shared", "link" => "index.php", "legend" => "Home Page");
-			$page = "edit.php?id=$id&step=4";		
+			$_SESSION['msg'] = array("msg" => "Your request could not be processed because this document is currently being shared with other users. In order to remove this document from your folder, you have to transfer the ownership of document to another user", "title" => "Document is Shared", "link" => "edit.php?id=$id&step=4", "legend" => "Transfer Ownership");
+			$page = "msg";		
 		}
 		else
 		{
@@ -794,9 +794,90 @@ else if(($action == "rename")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 
 
 
-// Rest the password
-else if(($action == "reset")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+
+// Rename the given document
+else if(($action == "account")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
 {
+	$functions = new functions;
+	$conn = $functions->dbConnect();
+				
+		
+	$password = htmlspecialchars($_POST['password']);
+	$email = htmlspecialchars($_POST['email']);
+	$fname = htmlspecialchars($_POST['fname']);
+	
+	$email = mysql_real_escape_string($email);	
+	
+	// clean inputs
+	$email = strtolower($email);
+	
+	$errors = 0;		
+	
+
+	
+	// check for email
+	$result = mysql_query("SELECT * FROM users WHERE email = '$email'");	
+	$row = mysql_fetch_assoc($result);						
+	if((!empty($row['id']))&&($row['id'] != $_SESSION['session_userID']))
+	{
+		$_SESSION['msg'] = array("msg" => "The email address that you have entered is associated with another account", "title" => "Invalid Email Address", "link" => "index.php", "legend" => "Try Again");	
+		$errors++;		
+	} 
+				 			
+
+	// check if name meets requirements
+	if(!preg_match('/^[A-Za-z ]{2,20}$/', $fname))
+	{ 
+		$_SESSION['msg'] = array("msg" => "Your name has to be 2-20 characters long and has to contain English Alphabets only", "title" => "Invalid First Name", "link" => "index.php", "legend" => "Try Again");	
+		$errors++;
+	}	
+
+	
+	// check if password meets requirements
+	if(!empty($password))
+	{
+		if(!preg_match('/^[A-Za-z0-9!@#$%^&*()_]{4,20}$/', $password))
+		{ 
+			$_SESSION['msg'] = array("msg" => "You must enter a valid password that is between 6-20 characters long", "title" => "Invalid Password", "link" => "index.php", "legend" => "Try Again");	
+			$errors++;
+		}	
+	}
+	
+	// check if email meets requirements
+	if(!preg_match('/^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$/ix', $email))
+	{ 
+		$_SESSION['msg'] = array("msg" => "You must enter a valid email address", "title" => "Invalid Email Address", "link" => "index.php", "legend" => "Try Again");	
+		$errors++;
+	}
+	
+	if($errors < 1)
+	{				
+		$thisUserID = $_SESSION['session_userID'];
+		
+		if(!empty($password))
+		{				
+			$password = md5($password);
+			mysql_query("UPDATE users set password = '$password' WHERE id='$thisUserID'");
+		}
+		
+		mysql_query("UPDATE users SET email = '$email' WHERE id='$thisUserID'");
+		mysql_query("UPDATE users SET name = '$fname' WHERE id='$thisUserID'");
+						
+		$_SESSION['msg'] = array("msg" => "Your information was updated", "title" => "Information Updated", "link" => "index.php", "legend" => "Go Back");								
+	}
+	
+	mysql_close($conn);	
+	
+	echo "<script type=\"text/javascript\">window.location='msg.php';</script>";	
+}
+
+
+
+// Rest the password
+else if(($action == "reset")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 0))
+{
+	$functions = new functions;
+	
 	$conn = $functions->dbConnect();	
 	
 	$email = htmlspecialchars($_POST['email']);
@@ -807,14 +888,27 @@ else if(($action == "reset")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank
 	
 	if($row['id'])
 	{
+		$thisUserID = $row['id'];		
+		$thisTitle = "Request to Reset Password";
+		$thisName = $row['name']; 
+		$thisEmail = $row['email'];
+		$thisToken = $functions->setToken($thisUserID);
+		$thisTokenURL = "<a href='http://standoffmarkup.org/password.php?email=$thisEmail&token=$thisToken'>http://standoffmarkup.org/password.php?email=$thisEmail&token=$thisToken</a>";
 		
+		$thisMessage = "Hi $thisName,<br><br>You've just received a request to reset your password at Standoff Markup Editor. If you still want to reset your password, please click on the link bellow (or copy and paste it in your browser):<br><br>$thisTokenURL<br><br>If you do not want to reset your password, simply disregard this email. <br><br><br>Regards,<br><b>Standoff Markup Editor Team</b>";
+		
+		$functions->sendEmail($thisEmail, $thisName, $thisTitle, $thisMessage);
+		
+		$_SESSION['msg'] = array("msg" => "Instructions regarding how you can reset your password was emailed to you. If you can't find the message, please check your junk mail", "title" => "Instructions Sent", "link" => "index.php", "legend" => "Home Page");		
 	}
 	else
 	{
-	
+		$_SESSION['msg'] = array("msg" => "We were unable to locate your account based on the email address you've supplied", "title" => "Account Not Found", "link" => "index.php", "legend" => "Home Page");		
 	}
 	
 	mysql_close($conn);
+	
+	echo "<script type=\"text/javascript\">window.location='msg.php';</script>";
 }
 
 // logout

@@ -22,6 +22,83 @@ class functions
 
 
 
+	/***************************************
+	*
+	* generate a random password
+	*
+	***************************************/
+	function generatePassword()
+	{
+	    $collection = "ABCDGHKLMNQRSTUWXYZabcdefghkmnpqrstwxyz23456789"; 
+	    srand((double)microtime()*1000000); 
+	    $i = 0; 
+	    $password = ''; 
+	
+	    while ($i < 10)
+	    { 
+	        $num = rand() % 47; 
+	        $password = $password .substr($collection, $num, 1); 
+	        $i++; 
+	    } 
+		
+		return $password;
+	}	
+	
+
+
+
+	/***************************************
+	*
+	* set a token for the given user
+	*
+	***************************************/
+	function setToken($userID)
+	{
+	    $collection = "ABCDGHKLMNQRSTUWXYZabcdefghkmnpqrstwxyz23456789"; 
+	    srand((double)microtime()*1000000); 
+	    $i = 0; 
+	    $newToken = ''; 
+	
+	    while ($i < 40)
+	    { 
+	        $num = rand() % 47; 
+	        $newToken = $newToken .substr($collection, $num, 1); 
+	        $i++; 
+	    } 
+	    
+	    		
+		$conn = $this->dbConnect();
+		
+		$userID = mysql_real_escape_string($userID);
+		
+		mysql_query("UPDATE tokens set status = '1' WHERE userID = '$userID'");
+		mysql_query("INSERT INTO `tokens` (`userID` , `token`) VALUES ('$userID', '$newToken')");
+		
+		mysql_close($conn);
+		
+		return $newToken;
+	}	
+	
+	
+	
+	
+	
+	/***************************************
+	*
+	* send message to the given email
+	*
+	***************************************/
+	function sendEmail($thisEmail, $thisName, $thisTitle, $thisMessage)
+	{
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= "Content-type: text/html; charset=windows-1252\r\n";
+		$headers .= "To: $thisName <$thisEmail>". "\r\n";
+		$headers .= 'From: Standoff Markup Editor <noreplay@standoffmarkupeditor.com>' . "\r\n" . 'X-Mailer: PHP/' . phpversion();
+
+		mail($thisEmail, $thisTitle, $thisMessage, $headers);		
+	}		
+	
+	
 
 
 	/***************************************

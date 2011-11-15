@@ -124,8 +124,12 @@ $(document).ready(function()
 				
 				tempElementID = "attr" + counter;
 				var valueOfTemp = document.getElementById(tempElementID).value;
-				document.getElementById(tempElementID).value = "";
-				$.post("do.php?action=linkAttribute", {attrValue:valueOfTemp, spanID:newSpanID}, function(data){}); 
+				
+				if(valueOfTemp != '')
+				{
+					document.getElementById(tempElementID).value = "";
+					$.post("do.php?action=linkAttribute", {attrValue:valueOfTemp, spanID:newSpanID}, function(data){}); 
+				}
 			}		
 			
 			rangy.removeMarkers(savedSel);						 			
@@ -279,7 +283,7 @@ function CheckSignupForm(form)
 	 
 	 if (!ck_name.test(fname))
 	 {
-	 	errors[errors.length] = "Your first name has to be 2-20 characters long and has to contain English Alphabets only";
+	 	errors[errors.length] = "Your name has to be 2-20 characters long and has to contain English Alphabets only";
 	 }
 	 if (!ck_email.test(email))
 	 {
@@ -296,6 +300,53 @@ function CheckSignupForm(form)
 	 if (errors.length > 0)
 	 {
 	  	var msg = "In order to signup:";
+	 	for (var i = 0; i<errors.length; i++)
+	 	{
+	  		msg += "\n\n" + errors[i];
+	  	}
+	  	alert(msg);
+	  	return false;
+	 }
+	return true;	
+}
+
+
+
+
+
+// validate the account form
+function CheckAccountForm(form)
+{
+	 var ck_name = /^[A-Za-z ]{2,20}$/;
+	 var ck_email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i 
+	 var ck_username = /^[A-Za-z0-9]{4,20}$/;
+	 var ck_password =  /^[A-Za-z0-9!@#$%^&*()_]{4,20}$/;
+	
+	 var fname = form.fname.value;
+	 var email = form.email.value;
+	 var username = form.username.value;
+	 var password = form.password.value;
+	 var errors = [];
+	 
+	 if (!ck_name.test(fname))
+	 {
+	 	errors[errors.length] = "Your name has to be 2-20 characters long and has to contain English Alphabets only";
+	 }
+	 if (!ck_email.test(email))
+	 {
+	 	errors[errors.length] = "You must enter a valid email address";
+	 }
+	 if (!ck_username.test(username))
+	 {
+	 	errors[errors.length] = "Your username has to be 6-20 characters long and has to contain English Alphabets only";
+	 }
+	 if((!ck_password.test(password))&&(password != ''))
+	 {
+	 	errors[errors.length] = "You must enter a valid password that is between 6-20 characters long. Leave the password field empty if you do not wish to change your password";
+	 }	 
+	 if (errors.length > 0)
+	 {
+	  	var msg = "Error:";
 	 	for (var i = 0; i<errors.length; i++)
 	 	{
 	  		msg += "\n\n" + errors[i];
