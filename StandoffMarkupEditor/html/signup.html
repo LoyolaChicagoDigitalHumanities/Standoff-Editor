@@ -15,7 +15,7 @@
 <body>
 	<noscript><meta http-equiv="REFRESH" content="0; url=javascript.php"></noscript>
 	<form method="post" action="do.php?action=signup" onSubmit="return CheckSignupForm(this);">
-		<br><br><br>
+		<br><br>
 		<legend class="classicLegend">Username:</legend>
 		<input type="text" name="username" class="classicInput">
 		<br><br>
@@ -28,7 +28,22 @@
 		<legend class="classicLegend">Full Name:</legend>
 		<input type="text" name="fname" class="classicInput">				
 		<div class="buttonHoler">
-			<input type="submit" value="Create Account">
+			<table>
+				<tr>
+					<td style="width:100%;">
+					
+					</td>
+					<td>
+						<input type="submit" value="Create Account"> 
+					</td>
+					<td style="white-space: nowrap;">
+						OR
+					</td>
+					<td>
+						<a href="{LINK}"><img src="images/fb.gif" alt=""></a>
+					</td>
+				</tr>
+			</table>
 		</div>
 	</form>
 </body>

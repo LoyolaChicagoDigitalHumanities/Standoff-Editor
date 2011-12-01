@@ -15,15 +15,38 @@
 <body>
 	<noscript><meta http-equiv="REFRESH" content="0; url=javascript.php"></noscript>
 	<form method="post" action="do.php?action=login" onSubmit="return checkLoginForm(this);">
-		<br><br><br>
+		<br><br>
 		<legend class="classicLegend">Username:</legend>
 		<input type="text" name="username" class="classicInput">
 		<br><br>
 		<legend class="classicLegend">Password:</legend>
 		<input type="password" name="password" class="classicInput">
 		<div class="buttonHoler">
-			<a href="reset.php?width=500&amp;height=150" class="thickbox" title="Reset Password">Forgot Your Password?</a>
-			<input type="submit" value="Login">
+			<table>
+				<tr>
+					<td style="width:100%;">
+					
+					</td>
+					<td style="white-space: nowrap;" colspan="3">
+						<a href="reset.php?width=500&amp;height=150" class="thickbox" title="Reset Password">Forgot Your Password?</a>
+						<br><br>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:100%;">
+					
+					</td>				
+					<td>
+						<input type="submit" value="Login">
+					</td>
+					<td>
+						OR
+					</td>
+					<td>
+						<a href="{LINK}"><img src="images/fb.gif" alt=""></a>
+					</td>
+				</tr>
+			</table>			
 		</div>
 	</form>
 </body>

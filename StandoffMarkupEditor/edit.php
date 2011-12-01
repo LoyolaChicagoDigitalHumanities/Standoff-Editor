@@ -180,8 +180,8 @@ if($_SESSION['session_rank'] == 1)
 		
 		$thisContent = $steps . $step;					
 		
-		$static_value = array ($thisFullname, $thisContent, $thisPageName);	  
-		$static_name  = array ("{FULL_NAME}","{CONTENT}", "{PAGE_NAME}");
+		$static_value = array ($thisFullname, $thisContent, $thisPageName, $logoutLink);	  
+		$static_name  = array ("{FULL_NAME}","{CONTENT}", "{PAGE_NAME}", "{LOGOUT}");
 		$template = $engine->load_template("html/layout.html");
 		$template = $engine->replace_static($static_name, $static_value,  $template);
 		

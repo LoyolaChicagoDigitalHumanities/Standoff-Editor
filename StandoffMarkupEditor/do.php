@@ -853,6 +853,7 @@ else if(($action == "account")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRa
 	if($errors < 1)
 	{				
 		$thisUserID = $_SESSION['session_userID'];
+		$_SESSION['session_username'] = $fname; // update user's name in session
 		
 		if(!empty($password))
 		{				
@@ -911,13 +912,65 @@ else if(($action == "reset")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank
 	echo "<script type=\"text/javascript\">window.location='msg.php';</script>";
 }
 
+
+
+// Process login requests made by 3rd party
+else if($action == "redirect")
+{	
+	$functions = new functions;
+	$requestType = strtolower($_GET['type']);
+	$party = strtolower($_GET['party']);
+	$nextPage = "index.php";
+	
+	
+	// FACEBOOK
+	if($party == "facebook")
+	{
+		if($requestType == "login")
+		{
+			$session = $facebook->getSession();
+			
+			try
+			{
+				$uid = $facebook->getUser();
+				$me = $facebook->api('/me');
+			} 
+			catch (FacebookApiException $e)
+			{}			
+			
+			$functions->registerFacebookUser($me[id], $me[email], $me[name]);
+		}
+		else if($requestType == "logout")
+		{
+			$nextPage = "do.php?action=logout";
+			
+			$facebook->setSession(null);
+			
+			try
+			{
+				$facebook->setSession(null);
+			} 
+			catch (FacebookApiException $e)
+			{}		
+		}
+		else
+		{}
+	}
+	
+	
+	echo "<script type=\"text/javascript\">window.location='$nextPage';</script>";
+}
+
+
+
 // logout
 else if(($action == "logout")&&($userRank == 1))
-{
+{	
 	@session_destroy();
 	
 	echo "<script type=\"text/javascript\">window.location='index.php';</script>";
 }
+
 
 
 // UNKNOWN REQUEST

@@ -326,25 +326,26 @@ function CheckAccountForm(form)
 	 var email = form.email.value;
 	 var username = form.username.value;
 	 var password = form.password.value;
+	 var userType = document.getElementById('userType').value;
 	 var errors = [];
-	 
-	 if (!ck_name.test(fname))
+
+	 if(!ck_name.test(fname))
 	 {
 	 	errors[errors.length] = "Your name has to be 2-20 characters long and has to contain English Alphabets only";
 	 }
-	 if (!ck_email.test(email))
+	 if(!ck_email.test(email))
 	 {
 	 	errors[errors.length] = "You must enter a valid email address";
 	 }
-	 if (!ck_username.test(username))
+	 if((!ck_username.test(username))&&(userType == 'citizen'))
 	 {
 	 	errors[errors.length] = "Your username has to be 6-20 characters long and has to contain English Alphabets only";
 	 }
-	 if((!ck_password.test(password))&&(password != ''))
+	 if((!ck_password.test(password))&&(password != '')&&(userType == 'citizen'))
 	 {
 	 	errors[errors.length] = "You must enter a valid password that is between 6-20 characters long. Leave the password field empty if you do not wish to change your password";
 	 }	 
-	 if (errors.length > 0)
+	 if(errors.length > 0)
 	 {
 	  	var msg = "Error:";
 	 	for (var i = 0; i<errors.length; i++)

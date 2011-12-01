@@ -4,6 +4,26 @@ class functions
 {				 
 
 
+
+
+	/***************************************
+	*
+	* Returns Facebook app info
+	*
+	***************************************/
+	function getFacebookInfo()
+	{		
+		return array(
+		  'appId'  => '286901421353952',
+		  'secret' => '******************************',
+		  'cookie' => true,
+		);
+	}	
+	
+	
+	
+	
+	
 	/***************************************
 	*
 	* connect to database
@@ -11,11 +31,11 @@ class functions
 	***************************************/
 	function dbConnect()
 	{
-		$conn = mysql_connect("localhost", "standoff_eyad", "eyad");
-		mysql_select_db("standoff_editors");
+		$conn = mysql_connect("********************", "********************", "********************");
+		mysql_select_db("********************");
 		
 		return $conn;
-	}	
+	}		
 	
 
 
@@ -78,6 +98,65 @@ class functions
 		
 		return $newToken;
 	}	
+	
+	
+	
+	
+	
+	
+	
+	/***************************************
+	*
+	* uses the given Facebook id to return
+	* user info
+	*
+	***************************************/	
+	function getUserInfoByFacebookID($fbID)
+	{
+		$conn = $this->dbConnect();
+		
+		$result = mysql_query("SELECT userID FROM facebook WHERE fbID = '$fbID'");	
+		$row = mysql_fetch_row($result);		
+		$userID = $row[0];
+		
+		
+		$result = mysql_query("SELECT * FROM users WHERE id = '$userID'");	
+		$usreInfoArray = mysql_fetch_assoc($result);		
+		
+		mysql_close($conn);
+		
+		return $usreInfoArray;
+	}
+	
+	
+	
+
+
+
+
+	
+	/***************************************
+	*
+	* register Facebook users if not already
+	* registered
+	*
+	***************************************/	
+	function registerFacebookUser($fbID, $email, $name)
+	{
+		$conn = $this->dbConnect();
+		
+		$result = mysql_query("SELECT id FROM facebook WHERE fbID = '$fbID'");	
+		$row = mysql_fetch_row($result);		
+		if(!$row[0])
+		{
+			mysql_query("INSERT INTO `users` (`email`, `name`) VALUES ('$email', '$name')");
+			$newUserID = mysql_insert_id();
+			mysql_query("INSERT INTO `facebook` (`fbID`, `userID`) VALUES ('$fbID', '$newUserID')");
+		}
+		
+		mysql_close($conn);		
+	}
+	
 	
 	
 	
