@@ -409,6 +409,7 @@ else if(($action == "linkAttribute")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($
 else if(($action == "processStep1")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
 {
 	$userInput = htmlspecialchars($_POST['input']);
+	$userInput = str_replace("\n", "<br>", $userInput);  
 		
 	$functions = new functions;
 	
