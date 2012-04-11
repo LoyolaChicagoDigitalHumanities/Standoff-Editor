@@ -1,1 +1,11 @@
-<textarea name="input" class="classicTextarea">{CONTENT}</textarea>
+<div><textarea name="input" class="classicTextarea">{CONTENT}</textarea></div>
+<div class="coontainedInput">
+	<div style="float:left">
+		Upload a textual file: <input type="file" id="uploadFile" name="uploadFile">
+	</div>
+	<div style="float:right">
+	<input type="button" id="uploadTextFileButton" name="uploadTextFileButton" value="Get Content">
+	</div>
+	<div style="clear:both"></div>
+</div>
+<input type="hidden" name="contentR" value="{CONTENT}">

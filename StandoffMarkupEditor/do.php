@@ -368,6 +368,10 @@ else if(($action == "create")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRan
 	
 	mysql_query("INSERT INTO `documents` ( `name` , `userID`)   VALUES ('$name', '$userID')");
 	$id = mysql_insert_id();
+	
+	$shareID = md5($id);
+	mysql_query("UPDATE `documents` SET shareID = '$shareID' WHERE id = '$id'");
+	
 	mysql_close($conn);	
 	
 	
@@ -402,7 +406,43 @@ else if(($action == "linkAttribute")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($
 }	
 
 
+// process step 1	
+else if(($action == "uploadFile")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+{
+	$id = $_GET["id"];
+	$userInput = htmlspecialchars(file_get_contents($_FILES['uploadFile']['tmp_name']));
 
+	$userInput = str_replace("\n", "<br>", $userInput);  
+		
+	$functions = new functions;
+	
+	$userHasAccess = $functions->hasAccess($_GET['id'], $_SESSION['session_userID']);	
+	
+	$conn = $functions->dbConnect();
+	
+	$id = mysql_real_escape_string($_GET['id']);
+
+  	$result = mysql_query("SELECT * FROM documents WHERE id = '$id'");	
+	$row = mysql_fetch_assoc($result);	
+	if($userHasAccess)
+	{
+		mysql_query("UPDATE documents set content = '$userInput' WHERE id='$id'");
+		mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$id'");						
+		mysql_query("DELETE FROM marks WHERE docID='$id'");
+		mysql_query("DELETE FROM attributes WHERE docID='$id'");
+		
+		$page = "edit.php?id=$id&step=2";
+	}
+	else
+	{
+		$_SESSION['msg'] = array("msg" => "Unable to process your request", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+		$page = "msg.php";
+	}	
+	
+	mysql_close($conn);	
+	
+	echo "<script type=\"text/javascript\">window.location='$page';</script>";	
+}
 
 
 // process step 1	
@@ -423,10 +463,12 @@ else if(($action == "processStep1")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($u
 	$row = mysql_fetch_assoc($result);	
 	if($userHasAccess)
 	{
-		if($row['content'] != $userInput)
+		if($_POST['input'] != $_POST['contentR'])
 		{
-			mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$id'");
 			mysql_query("UPDATE documents set content = '$userInput' WHERE id='$id'");
+			mysql_query("UPDATE documents set markedContent = '$userInput' WHERE id='$id'");						
+			mysql_query("DELETE FROM marks WHERE docID='$id'");
+			mysql_query("DELETE FROM attributes WHERE docID='$id'");
 		}
 		
 		$page = "edit.php?id=$id&step=2";
@@ -914,6 +956,31 @@ else if(($action == "reset")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank
 }
 
 
+// set public sharing
+else if(($action == "toshare")&&($_SERVER["REQUEST_METHOD"] == "POST")&&($userRank == 1))
+{
+	$functions = new functions;
+	
+	$conn = $functions->dbConnect();	
+	
+	$id = htmlspecialchars($_GET['id']);
+	$toChange = htmlspecialchars($_POST['toshare']);
+	$id = mysql_real_escape_string($id);
+	
+	$result = mysql_query("SELECT * FROM documents WHERE id = '$id'");	
+	$row = mysql_fetch_assoc($result);	
+	
+	if($row['id'])
+	{
+		mysql_query("UPDATE documents SET public = '$toChange' WHERE id='$id'");
+		echo "<script type=\"text/javascript\">window.location='edit.php?id=$id&step=3';</script>";	
+	}
+	else
+	{
+		$_SESSION['msg'] = array("msg" => "Your request could not be processed", "title" => "Invalid Request", "link" => "index.php", "legend" => "Home Page");
+		echo "<script type=\"text/javascript\">window.location='msg.php';</script>";	
+	}
+}
 
 // Process login requests made by 3rd party
 else if($action == "redirect")

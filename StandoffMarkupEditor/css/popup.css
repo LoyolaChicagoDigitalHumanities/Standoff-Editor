@@ -21,3 +21,27 @@
 {
 	font-weight: bold;
 }
+
+.publicLegendWrapper
+{
+	font-weight: bold;
+	float: left;
+	margin: 10px 5px 0px 0px;
+	width: 120px;
+	vertical-align: top;
+	font-size: 14px;
+	white-space: nowrap;
+}
+.publicDataWrapper
+{
+	float: left;
+	margin: 10px 0px 0px 0px;	
+	width: 350px;
+	vertical-align: top;
+	word-break: break-word;
+	font-size: 14px;
+}
+.cleaner
+{
+	clear: both;
+}

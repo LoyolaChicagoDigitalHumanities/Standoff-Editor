@@ -13,6 +13,7 @@ if (!session_is_registered('session_rank'))
 	session_register('msg');
 	session_register('session_docID');
 	session_register('session_text');
+	session_register('uploadedFileContent');
 	
 	$_SESSION['session_text'] = "";	
 	$_SESSION['session_rank'] = 0;

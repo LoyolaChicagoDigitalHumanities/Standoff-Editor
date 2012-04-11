@@ -36,6 +36,12 @@ if($_SESSION['session_rank'] == 1)
 		$content = $row['content'];
 		$markedContent = $row['markedContent'];
 		
+		if(empty($markedContent))
+		{
+			$markedContent = $content;
+			mysql_query("UPDATE documents set markedContent = '$content' WHERE id='$docID'");						
+		}		
+		
 		$e1 = "Inactive"; 
 		$e2 = "Inactive"; 
 		$e3 = "Inactive"; 
@@ -47,10 +53,15 @@ if($_SESSION['session_rank'] == 1)
 		// STEP 1
 		if($step == 1)
 		{
+			if(!empty($row['content']))
+			echo "<script>alert('This document has already been marked. If you make any changes to the text, all marks will be permanently removed');</script>";
+			
 			$thisPageName = "Step 1 - $thisDocumentName";
 			
 			$e1 = "Active";
 			$prevStep = 1;
+			
+			$content = str_replace("<br>", "\n", $content);
 			
 			$static_value = array ($content);	  
 			$static_name  = array ("{CONTENT}");			

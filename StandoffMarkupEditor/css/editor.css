@@ -39,6 +39,19 @@ img
 {
   border: none;
 }
+.publishingBody
+{
+	padding:20px;
+}
+.publishingWrapper
+{
+	margin: 0 auto;
+	width: 600px;
+	background-color: #ffffff;
+	padding: 20px;
+	border: 3px solid #858585;
+	color: #000;
+}
 #container
 {
 	background-image:url('../images/background2.jpg');
@@ -152,8 +165,22 @@ span
 	border-radius: 5px;	
 	outline: none;
 	resize: none;	
-	height: 357px;
+	height: 320px;
 	line-height: 200%;
+}
+.coontainedInput
+{
+	margin-top: 5px;
+	padding: 5px;
+	font-size: 14px;
+	color: #000;
+	border: 2px solid #cdcdcd;
+	background-color: #f2f2f2;
+	-moz-border-radius: 5px;
+	border-radius: 5px;	
+	outline: none;
+	resize: none;	
+	font-weight: bold;
 }
 .classicLegend
 {

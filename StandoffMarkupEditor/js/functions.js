@@ -8,6 +8,7 @@
  *      Orgnization: Loyola University of Chicago                         *
  *             File: functions.php                                        *
  *                                                                        *
+ *			  TO Do: convert functions from classic JS to jQuery          *
  *                                                                        *
  *************************************************************************/
 
@@ -25,10 +26,40 @@ $(document).ready(function()
 
 
 	// On load, Set focus on the text area 
-	document.getElementById('userInput').focus();
+	$('#userInput').focus();
+
 
 	 
-	 
+	// get file content
+	$("#uploadTextFileButton").click(function()	
+	{
+		
+		if($("#uploadFile").val())
+		{
+		
+			var ext = $('#uploadFile').val().split('.').pop().toLowerCase();
+			
+			//if($.inArray(ext, ['txt', 'rtf']) == -1)
+			if($.inArray(ext, ['txt']) == -1)
+			{
+			    alert('Invalid file type. You can only upload .txt files');
+			}
+			else
+			{
+				var thisAction = $("#stepHolderID").attr("action");
+				thisAction = thisAction.replace("processStep1", "uploadFile");
+				$("#stepHolderID").attr("action", thisAction);
+				$("#stepHolderID").submit();
+			}
+		}
+		else
+		{
+			alert("You have not chosen a file");
+		}
+	});
+		 
+		 
+		 
 	  
     // needed variable(s)
     var savedSel;
@@ -75,33 +106,34 @@ $(document).ready(function()
 	// event when the + button is clicked
 	$("#markButton").click(function()
 	{		
-		var ns = document.getElementById('ns').value;
-		var tag = document.getElementById('tag').value;
-		var totalAttr = document.getElementById('newAttrCounter').value;
-		var url = document.getElementById('url').value;
-		var txt = document.getElementById('text').value;		
+		var ns = $("#ns").val();
+		var tag = $("#tag").val();
+		var totalAttr = $("#newAttrCounter").val();
+		var url = $("#url").val();
+		var txt = $("#text").val();		
 
 		rangy.restoreSelection(savedSel);
 				
 		if((ns != '')&&(tag != '')&&(reportSelectionText() != ''))
 		{						 						
-			var newSpanID = parseInt(document.getElementById('spanIDHistory').value)+1;
-			document.getElementById('spanIDHistory').value = newSpanID;
+			var newSpanID = parseInt($("#spanIDHistory").val())+1;
+			$("#spanIDHistory").val(newSpanID);
 			
 			var selectedText = rangy.getSelection().toString();
 			
 			surroundRange(newSpanID);
 			
-			document.getElementById('ns').value = "";
-			document.getElementById('tag').value = "";
-			document.getElementById('url').value = "";
-			document.getElementById('text').value = "";			
+			$("#ns").val("");
+			$("#tag").val("");
+			$("#url").val("");
+			$("#text").val("");
+					
 			 
-			document.getElementById('userInput').focus();
+			$('#userInput').focus();
 						
 			$('span[id^="junk"]').remove();
 			
-			var userInput = document.getElementById('userInput').innerHTML;
+			var userInput = $('#userInput').html();
 			var selectionTextLength = selectedText.length;
 			var sp = getStartPoint(newSpanID, userInput);
 			var ep = sp + selectionTextLength - 1; 
@@ -115,7 +147,7 @@ $(document).ready(function()
 			     });			
 			});
 			
-			var totalAttributes = parseInt(document.getElementById('newAttrCounter').value);
+			var totalAttributes = parseInt($('#newAttrCounter').val());
 			var counter = 0;
 			var tempElementID = "";
 			while(counter < totalAttributes)
@@ -123,11 +155,11 @@ $(document).ready(function()
 				counter++;
 				
 				tempElementID = "attr" + counter;
-				var valueOfTemp = document.getElementById(tempElementID).value;
+				var valueOfTemp = $("#" + tempElementID).val();
 				
 				if(valueOfTemp != '')
 				{
-					document.getElementById(tempElementID).value = "";
+					$("#" + tempElementID).val() = "";
 					$.post("do.php?action=linkAttribute", {attrValue:valueOfTemp, spanID:newSpanID}, function(data){}); 
 				}
 			}		
@@ -139,17 +171,17 @@ $(document).ready(function()
 			if(ns == '')
 			{
 				alert("You have to fill the name space field");
-				document.getElementById('ns').focus();
+				$('#ns').focus();
 			}
 			else if(tag == '')
 			{
 				alert("You have to fill the tag field");
-				document.getElementById('tag').focus();
+				$('#tag').focus();
 			}
 			else
 			{
 				alert("No selection was made");
-				document.getElementById('userInput').focus();
+				$('#userInput').focus();
 			}									
 		} 	     
 	}); 
@@ -168,8 +200,6 @@ $(document).ready(function()
 	        .load('do.php?action=getAllMarks', null, function(responseText){  
 	     });	     
 	}); 
-		
-	
 });
 
 
@@ -440,20 +470,8 @@ function confirmDelete(id)
 // load Step
 function loadStep(url, stepID)
 {
-	if(stepID == '1')
-	{
-		if(confirm("If you step back and make changes, you will lose the current marks. Do you still want to proceed?"))
-		{
-			window.location = url;
-		}
-	}
-	else
-	{
-		window.location = url;
-	}
+	window.location = url;
 }
-
-
 
 
 
